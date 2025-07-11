@@ -1,0 +1,25 @@
+{% extends 'base.html' %}
+
+{% block title %}Restaurant Lists - Munch{% endblock %}
+
+{% block content %}
+<h1>All Restaurant Lists</h1>
+
+{% if restaurant_lists %}
+    <div>
+        {% for restaurant_list in restaurant_lists %}
+            <div style="border: 1px solid #ccc; margin: 10px 0; padding: 10px;">
+                <h3><a href="{% url 'restaurantlist_detail' restaurant_list.id %}">{{ restaurant_list.name }}</a></h3>
+                <p><strong>Owner:</strong> {{ restaurant_list.owner.username }}</p>
+                <p><strong>Created:</strong> {{ restaurant_list.inserted_at|date:"F j, Y" }}</p>
+            </div>
+        {% endfor %}
+    </div>
+{% else %}
+    <p>No restaurant lists found.</p>
+{% endif %}
+
+<div style="margin-top: 20px;">
+    <a href="{% url 'create_restaurantlist' %}">Create New List</a>
+</div>
+{% endblock %}

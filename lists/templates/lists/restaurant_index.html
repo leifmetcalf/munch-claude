@@ -1,0 +1,21 @@
+{% extends 'base.html' %}
+
+{% block title %}Restaurants - Munch{% endblock %}
+
+{% block content %}
+<h1>All Restaurants</h1>
+
+{% if restaurants %}
+    <div>
+        {% for restaurant in restaurants %}
+            <div style="border: 1px solid #ccc; margin: 10px 0; padding: 10px;">
+                <h3><a href="{% url 'restaurant_detail' restaurant.id %}">{{ restaurant.name }}</a></h3>
+                <p>{{ restaurant.address }}</p>
+                <p>{{ restaurant.suburb }}{% if restaurant.region %}, {{ restaurant.region }}{% endif %}{% if restaurant.country %}, {{ restaurant.country }}{% endif %}</p>
+            </div>
+        {% endfor %}
+    </div>
+{% else %}
+    <p>No restaurants found. <a href="{% url 'search_restaurants' %}">Search for restaurants</a> to add some.</p>
+{% endif %}
+{% endblock %}

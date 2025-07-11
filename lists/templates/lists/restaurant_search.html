@@ -1,0 +1,33 @@
+{% extends 'base.html' %}
+
+{% block title %}Search Restaurants - Munch{% endblock %}
+
+{% block content %}
+<h1>Search Restaurants</h1>
+
+<form method="get">
+    <input type="text" name="q" value="{{ query|default:'' }}" placeholder="Enter location or restaurant name">
+    <button type="submit">Search</button>
+</form>
+
+{% if error %}
+    <div class="error">Error: {{ error }}</div>
+{% endif %}
+
+{% if restaurants %}
+    <h2>Search Results</h2>
+    {% for restaurant in restaurants %}
+        <div style="border: 1px solid #ccc; margin: 10px 0; padding: 10px;">
+            <h3>{{ restaurant.name }}</h3>
+            <p>{{ restaurant.display_name }}</p>
+            
+            <form method="post" style="display: inline;">
+                {% csrf_token %}
+                <input type="hidden" name="osm_type" value="{{ restaurant.osm_type }}">
+                <input type="hidden" name="osm_id" value="{{ restaurant.osm_id }}">
+                <button type="submit">Add to Database</button>
+            </form>
+        </div>
+    {% endfor %}
+{% endif %}
+{% endblock %}

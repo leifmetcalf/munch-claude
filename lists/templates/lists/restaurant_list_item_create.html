@@ -1,0 +1,17 @@
+{% extends 'base.html' %}
+
+{% block title %}Add Restaurant to List - Munch{% endblock %}
+
+{% block content %}
+<h1>Add Restaurant to List</h1>
+
+<form method="post">
+    {% csrf_token %}
+    {{ form.as_p }}
+    <button type="submit">Add to List</button>
+</form>
+
+<div style="margin-top: 20px;">
+    <a href="{% url 'restaurantlist_index' %}">Back to Lists</a>
+</div>
+{% endblock %}

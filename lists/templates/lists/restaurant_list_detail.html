@@ -1,0 +1,36 @@
+{% extends 'base.html' %}
+
+{% block title %}{{ restaurant_list.name }} - Munch{% endblock %}
+
+{% block content %}
+<h1>{{ restaurant_list.name }}</h1>
+
+<div>
+    <p><strong>Owner:</strong> {{ restaurant_list.owner.username }}</p>
+    <p><strong>Created:</strong> {{ restaurant_list.inserted_at|date:"F j, Y" }}</p>
+</div>
+
+<div style="margin: 20px 0;">
+    <a href="{% url 'create_restaurantlistitem' %}">Add Restaurant to List</a>
+</div>
+
+{% if list_items %}
+    <h2>Restaurants in this list</h2>
+    <div>
+        {% for item in list_items %}
+            <div style="border: 1px solid #ccc; margin: 10px 0; padding: 10px;">
+                <h3><a href="{% url 'restaurant_detail' item.restaurant.id %}">{{ item.restaurant.name }}</a></h3>
+                <p>{{ item.restaurant.address }}</p>
+                <p><strong>Added:</strong> {{ item.inserted_at|date:"F j, Y" }}</p>
+                <p><strong>Order:</strong> {{ item.order }}</p>
+            </div>
+        {% endfor %}
+    </div>
+{% else %}
+    <p>No restaurants in this list yet. <a href="{% url 'create_restaurantlistitem' %}">Add one!</a></p>
+{% endif %}
+
+<div style="margin-top: 20px;">
+    <a href="{% url 'restaurantlist_index' %}">Back to Lists</a>
+</div>
+{% endblock %}
