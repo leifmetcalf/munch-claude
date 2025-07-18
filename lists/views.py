@@ -10,8 +10,8 @@ from django.core.serializers.json import DjangoJSONEncoder
 from django.db import models, transaction
 from django.http import JsonResponse
 from django.shortcuts import render, redirect, get_object_or_404
-from .models import Restaurant, RestaurantList, RestaurantListItem
-from .forms import RestaurantForm, RestaurantListForm, RestaurantListItemForm, CustomUserCreationForm, RestaurantUpdateForm
+from .models import Restaurant, RestaurantList, RestaurantListItem, RestaurantImage
+from .forms import RestaurantForm, RestaurantListForm, RestaurantListItemForm, CustomUserCreationForm, RestaurantImageForm
 
 
 class OSMType(Enum):
@@ -232,19 +232,21 @@ def restaurant_detail(request, restaurant_id):
 
 
 @login_required
-def restaurant_update(request, restaurant_id):
+def restaurant_image_add(request, restaurant_id):
     restaurant = get_object_or_404(Restaurant, id=restaurant_id)
     
     if request.method == 'POST':
-        form = RestaurantUpdateForm(request.POST, request.FILES, instance=restaurant)
+        form = RestaurantImageForm(request.POST, request.FILES)
         if form.is_valid():
-            form.save()
-            messages.success(request, f'Image updated for "{restaurant.name}"!')
+            image = form.save(commit=False)
+            image.restaurant = restaurant
+            image.save()
+            messages.success(request, f'Image added for "{restaurant.name}"!')
             return redirect('restaurant_detail', restaurant_id=restaurant.id)
     else:
-        form = RestaurantUpdateForm(instance=restaurant)
+        form = RestaurantImageForm()
     
-    return render(request, 'lists/restaurant_update.html', {
+    return render(request, 'lists/restaurant_image_add.html', {
         'form': form,
         'restaurant': restaurant
     })

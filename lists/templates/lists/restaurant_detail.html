@@ -10,13 +10,25 @@
         <div class="flex justify-between items-start mb-4">
             <h2 class="text-xl font-semibold text-gray-900">Restaurant Details</h2>
             {% if user.is_authenticated %}
-                <a href="{% url 'restaurant_update' restaurant.id %}" class="bg-blue-600 text-white hover:bg-blue-700 px-3 py-1 rounded text-sm font-medium transition-colors">Update Image</a>
+                <a href="{% url 'restaurant_image_add' restaurant.id %}" class="bg-blue-600 text-white hover:bg-blue-700 px-3 py-1 rounded text-sm font-medium transition-colors">Add Image</a>
             {% endif %}
         </div>
         
-        {% if restaurant.image %}
+        {% if restaurant.images.all %}
             <div class="mb-4">
-                <img src="{{ restaurant.image.url }}" alt="{{ restaurant.name }}" class="w-full max-w-sm h-64 object-cover rounded-lg border border-gray-300">
+                <h3 class="text-lg font-medium text-gray-900 mb-3">Images</h3>
+                <div class="grid grid-cols-1 gap-4">
+                    {% for image in restaurant.images.all %}
+                        <div class="border border-gray-300 rounded-lg overflow-hidden">
+                            <img src="{{ image.image.url }}" alt="{{ restaurant.name }}" class="w-full max-w-sm h-64 object-cover">
+                            {% if image.caption %}
+                                <div class="p-3 bg-gray-50">
+                                    <p class="text-sm text-gray-700">{{ image.caption }}</p>
+                                </div>
+                            {% endif %}
+                        </div>
+                    {% endfor %}
+                </div>
             </div>
         {% endif %}
         

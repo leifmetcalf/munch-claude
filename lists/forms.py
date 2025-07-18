@@ -1,6 +1,6 @@
 from django import forms
 from django.contrib.auth.forms import UserCreationForm
-from .models import RestaurantList, RestaurantListItem, Restaurant, User
+from .models import RestaurantList, RestaurantListItem, Restaurant, RestaurantImage, User
 
 
 class RestaurantForm(forms.Form):
@@ -8,12 +8,13 @@ class RestaurantForm(forms.Form):
     osm_id = forms.CharField(widget=forms.HiddenInput())
 
 
-class RestaurantUpdateForm(forms.ModelForm):
+class RestaurantImageForm(forms.ModelForm):
     class Meta:
-        model = Restaurant
-        fields = ['image']
+        model = RestaurantImage
+        fields = ['image', 'caption']
         widgets = {
             'image': forms.ClearableFileInput(attrs={'accept': 'image/*'}),
+            'caption': forms.TextInput(attrs={'placeholder': 'Optional caption for the image...'}),
         }
     
     def clean_image(self):

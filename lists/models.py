@@ -19,13 +19,25 @@ class Restaurant(models.Model):
     osm_type = models.CharField(max_length=20)
     osm_id = models.CharField(max_length=20)
     location = models.PointField(help_text="Geographic location from Nominatim")
-    image = models.ImageField(upload_to='restaurants/', blank=True, null=True, help_text="Restaurant photo")
     
     class Meta:
         unique_together = ['osm_type', 'osm_id']
     
     def __str__(self):
         return self.name
+
+
+class RestaurantImage(models.Model):
+    restaurant = models.ForeignKey(Restaurant, on_delete=models.CASCADE, related_name='images')
+    image = models.ImageField(upload_to='restaurants/', help_text="Restaurant photo")
+    caption = models.CharField(max_length=200, blank=True, help_text="Optional caption for the image")
+    uploaded_at = models.DateTimeField(auto_now_add=True)
+    
+    class Meta:
+        ordering = ['uploaded_at']
+    
+    def __str__(self):
+        return f"Image for {self.restaurant.name}"
 
 
 class RestaurantList(models.Model):
@@ -54,23 +66,23 @@ class RestaurantListItem(models.Model):
         return f"{self.restaurant.name} in {self.restaurant_list.name}"
 
 
-@receiver(post_delete, sender=Restaurant)
-def delete_restaurant_image(sender, instance, **kwargs):
-    """Delete image file when Restaurant instance is deleted"""
+@receiver(post_delete, sender=RestaurantImage)
+def delete_restaurant_image_file(sender, instance, **kwargs):
+    """Delete image file when RestaurantImage instance is deleted"""
     if instance.image:
         if os.path.isfile(instance.image.path):
             os.remove(instance.image.path)
 
 
-@receiver(pre_save, sender=Restaurant)
-def delete_old_image(sender, instance, **kwargs):
+@receiver(pre_save, sender=RestaurantImage)
+def delete_old_restaurant_image(sender, instance, **kwargs):
     """Delete old image file when a new one is uploaded"""
     if not instance.pk:
         return False
     
     try:
-        old_image = Restaurant.objects.get(pk=instance.pk).image
-    except Restaurant.DoesNotExist:
+        old_image = RestaurantImage.objects.get(pk=instance.pk).image
+    except RestaurantImage.DoesNotExist:
         return False
     
     if old_image and old_image != instance.image:
