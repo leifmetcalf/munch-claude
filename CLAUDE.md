@@ -29,6 +29,17 @@ uv run manage.py createsuperuser
 uv run manage.py shell
 ```
 
+**Build Tailwind CSS:**
+```bash
+npx @tailwindcss/cli -i ./lists/main.css -o ./lists/static/css/main.css --watch
+```
+
+**Install dependencies:**
+```bash
+uv install
+npm install
+```
+
 ## Architecture
 
 ### Custom User Model
@@ -43,6 +54,7 @@ uv run manage.py shell
 
 ### Core Models
 - **Restaurant**: Stores restaurant data with OpenStreetMap integration (osm_type, osm_id)
+- **RestaurantImage**: Multiple images per restaurant with automatic file cleanup
 - **RestaurantList**: User-owned lists of restaurants
 - **RestaurantListItem**: Junction table linking restaurants to lists (allows duplicates)
 
@@ -84,3 +96,27 @@ Key function: `create_restaurant_from_osm(osm_type: OSMType, osm_id)` - takes en
 - ModelForms for database objects
 - Custom forms for API interactions (like RestaurantForm with hidden OSM fields)
 - Always extend Django's built-in forms when working with User model
+
+## Technical Details
+
+### Database Configuration
+- PostgreSQL with PostGIS extension for geographic data
+- Database name: `munch`, user: `munch`, no password, localhost:5432
+- Uses Django GIS with PointField for restaurant locations
+
+### Dependencies
+- **Python**: Requires Python 3.13+, managed with `uv`
+- **Core**: Django 5.2.4+, Pillow 11.3.0+, psycopg[binary] 3.2.9+
+- **Frontend**: Tailwind CSS 4.1.11 via npm
+
+### File Handling
+- Media files stored in `media/` directory
+- Restaurant images uploaded to `media/restaurants/`
+- Automatic file cleanup via Django signals when images are deleted/replaced
+
+### Frontend Architecture
+- Tailwind CSS for styling with utility-first approach
+- Leaflet.js for interactive maps
+- Fixed design for mobile phone in portrait orientation
+- Templates use Django's template inheritance pattern
+- Accessibility: alt-text for images, screen reader compatibility
