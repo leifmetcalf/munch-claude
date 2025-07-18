@@ -17,7 +17,10 @@ class RestaurantListForm(forms.ModelForm):
 class RestaurantListItemForm(forms.ModelForm):
     class Meta:
         model = RestaurantListItem
-        fields = ['restaurant', 'restaurant_list']
+        fields = ['restaurant', 'restaurant_list', 'notes']
+        widgets = {
+            'notes': forms.Textarea(attrs={'rows': 3, 'placeholder': 'Optional notes about this restaurant...'}),
+        }
 
 
 class CustomUserCreationForm(UserCreationForm):

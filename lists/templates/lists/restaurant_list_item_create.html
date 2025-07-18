@@ -7,7 +7,33 @@
 
 <form method="post">
     {% csrf_token %}
-    {{ form.as_p }}
+    <div style="margin-bottom: 15px;">
+        <label for="{{ form.restaurant.id_for_label }}">{{ form.restaurant.label }}:</label>
+        {{ form.restaurant }}
+        {% if form.restaurant.errors %}
+            <div style="color: red;">{{ form.restaurant.errors }}</div>
+        {% endif %}
+    </div>
+    
+    <div style="margin-bottom: 15px;">
+        <label for="{{ form.restaurant_list.id_for_label }}">{{ form.restaurant_list.label }}:</label>
+        {{ form.restaurant_list }}
+        {% if form.restaurant_list.errors %}
+            <div style="color: red;">{{ form.restaurant_list.errors }}</div>
+        {% endif %}
+    </div>
+    
+    <div style="margin-bottom: 15px;">
+        <label for="{{ form.notes.id_for_label }}">{{ form.notes.label }}:</label>
+        {{ form.notes }}
+        {% if form.notes.help_text %}
+            <div style="font-size: 0.9em; color: #666;">{{ form.notes.help_text }}</div>
+        {% endif %}
+        {% if form.notes.errors %}
+            <div style="color: red;">{{ form.notes.errors }}</div>
+        {% endif %}
+    </div>
+    
     <button type="submit">Add to List</button>
 </form>
 

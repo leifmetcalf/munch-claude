@@ -39,6 +39,7 @@ class RestaurantListItem(models.Model):
     restaurant_list = models.ForeignKey(RestaurantList, on_delete=models.CASCADE)
     inserted_at = models.DateTimeField(auto_now_add=True)
     order = models.PositiveIntegerField(default=0)
+    notes = models.TextField(blank=True, help_text="Optional notes about this restaurant")
     
     class Meta:
         ordering = ['order']

@@ -24,6 +24,9 @@
                         <h3><a href="{% url 'restaurant_detail' item.restaurant.id %}">{{ item.restaurant.name }}</a></h3>
                         <p>{{ item.restaurant.address }}</p>
                         <p><strong>Added:</strong> {{ item.inserted_at|date:"F j, Y" }}</p>
+                        {% if item.notes %}
+                            <p><strong>Notes:</strong> {{ item.notes }}</p>
+                        {% endif %}
                     </div>
                     {% if user.is_authenticated and user == restaurant_list.owner %}
                         <div style="display: flex; flex-direction: column; gap: 5px;">
