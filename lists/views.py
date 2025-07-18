@@ -38,15 +38,16 @@ def create_restaurant_from_osm(osm_type: OSMType, osm_id):
     # Parse address components
     address_parts = item.get('display_name', '').split(', ')
     
-    # Create Point from lat/lon if available
-    location = None
-    if item.get('lat') and item.get('lon'):
-        try:
-            lat = float(item['lat'])
-            lon = float(item['lon'])
-            location = Point(lon, lat)  # Point(longitude, latitude)
-        except (ValueError, TypeError):
-            pass  # Keep location as None if conversion fails
+    # Create Point from lat/lon - required field
+    if not item.get('lat') or not item.get('lon'):
+        raise ValueError(f"Missing latitude or longitude data from Nominatim for OSM {osm_type.name}:{osm_id}")
+    
+    try:
+        lat = float(item['lat'])
+        lon = float(item['lon'])
+        location = Point(lon, lat)  # Point(longitude, latitude)
+    except (ValueError, TypeError) as e:
+        raise ValueError(f"Invalid latitude/longitude data from Nominatim: lat={item.get('lat')}, lon={item.get('lon')}") from e
     
     restaurant = Restaurant.objects.create(
         name=address_parts[0] if address_parts else '',
