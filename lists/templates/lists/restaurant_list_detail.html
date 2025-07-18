@@ -3,25 +3,27 @@
 {% block title %}{{ restaurant_list.name }} - Munch{% endblock %}
 
 {% block content %}
-<h1>{{ restaurant_list.name }}</h1>
+<div class="mb-6">
+    <h1 class="text-3xl font-bold text-gray-900 mb-4">{{ restaurant_list.name }}</h1>
+    
+    <div class="bg-white rounded-lg shadow border border-gray-200 p-4 mb-6">
+        <p class="text-gray-600 mb-2"><strong>Owner:</strong> {{ restaurant_list.owner.username }}</p>
+        <p class="text-gray-500 text-sm"><strong>Created:</strong> {{ restaurant_list.inserted_at|date:"F j, Y" }}</p>
+    </div>
 
-<div>
-    <p><strong>Owner:</strong> {{ restaurant_list.owner.username }}</p>
-    <p><strong>Created:</strong> {{ restaurant_list.inserted_at|date:"F j, Y" }}</p>
+    {% if user.is_authenticated and user == restaurant_list.owner %}
+        <div class="flex gap-4 mb-6">
+            <a href="{% url 'restaurantlistitem_create' restaurant_list.id %}" class="bg-blue-600 text-white hover:bg-blue-700 px-4 py-2 rounded-md text-sm font-medium transition-colors">Add Restaurant to List</a>
+            <a href="{% url 'restaurantlist_edit' restaurant_list.id %}" class="bg-gray-600 text-white hover:bg-gray-700 px-4 py-2 rounded-md text-sm font-medium transition-colors">Edit List</a>
+        </div>
+    {% endif %}
 </div>
 
-{% if user.is_authenticated and user == restaurant_list.owner %}
-    <div style="margin: 20px 0;">
-        <a href="{% url 'restaurantlistitem_create' restaurant_list.id %}">Add Restaurant to List</a> |
-        <a href="{% url 'restaurantlist_edit' restaurant_list.id %}">Edit List</a>
-    </div>
-{% endif %}
-
 {% if list_items %}
-    <h2>Restaurants in this list</h2>
+    <h2 class="text-2xl font-semibold text-gray-900 mb-4">Restaurants in this list</h2>
     
     {% if restaurant_coordinates %}
-        <div id="map" style="height: 400px; width: 100%; margin: 20px 0; border: 1px solid #ccc;"></div>
+        <div id="map" class="h-96 w-full my-6 border border-gray-300 rounded-lg shadow-sm"></div>
         <script>
             // Initialize the map
             var map = L.map('map');
@@ -53,27 +55,32 @@
         </script>
     {% endif %}
     
-    <div>
+    <div class="space-y-4">
         {% for item in list_items %}
-            <div style="border: 1px solid #ccc; margin: 10px 0; padding: 10px;">
-                <div style="display: flex; justify-content: space-between; align-items: flex-start;">
-                    <div style="flex: 1;">
-                        <h3><a href="{% url 'restaurant_detail' item.restaurant.id %}">{{ item.restaurant.name }}</a></h3>
-                        <p>{{ item.restaurant.address }}</p>
-                        <p><strong>Added:</strong> {{ item.inserted_at|date:"F j, Y" }}</p>
-                        {% if item.notes %}
-                            <p><strong>Notes:</strong> {{ item.notes }}</p>
-                        {% endif %}
+            <div class="bg-white rounded-lg shadow border border-gray-200 p-6">
+                <h3 class="text-xl font-semibold text-gray-900 mb-2">
+                    <a href="{% url 'restaurant_detail' item.restaurant.id %}" class="hover:text-blue-600">{{ item.restaurant.name }}</a>
+                </h3>
+                <p class="text-gray-600 mb-2">{{ item.restaurant.address }}</p>
+                <p class="text-gray-500 text-sm mb-2"><strong>Added:</strong> {{ item.inserted_at|date:"F j, Y" }}</p>
+                {% if item.notes %}
+                    <div class="bg-gray-50 border border-gray-200 rounded p-3 mt-3">
+                        <p class="text-gray-700"><strong>Notes:</strong> {{ item.notes }}</p>
                     </div>
-                </div>
+                {% endif %}
             </div>
         {% endfor %}
     </div>
 {% else %}
-    <p>No restaurants in this list yet. <a href="{% url 'restaurantlistitem_create' restaurant_list.id %}">Add one!</a></p>
+    <div class="text-center py-12">
+        <p class="text-gray-500 text-lg mb-4">No restaurants in this list yet.</p>
+        {% if user.is_authenticated and user == restaurant_list.owner %}
+            <a href="{% url 'restaurantlistitem_create' restaurant_list.id %}" class="bg-blue-600 text-white hover:bg-blue-700 px-4 py-2 rounded-md text-sm font-medium transition-colors">Add your first restaurant</a>
+        {% endif %}
+    </div>
 {% endif %}
 
-<div style="margin-top: 20px;">
-    <a href="{% url 'restaurantlist_index' %}">Back to Lists</a>
+<div class="mt-8 pt-6 border-t border-gray-200">
+    <a href="{% url 'restaurantlist_index' %}" class="text-blue-600 hover:text-blue-800 font-medium">← Back to Lists</a>
 </div>
 {% endblock %}

@@ -3,35 +3,49 @@
 {% block title %}Add Restaurant to List - Munch{% endblock %}
 
 {% block content %}
-<h1>Add Restaurant to "{{ restaurant_list.name }}"</h1>
+<div class="max-w-2xl mx-auto">
+    <h1 class="text-3xl font-bold text-gray-900 mb-6">Add Restaurant to "{{ restaurant_list.name }}"</h1>
 
-<form method="post">
-    {% csrf_token %}
-    <div style="margin-bottom: 15px;">
-        <label for="{{ form.restaurant.id_for_label }}">{{ form.restaurant.label }}:</label>
-        {{ form.restaurant }}
-        {% if form.restaurant.errors %}
-            <div style="color: red;">{{ form.restaurant.errors }}</div>
-        {% endif %}
+    <div class="bg-white rounded-lg shadow border border-gray-200 p-6">
+        <form method="post" class="space-y-6">
+            {% csrf_token %}
+            <div>
+                <label for="{{ form.restaurant.id_for_label }}" class="block text-sm font-medium text-gray-700 mb-2">{{ form.restaurant.label }}</label>
+                {{ form.restaurant }}
+                {% if form.restaurant.errors %}
+                    <div class="mt-1 text-sm text-red-600">
+                        {% for error in form.restaurant.errors %}
+                            <p>{{ error }}</p>
+                        {% endfor %}
+                    </div>
+                {% endif %}
+            </div>
+            
+            <div>
+                <label for="{{ form.notes.id_for_label }}" class="block text-sm font-medium text-gray-700 mb-2">{{ form.notes.label }}</label>
+                {{ form.notes }}
+                {% if form.notes.help_text %}
+                    <p class="mt-1 text-sm text-gray-500">{{ form.notes.help_text }}</p>
+                {% endif %}
+                {% if form.notes.errors %}
+                    <div class="mt-1 text-sm text-red-600">
+                        {% for error in form.notes.errors %}
+                            <p>{{ error }}</p>
+                        {% endfor %}
+                    </div>
+                {% endif %}
+            </div>
+            
+            <div class="flex justify-end">
+                <button type="submit" class="bg-blue-600 text-white hover:bg-blue-700 px-4 py-2 rounded-md text-sm font-medium transition-colors">Add to List</button>
+            </div>
+        </form>
     </div>
-    
-    
-    <div style="margin-bottom: 15px;">
-        <label for="{{ form.notes.id_for_label }}">{{ form.notes.label }}:</label>
-        {{ form.notes }}
-        {% if form.notes.help_text %}
-            <div style="font-size: 0.9em; color: #666;">{{ form.notes.help_text }}</div>
-        {% endif %}
-        {% if form.notes.errors %}
-            <div style="color: red;">{{ form.notes.errors }}</div>
-        {% endif %}
-    </div>
-    
-    <button type="submit">Add to List</button>
-</form>
 
-<div style="margin-top: 20px;">
-    <a href="{% url 'restaurantlist_detail' restaurant_list.id %}">Back to "{{ restaurant_list.name }}"</a> | 
-    <a href="{% url 'restaurantlist_index' %}">Back to Lists</a>
+    <div class="mt-6 flex gap-4">
+        <a href="{% url 'restaurantlist_detail' restaurant_list.id %}" class="text-blue-600 hover:text-blue-800 font-medium">← Back to "{{ restaurant_list.name }}"</a>
+        <span class="text-gray-400">|</span>
+        <a href="{% url 'restaurantlist_index' %}" class="text-blue-600 hover:text-blue-800 font-medium">Back to Lists</a>
+    </div>
 </div>
 {% endblock %}

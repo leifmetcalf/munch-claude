@@ -3,19 +3,24 @@
 {% block title %}Restaurants - Munch{% endblock %}
 
 {% block content %}
-<h1>All Restaurants</h1>
+<h1 class="text-3xl font-bold text-gray-900 mb-6">All Restaurants</h1>
 
 {% if restaurants %}
-    <div>
+    <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
         {% for restaurant in restaurants %}
-            <div style="border: 1px solid #ccc; margin: 10px 0; padding: 10px;">
-                <h3><a href="{% url 'restaurant_detail' restaurant.id %}">{{ restaurant.name }}</a></h3>
-                <p>{{ restaurant.address }}</p>
-                <p>{{ restaurant.suburb }}{% if restaurant.region %}, {{ restaurant.region }}{% endif %}{% if restaurant.country %}, {{ restaurant.country }}{% endif %}</p>
+            <div class="bg-white rounded-lg shadow border border-gray-200 p-6 hover:shadow-md transition-shadow">
+                <h3 class="text-xl font-semibold text-gray-900 mb-2">
+                    <a href="{% url 'restaurant_detail' restaurant.id %}" class="hover:text-blue-600">{{ restaurant.name }}</a>
+                </h3>
+                <p class="text-gray-600 mb-2">{{ restaurant.address }}</p>
+                <p class="text-gray-500 text-sm">{{ restaurant.suburb }}{% if restaurant.region %}, {{ restaurant.region }}{% endif %}{% if restaurant.country %}, {{ restaurant.country }}{% endif %}</p>
             </div>
         {% endfor %}
     </div>
 {% else %}
-    <p>No restaurants found. <a href="{% url 'restaurant_nominatim' %}">Search for restaurants</a> to add some.</p>
+    <div class="text-center py-12">
+        <p class="text-gray-500 text-lg mb-4">No restaurants found.</p>
+        <a href="{% url 'restaurant_nominatim' %}" class="bg-blue-600 text-white hover:bg-blue-700 px-4 py-2 rounded-md text-sm font-medium transition-colors">Import restaurants</a>
+    </div>
 {% endif %}
 {% endblock %}

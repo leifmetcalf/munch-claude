@@ -1,33 +1,41 @@
 {% extends 'base.html' %}
 
-{% block title %}Search Restaurants - Munch{% endblock %}
+{% block title %}Import Restaurants - Munch{% endblock %}
 
 {% block content %}
-<h1>Search Restaurants</h1>
+<div class="max-w-4xl mx-auto">
+    <h1 class="text-3xl font-bold text-gray-900 mb-6">Import Restaurants</h1>
 
-<form method="get">
-    <input type="text" name="q" value="{{ query|default:'' }}" placeholder="Enter location or restaurant name">
-    <button type="submit">Search</button>
-</form>
+    <div class="bg-white rounded-lg shadow border border-gray-200 p-6 mb-6">
+        <form method="get" class="flex gap-4">
+            <input type="text" name="q" value="{{ query|default:'' }}" placeholder="Enter location or restaurant name" class="flex-1 px-3 py-2 border border-gray-300 rounded-md shadow-sm focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-blue-500">
+            <button type="submit" class="bg-blue-600 text-white hover:bg-blue-700 px-6 py-2 rounded-md text-sm font-medium transition-colors">Search</button>
+        </form>
+    </div>
 
-{% if error %}
-    <div class="error">Error: {{ error }}</div>
-{% endif %}
-
-{% if restaurants %}
-    <h2>Search Results</h2>
-    {% for restaurant in restaurants %}
-        <div style="border: 1px solid #ccc; margin: 10px 0; padding: 10px;">
-            <h3>{{ restaurant.name }}</h3>
-            <p>{{ restaurant.display_name }}</p>
-            
-            <form method="post" style="display: inline;">
-                {% csrf_token %}
-                <input type="hidden" name="osm_type" value="{{ restaurant.osm_type }}">
-                <input type="hidden" name="osm_id" value="{{ restaurant.osm_id }}">
-                <button type="submit">Add to Database</button>
-            </form>
+    {% if error %}
+        <div class="bg-red-50 border border-red-200 text-red-800 px-4 py-3 rounded-md mb-6">
+            <strong>Error:</strong> {{ error }}
         </div>
-    {% endfor %}
-{% endif %}
+    {% endif %}
+
+    {% if restaurants %}
+        <h2 class="text-2xl font-semibold text-gray-900 mb-4">Search Results</h2>
+        <div class="space-y-4">
+            {% for restaurant in restaurants %}
+                <div class="bg-white rounded-lg shadow border border-gray-200 p-6">
+                    <h3 class="text-xl font-semibold text-gray-900 mb-2">{{ restaurant.name }}</h3>
+                    <p class="text-gray-600 mb-4">{{ restaurant.display_name }}</p>
+                    
+                    <form method="post" class="inline-block">
+                        {% csrf_token %}
+                        <input type="hidden" name="osm_type" value="{{ restaurant.osm_type }}">
+                        <input type="hidden" name="osm_id" value="{{ restaurant.osm_id }}">
+                        <button type="submit" class="bg-green-600 text-white hover:bg-green-700 px-4 py-2 rounded-md text-sm font-medium transition-colors">Add to Database</button>
+                    </form>
+                </div>
+            {% endfor %}
+        </div>
+    {% endif %}
+</div>
 {% endblock %}

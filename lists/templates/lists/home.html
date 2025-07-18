@@ -1,12 +1,20 @@
 {% extends 'base.html' %}
 
 {% block content %}
-<h1>Welcome to Munch</h1>
-<p>Create and manage your restaurant lists</p>
+<div class="text-center">
+    <h1 class="text-4xl font-bold text-gray-900 mb-4">Welcome to Munch</h1>
+    <p class="text-xl text-gray-600 mb-8">Create and manage your restaurant lists</p>
 
-<div style="margin-top: 20px;">
-    <a href="{% url 'restaurantlist_index' %}">View All Lists</a>
-    <a href="{% url 'restaurant_index' %}">View All Restaurants</a>
-    <a href="{% url 'restaurant_nominatim' %}">Search & Add Restaurants</a>
+    <div class="grid grid-cols-1 md:grid-cols-3 gap-4 max-w-2xl mx-auto">
+        <a href="{% url 'restaurantlist_index' %}" class="bg-white hover:bg-gray-50 p-6 rounded-lg shadow border border-gray-200 text-center transition-colors">
+            <div class="text-blue-600 font-semibold">View All Lists</div>
+        </a>
+        <a href="{% url 'restaurant_index' %}" class="bg-white hover:bg-gray-50 p-6 rounded-lg shadow border border-gray-200 text-center transition-colors">
+            <div class="text-green-600 font-semibold">View All Restaurants</div>
+        </a>
+        <a href="{% url 'restaurant_nominatim' %}" class="bg-white hover:bg-gray-50 p-6 rounded-lg shadow border border-gray-200 text-center transition-colors">
+            <div class="text-purple-600 font-semibold">Import Restaurants</div>
+        </a>
+    </div>
 </div>
 {% endblock %}

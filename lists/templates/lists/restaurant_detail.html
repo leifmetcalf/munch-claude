@@ -3,26 +3,31 @@
 {% block title %}{{ restaurant.name }} - Munch{% endblock %}
 
 {% block content %}
-<h1>{{ restaurant.name }}</h1>
+<div class="max-w-4xl mx-auto">
+    <h1 class="text-3xl font-bold text-gray-900 mb-6">{{ restaurant.name }}</h1>
 
-<div>
-    <h2>Restaurant Details</h2>
-    <p><strong>Address:</strong> {{ restaurant.address }}</p>
-    <p><strong>Suburb:</strong> {{ restaurant.suburb|default:"N/A" }}</p>
-    <p><strong>Region:</strong> {{ restaurant.region|default:"N/A" }}</p>
-    <p><strong>Country:</strong> {{ restaurant.country|default:"N/A" }}</p>
-</div>
+    <div class="bg-white rounded-lg shadow border border-gray-200 p-6 mb-6">
+        <h2 class="text-xl font-semibold text-gray-900 mb-4">Restaurant Details</h2>
+        <div class="space-y-2">
+            <p class="text-gray-600"><strong>Address:</strong> {{ restaurant.address }}</p>
+            <p class="text-gray-600"><strong>Suburb:</strong> {{ restaurant.suburb|default:"N/A" }}</p>
+            <p class="text-gray-600"><strong>Region:</strong> {{ restaurant.region|default:"N/A" }}</p>
+            <p class="text-gray-600"><strong>Country:</strong> {{ restaurant.country|default:"N/A" }}</p>
+        </div>
+    </div>
 
-{% if coordinates %}
-<div style="margin-top: 20px;">
-    <h2>Location</h2>
-    <div id="map" style="height: 400px; width: 100%; border: 1px solid #ccc;"></div>
-</div>
-{% endif %}
+    {% if coordinates %}
+    <div class="bg-white rounded-lg shadow border border-gray-200 p-6 mb-6">
+        <h2 class="text-xl font-semibold text-gray-900 mb-4">Location</h2>
+        <div id="map" class="h-96 w-full border border-gray-300 rounded-lg"></div>
+    </div>
+    {% endif %}
 
-<div style="margin-top: 20px;">
-    <a href="{% url 'restaurant_index' %}">All Restaurants</a>
-    <a href="{% url 'restaurant_nominatim' %}">Back to Search</a>
+    <div class="flex gap-4">
+        <a href="{% url 'restaurant_index' %}" class="text-blue-600 hover:text-blue-800 font-medium">← All Restaurants</a>
+        <span class="text-gray-400">|</span>
+        <a href="{% url 'restaurant_nominatim' %}" class="text-blue-600 hover:text-blue-800 font-medium">Back to Import</a>
+    </div>
 </div>
 
 {% if coordinates %}
