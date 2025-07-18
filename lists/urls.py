@@ -4,12 +4,12 @@ from . import views
 
 urlpatterns = [
     path('', views.index, name='index'),
-    path('search/', views.search_restaurants, name='search_restaurants'),
+    path('search/', views.restaurant_nominatim, name='restaurant_nominatim'),
     path('restaurants/', views.restaurant_index, name='restaurant_index'),
     path('lists/', views.restaurantlist_index, name='restaurantlist_index'),
-    path('lists/create/', views.create_restaurantlist, name='create_restaurantlist'),
+    path('lists/create/', views.restaurantlist_create, name='restaurantlist_create'),
     path('lists/<int:list_id>/', views.restaurantlist_detail, name='restaurantlist_detail'),
-    path('lists/add-restaurant/', views.create_restaurantlistitem, name='create_restaurantlistitem'),
+    path('lists/<int:list_id>/add-restaurant/', views.restaurantlistitem_create, name='restaurantlistitem_create'),
     path('lists/item/<int:item_id>/move-up/', views.move_item_up, name='move_item_up'),
     path('lists/item/<int:item_id>/move-down/', views.move_item_down, name='move_item_down'),
     path('restaurant/<int:restaurant_id>/', views.restaurant_detail, name='restaurant_detail'),

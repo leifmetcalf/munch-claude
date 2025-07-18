@@ -11,7 +11,7 @@
 </div>
 
 <div style="margin: 20px 0;">
-    <a href="{% url 'create_restaurantlistitem' %}">Add Restaurant to List</a>
+    <a href="{% url 'restaurantlistitem_create' restaurant_list.id %}">Add Restaurant to List</a>
 </div>
 
 {% if list_items %}
@@ -39,7 +39,7 @@
         {% endfor %}
     </div>
 {% else %}
-    <p>No restaurants in this list yet. <a href="{% url 'create_restaurantlistitem' %}">Add one!</a></p>
+    <p>No restaurants in this list yet. <a href="{% url 'restaurantlistitem_create' restaurant_list.id %}">Add one!</a></p>
 {% endif %}
 
 <div style="margin-top: 20px;">

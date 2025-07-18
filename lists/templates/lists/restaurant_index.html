@@ -16,6 +16,6 @@
         {% endfor %}
     </div>
 {% else %}
-    <p>No restaurants found. <a href="{% url 'search_restaurants' %}">Search for restaurants</a> to add some.</p>
+    <p>No restaurants found. <a href="{% url 'restaurant_nominatim' %}">Search for restaurants</a> to add some.</p>
 {% endif %}
 {% endblock %}

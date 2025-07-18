@@ -3,7 +3,7 @@
 {% block title %}Add Restaurant to List - Munch{% endblock %}
 
 {% block content %}
-<h1>Add Restaurant to List</h1>
+<h1>Add Restaurant to "{{ restaurant_list.name }}"</h1>
 
 <form method="post">
     {% csrf_token %}
@@ -15,13 +15,6 @@
         {% endif %}
     </div>
     
-    <div style="margin-bottom: 15px;">
-        <label for="{{ form.restaurant_list.id_for_label }}">{{ form.restaurant_list.label }}:</label>
-        {{ form.restaurant_list }}
-        {% if form.restaurant_list.errors %}
-            <div style="color: red;">{{ form.restaurant_list.errors }}</div>
-        {% endif %}
-    </div>
     
     <div style="margin-bottom: 15px;">
         <label for="{{ form.notes.id_for_label }}">{{ form.notes.label }}:</label>
@@ -38,6 +31,7 @@
 </form>
 
 <div style="margin-top: 20px;">
+    <a href="{% url 'restaurantlist_detail' restaurant_list.id %}">Back to "{{ restaurant_list.name }}"</a> | 
     <a href="{% url 'restaurantlist_index' %}">Back to Lists</a>
 </div>
 {% endblock %}

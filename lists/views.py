@@ -49,7 +49,7 @@ def create_restaurant_from_osm(osm_type: OSMType, osm_id):
     return restaurant
 
 
-def search_restaurants(request):
+def restaurant_nominatim(request):
     if request.method == 'GET':
         query = request.GET.get('q', '')
         if query:
@@ -126,7 +126,7 @@ def restaurantlist_detail(request, list_id):
 
 
 @login_required
-def create_restaurantlist(request):
+def restaurantlist_create(request):
     if request.method == 'POST':
         form = RestaurantListForm(request.POST)
         if form.is_valid():
@@ -142,13 +142,20 @@ def create_restaurantlist(request):
 
 
 @login_required
-def create_restaurantlistitem(request):
+def restaurantlistitem_create(request, list_id):
+    restaurant_list = get_object_or_404(RestaurantList, id=list_id)
+    
+    # Check if user owns the list
+    if restaurant_list.owner != request.user:
+        messages.error(request, "You don't have permission to add items to this list.")
+        return redirect('restaurantlist_detail', list_id=list_id)
+    
     if request.method == 'POST':
         form = RestaurantListItemForm(request.POST)
         if form.is_valid():
             list_item = form.save(commit=False)
+            list_item.restaurant_list = restaurant_list
             # Auto-generate order to add to end of list
-            restaurant_list = list_item.restaurant_list
             max_order = RestaurantListItem.objects.filter(restaurant_list=restaurant_list).aggregate(
                 max_order=models.Max('order')
             )['max_order']
@@ -159,7 +166,10 @@ def create_restaurantlistitem(request):
     else:
         form = RestaurantListItemForm()
     
-    return render(request, 'lists/restaurant_list_item_create.html', {'form': form})
+    return render(request, 'lists/restaurant_list_item_create.html', {
+        'form': form, 
+        'restaurant_list': restaurant_list
+    })
 
 
 def register(request):

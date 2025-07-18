@@ -5,6 +5,10 @@
 {% block content %}
 <h1>All Restaurant Lists</h1>
 
+<div style="margin-bottom: 20px;">
+    <a href="{% url 'restaurantlist_create' %}">Create New List</a>
+</div>
+
 {% if restaurant_lists %}
     <div>
         {% for restaurant_list in restaurant_lists %}
@@ -19,7 +23,4 @@
     <p>No restaurant lists found.</p>
 {% endif %}
 
-<div style="margin-top: 20px;">
-    <a href="{% url 'create_restaurantlist' %}">Create New List</a>
-</div>
 {% endblock %}
