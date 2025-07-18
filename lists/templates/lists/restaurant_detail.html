@@ -13,8 +13,31 @@
     <p><strong>Country:</strong> {{ restaurant.country|default:"N/A" }}</p>
 </div>
 
+{% if coordinates %}
+<div style="margin-top: 20px;">
+    <h2>Location</h2>
+    <div id="map" style="height: 400px; width: 100%; border: 1px solid #ccc;"></div>
+</div>
+{% endif %}
+
 <div style="margin-top: 20px;">
     <a href="{% url 'restaurant_index' %}">All Restaurants</a>
     <a href="{% url 'restaurant_nominatim' %}">Back to Search</a>
 </div>
+
+{% if coordinates %}
+<script>
+    // Initialize the map
+    var map = L.map('map').setView([{{ coordinates.lat }}, {{ coordinates.lng }}], 15);
+    
+    // Add OpenStreetMap tiles
+    L.tileLayer('https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png', {
+        attribution: '© <a href="https://www.openstreetmap.org/copyright">OpenStreetMap</a> contributors'
+    }).addTo(map);
+    
+    // Add a marker for the restaurant
+    var marker = L.marker([{{ coordinates.lat }}, {{ coordinates.lng }}]).addTo(map);
+    marker.bindPopup('<b>{{ restaurant.name|escapejs }}</b><br>{{ restaurant.address|escapejs }}');
+</script>
+{% endif %}
 {% endblock %}

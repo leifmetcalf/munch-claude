@@ -200,7 +200,19 @@ def register(request):
 
 def restaurant_detail(request, restaurant_id):
     restaurant = get_object_or_404(Restaurant, id=restaurant_id)
-    return render(request, 'lists/restaurant_detail.html', {'restaurant': restaurant})
+    
+    # Extract coordinates for the map
+    coordinates = None
+    if restaurant.location:
+        coordinates = {
+            'lat': restaurant.location.y,  # latitude
+            'lng': restaurant.location.x   # longitude
+        }
+    
+    return render(request, 'lists/restaurant_detail.html', {
+        'restaurant': restaurant,
+        'coordinates': coordinates
+    })
 
 
 @login_required

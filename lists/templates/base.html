@@ -1,7 +1,10 @@
+{% load static %}
 <!DOCTYPE html>
 <html>
 <head>
     <title>{% block title %}Munch - Restaurant Lists{% endblock %}</title>
+    <link rel="stylesheet" href="{% static 'leaflet/leaflet.css' %}"/>
+    <script src="{% static 'leaflet/leaflet.js' %}"></script>
     <style>
         nav {
             background-color: #f0f0f0;
