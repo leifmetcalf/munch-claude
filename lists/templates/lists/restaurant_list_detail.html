@@ -22,7 +22,6 @@
                 <h3><a href="{% url 'restaurant_detail' item.restaurant.id %}">{{ item.restaurant.name }}</a></h3>
                 <p>{{ item.restaurant.address }}</p>
                 <p><strong>Added:</strong> {{ item.inserted_at|date:"F j, Y" }}</p>
-                <p><strong>Order:</strong> {{ item.order }}</p>
             </div>
         {% endfor %}
     </div>
