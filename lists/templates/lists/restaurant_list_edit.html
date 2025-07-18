@@ -11,7 +11,8 @@
 </div>
 
 <div style="margin: 20px 0;">
-    <a href="{% url 'restaurantlistitem_create' restaurant_list.id %}">Add Restaurant to List</a>
+    <a href="{% url 'restaurantlistitem_create' restaurant_list.id %}">Add Restaurant to List</a> |
+    <a href="{% url 'restaurantlist_detail' restaurant_list.id %}">Done editing</a>
 </div>
 
 {% if list_items %}
@@ -42,7 +43,6 @@
 {% endif %}
 
 <div style="margin-top: 20px;">
-    <a href="{% url 'restaurantlist_detail' restaurant_list.id %}">Back to List</a> |
     <a href="{% url 'restaurantlist_index' %}">Back to Lists</a>
 </div>
 {% endblock %}
