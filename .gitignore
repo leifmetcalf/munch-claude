@@ -11,3 +11,6 @@ wheels/
 
 # Database
 db.sqlite3
+
+# Node.js
+node_modules/

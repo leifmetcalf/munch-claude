@@ -19,6 +19,40 @@
 
 {% if list_items %}
     <h2>Restaurants in this list</h2>
+    
+    {% if restaurant_coordinates %}
+        <div id="map" style="height: 400px; width: 100%; margin: 20px 0; border: 1px solid #ccc;"></div>
+        <script>
+            // Initialize the map
+            var map = L.map('map');
+            
+            // Add tile layer
+            L.tileLayer('https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png', {
+                attribution: '© OpenStreetMap contributors'
+            }).addTo(map);
+            
+            // Add markers for all restaurants
+            var restaurants = {{ restaurant_coordinates_json|safe }};
+            var markers = [];
+            
+            restaurants.forEach(function(restaurant) {
+                var marker = L.marker([restaurant.lat, restaurant.lng]).addTo(map);
+                var popupContent = '<strong>' + restaurant.name + '</strong><br>' + restaurant.address;
+                if (restaurant.notes) {
+                    popupContent += '<br><em>Notes: ' + restaurant.notes + '</em>';
+                }
+                marker.bindPopup(popupContent);
+                markers.push(marker);
+            });
+            
+            // Fit map to show all markers
+            if (markers.length > 0) {
+                var group = new L.featureGroup(markers);
+                map.fitBounds(group.getBounds().pad(0.1));
+            }
+        </script>
+    {% endif %}
+    
     <div>
         {% for item in list_items %}
             <div style="border: 1px solid #ccc; margin: 10px 0; padding: 10px;">

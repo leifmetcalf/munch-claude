@@ -6,6 +6,7 @@ from django.contrib import messages
 from django.contrib.auth import login
 from django.contrib.auth.decorators import login_required
 from django.contrib.gis.geos import Point
+from django.core.serializers.json import DjangoJSONEncoder
 from django.db import models, transaction
 from django.http import JsonResponse
 from django.shortcuts import render, redirect, get_object_or_404
@@ -132,9 +133,24 @@ def restaurantlist_index(request):
 def restaurantlist_detail(request, list_id):
     restaurant_list = get_object_or_404(RestaurantList, id=list_id)
     list_items = RestaurantListItem.objects.filter(restaurant_list=restaurant_list).order_by('order')
+    
+    # Extract coordinates for the map
+    restaurant_coordinates = []
+    for item in list_items:
+        if item.restaurant.location:
+            restaurant_coordinates.append({
+                'lat': item.restaurant.location.y,  # latitude
+                'lng': item.restaurant.location.x,  # longitude
+                'name': item.restaurant.name,
+                'address': item.restaurant.address,
+                'notes': item.notes or ''
+            })
+    
     return render(request, 'lists/restaurant_list_detail.html', {
         'restaurant_list': restaurant_list,
-        'list_items': list_items
+        'list_items': list_items,
+        'restaurant_coordinates': restaurant_coordinates,
+        'restaurant_coordinates_json': json.dumps(restaurant_coordinates, cls=DjangoJSONEncoder)
     })
 
 
