@@ -11,10 +11,10 @@ class RestaurantForm(forms.Form):
 class RestaurantImageForm(forms.ModelForm):
     class Meta:
         model = RestaurantImage
-        fields = ['image', 'caption']
+        fields = ['image', 'alt_text']
         widgets = {
             'image': forms.ClearableFileInput(attrs={'accept': 'image/*'}),
-            'caption': forms.TextInput(attrs={'placeholder': 'Optional caption for the image...'}),
+            'alt_text': forms.TextInput(attrs={'placeholder': 'Alt text for accessibility...'}),
         }
     
     def clean_image(self):

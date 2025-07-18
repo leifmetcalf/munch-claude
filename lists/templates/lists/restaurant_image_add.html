@@ -23,13 +23,13 @@
             </div>
 
             <div>
-                <label for="{{ form.caption.id_for_label }}" class="block text-sm font-medium text-gray-700 mb-2">
-                    {{ form.caption.label }}
+                <label for="{{ form.alt_text.id_for_label }}" class="block text-sm font-medium text-gray-700 mb-2">
+                    {{ form.alt_text.label }}
                 </label>
-                {{ form.caption }}
-                {% if form.caption.errors %}
+                {{ form.alt_text }}
+                {% if form.alt_text.errors %}
                     <div class="text-red-600 text-sm mt-1">
-                        {{ form.caption.errors }}
+                        {{ form.alt_text.errors }}
                     </div>
                 {% endif %}
             </div>

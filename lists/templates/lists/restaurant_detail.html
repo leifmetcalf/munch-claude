@@ -20,10 +20,10 @@
                 <div class="grid grid-cols-1 gap-4">
                     {% for image in restaurant.images.all %}
                         <div class="border border-gray-300 rounded-lg overflow-hidden">
-                            <img src="{{ image.image.url }}" alt="{{ restaurant.name }}" class="w-full max-w-sm h-64 object-cover">
-                            {% if image.caption %}
+                            <img src="{{ image.image.url }}" alt="{{ image.alt_text|default:restaurant.name }}" class="w-full max-w-sm h-64 object-cover">
+                            {% if image.alt_text %}
                                 <div class="p-3 bg-gray-50">
-                                    <p class="text-sm text-gray-700">{{ image.caption }}</p>
+                                    <p class="text-sm text-gray-700">{{ image.alt_text }}</p>
                                 </div>
                             {% endif %}
                         </div>

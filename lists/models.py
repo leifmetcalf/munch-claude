@@ -30,7 +30,8 @@ class Restaurant(models.Model):
 class RestaurantImage(models.Model):
     restaurant = models.ForeignKey(Restaurant, on_delete=models.CASCADE, related_name='images')
     image = models.ImageField(upload_to='restaurants/', help_text="Restaurant photo")
-    caption = models.CharField(max_length=200, blank=True, help_text="Optional caption for the image")
+    alt_text = models.CharField(max_length=200, blank=True, help_text="Alt text for accessibility")
+    added_by = models.ForeignKey(User, on_delete=models.CASCADE, help_text="User who added this image")
     uploaded_at = models.DateTimeField(auto_now_add=True)
     
     class Meta:
