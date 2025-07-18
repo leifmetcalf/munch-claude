@@ -5,7 +5,7 @@ from enum import Enum
 from django.contrib import messages
 from django.contrib.auth import login
 from django.contrib.auth.decorators import login_required
-from django.db import models
+from django.db import models, transaction
 from django.http import JsonResponse
 from django.shortcuts import render, redirect, get_object_or_404
 from .models import Restaurant, RestaurantList, RestaurantListItem
@@ -178,3 +178,53 @@ def register(request):
 def restaurant_detail(request, restaurant_id):
     restaurant = get_object_or_404(Restaurant, id=restaurant_id)
     return render(request, 'lists/restaurant_detail.html', {'restaurant': restaurant})
+
+
+@login_required
+def move_item_up(request, item_id):
+    item = get_object_or_404(RestaurantListItem, id=item_id)
+    
+    # Check if user owns the list
+    if item.restaurant_list.owner != request.user:
+        messages.error(request, "You don't have permission to modify this list.")
+        return redirect('restaurantlist_detail', list_id=item.restaurant_list.id)
+    
+    with transaction.atomic():
+        # Find the item with the next lower order (the one to swap with)
+        previous_item = RestaurantListItem.objects.filter(
+            restaurant_list=item.restaurant_list,
+            order__lt=item.order
+        ).order_by('-order').first()
+        
+        if previous_item:
+            # Swap the order values
+            item.order, previous_item.order = previous_item.order, item.order
+            item.save()
+            previous_item.save()
+    
+    return redirect('restaurantlist_detail', list_id=item.restaurant_list.id)
+
+
+@login_required
+def move_item_down(request, item_id):
+    item = get_object_or_404(RestaurantListItem, id=item_id)
+    
+    # Check if user owns the list
+    if item.restaurant_list.owner != request.user:
+        messages.error(request, "You don't have permission to modify this list.")
+        return redirect('restaurantlist_detail', list_id=item.restaurant_list.id)
+    
+    with transaction.atomic():
+        # Find the item with the next higher order (the one to swap with)
+        next_item = RestaurantListItem.objects.filter(
+            restaurant_list=item.restaurant_list,
+            order__gt=item.order
+        ).order_by('order').first()
+        
+        if next_item:
+            # Swap the order values
+            item.order, next_item.order = next_item.order, item.order
+            item.save()
+            next_item.save()
+    
+    return redirect('restaurantlist_detail', list_id=item.restaurant_list.id)

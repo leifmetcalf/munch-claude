@@ -19,9 +19,19 @@
     <div>
         {% for item in list_items %}
             <div style="border: 1px solid #ccc; margin: 10px 0; padding: 10px;">
-                <h3><a href="{% url 'restaurant_detail' item.restaurant.id %}">{{ item.restaurant.name }}</a></h3>
-                <p>{{ item.restaurant.address }}</p>
-                <p><strong>Added:</strong> {{ item.inserted_at|date:"F j, Y" }}</p>
+                <div style="display: flex; justify-content: space-between; align-items: flex-start;">
+                    <div style="flex: 1;">
+                        <h3><a href="{% url 'restaurant_detail' item.restaurant.id %}">{{ item.restaurant.name }}</a></h3>
+                        <p>{{ item.restaurant.address }}</p>
+                        <p><strong>Added:</strong> {{ item.inserted_at|date:"F j, Y" }}</p>
+                    </div>
+                    {% if user.is_authenticated and user == restaurant_list.owner %}
+                        <div style="display: flex; flex-direction: column; gap: 5px;">
+                            <a href="{% url 'move_item_up' item.id %}" style="padding: 5px 10px; background: #007bff; color: white; text-decoration: none; border-radius: 3px; text-align: center;">↑</a>
+                            <a href="{% url 'move_item_down' item.id %}" style="padding: 5px 10px; background: #007bff; color: white; text-decoration: none; border-radius: 3px; text-align: center;">↓</a>
+                        </div>
+                    {% endif %}
+                </div>
             </div>
         {% endfor %}
     </div>
