@@ -1,5 +1,5 @@
 from django.contrib.auth.models import AbstractUser
-from django.db import models
+from django.contrib.gis.db import models
 
 
 class User(AbstractUser):
@@ -14,6 +14,7 @@ class Restaurant(models.Model):
     country = models.CharField(max_length=100)
     osm_type = models.CharField(max_length=20)
     osm_id = models.CharField(max_length=20)
+    location = models.PointField(null=True, blank=True, help_text="Geographic location from Nominatim")
     
     class Meta:
         unique_together = ['osm_type', 'osm_id']

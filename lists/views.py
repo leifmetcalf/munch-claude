@@ -5,6 +5,7 @@ from enum import Enum
 from django.contrib import messages
 from django.contrib.auth import login
 from django.contrib.auth.decorators import login_required
+from django.contrib.gis.geos import Point
 from django.db import models, transaction
 from django.http import JsonResponse
 from django.shortcuts import render, redirect, get_object_or_404
@@ -37,6 +38,16 @@ def create_restaurant_from_osm(osm_type: OSMType, osm_id):
     # Parse address components
     address_parts = item.get('display_name', '').split(', ')
     
+    # Create Point from lat/lon if available
+    location = None
+    if item.get('lat') and item.get('lon'):
+        try:
+            lat = float(item['lat'])
+            lon = float(item['lon'])
+            location = Point(lon, lat)  # Point(longitude, latitude)
+        except (ValueError, TypeError):
+            pass  # Keep location as None if conversion fails
+    
     restaurant = Restaurant.objects.create(
         name=address_parts[0] if address_parts else '',
         address=item.get('display_name', ''),
@@ -44,7 +55,8 @@ def create_restaurant_from_osm(osm_type: OSMType, osm_id):
         region=item.get('address', {}).get('state', ''),
         country=item.get('address', {}).get('country', ''),
         osm_type=osm_type.value,
-        osm_id=osm_id
+        osm_id=osm_id,
+        location=location
     )
     return restaurant
 
