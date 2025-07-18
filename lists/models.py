@@ -1,6 +1,9 @@
+import os
 from django.contrib.auth.models import AbstractUser
 from django.contrib.gis.db import models
 from django.contrib.gis.geos import Point
+from django.db.models.signals import post_delete, pre_save
+from django.dispatch import receiver
 
 
 class User(AbstractUser):
@@ -16,6 +19,7 @@ class Restaurant(models.Model):
     osm_type = models.CharField(max_length=20)
     osm_id = models.CharField(max_length=20)
     location = models.PointField(help_text="Geographic location from Nominatim")
+    image = models.ImageField(upload_to='restaurants/', blank=True, null=True, help_text="Restaurant photo")
     
     class Meta:
         unique_together = ['osm_type', 'osm_id']
@@ -48,3 +52,27 @@ class RestaurantListItem(models.Model):
     
     def __str__(self):
         return f"{self.restaurant.name} in {self.restaurant_list.name}"
+
+
+@receiver(post_delete, sender=Restaurant)
+def delete_restaurant_image(sender, instance, **kwargs):
+    """Delete image file when Restaurant instance is deleted"""
+    if instance.image:
+        if os.path.isfile(instance.image.path):
+            os.remove(instance.image.path)
+
+
+@receiver(pre_save, sender=Restaurant)
+def delete_old_image(sender, instance, **kwargs):
+    """Delete old image file when a new one is uploaded"""
+    if not instance.pk:
+        return False
+    
+    try:
+        old_image = Restaurant.objects.get(pk=instance.pk).image
+    except Restaurant.DoesNotExist:
+        return False
+    
+    if old_image and old_image != instance.image:
+        if os.path.isfile(old_image.path):
+            os.remove(old_image.path)
