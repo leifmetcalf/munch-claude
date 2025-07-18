@@ -240,6 +240,7 @@ def restaurant_image_add(request, restaurant_id):
         if form.is_valid():
             image = form.save(commit=False)
             image.restaurant = restaurant
+            image.added_by = request.user
             image.save()
             messages.success(request, f'Image added for "{restaurant.name}"!')
             return redirect('restaurant_detail', restaurant_id=restaurant.id)
