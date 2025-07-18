@@ -31,7 +31,7 @@
                     <div style="display: flex; flex-direction: column; gap: 5px;">
                         <a href="{% url 'move_item_up' item.id %}" style="padding: 5px 10px; background: #007bff; color: white; text-decoration: none; border-radius: 3px; text-align: center;">↑</a>
                         <a href="{% url 'move_item_down' item.id %}" style="padding: 5px 10px; background: #007bff; color: white; text-decoration: none; border-radius: 3px; text-align: center;">↓</a>
-                        <a href="{% url 'restaurantlistitem_delete' item.id %}" style="padding: 5px 10px; background: #dc3545; color: white; text-decoration: none; border-radius: 3px; text-align: center;" onclick="return confirm('Are you sure you want to remove this restaurant from the list?')">✕</a>
+                        <a href="{% url 'restaurantlistitem_delete' item.id %}" style="padding: 5px 10px; background: #dc3545; color: white; text-decoration: none; border-radius: 3px; text-align: center;">✕</a>
                     </div>
                 </div>
             </div>
