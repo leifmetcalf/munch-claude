@@ -272,7 +272,7 @@ def move_item_up(request, item_id):
             item.save()
             previous_item.save()
     
-    return redirect('restaurantlist_detail', list_id=item.restaurant_list.id)
+    return redirect('restaurantlist_edit', list_id=item.restaurant_list.id)
 
 
 @login_required
@@ -297,7 +297,7 @@ def move_item_down(request, item_id):
             item.save()
             next_item.save()
     
-    return redirect('restaurantlist_detail', list_id=item.restaurant_list.id)
+    return redirect('restaurantlist_edit', list_id=item.restaurant_list.id)
 
 
 @login_required
