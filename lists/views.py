@@ -263,3 +263,36 @@ def move_item_down(request, item_id):
             next_item.save()
     
     return redirect('restaurantlist_detail', list_id=item.restaurant_list.id)
+
+
+@login_required
+def restaurantlist_edit(request, list_id):
+    restaurant_list = get_object_or_404(RestaurantList, id=list_id)
+    
+    # Check if user owns the list
+    if restaurant_list.owner != request.user:
+        messages.error(request, "You don't have permission to edit this list.")
+        return redirect('restaurantlist_detail', list_id=list_id)
+    
+    list_items = RestaurantListItem.objects.filter(restaurant_list=restaurant_list).order_by('order')
+    return render(request, 'lists/restaurant_list_edit.html', {
+        'restaurant_list': restaurant_list,
+        'list_items': list_items
+    })
+
+
+@login_required
+def restaurantlistitem_delete(request, item_id):
+    item = get_object_or_404(RestaurantListItem, id=item_id)
+    
+    # Check if user owns the list
+    if item.restaurant_list.owner != request.user:
+        messages.error(request, "You don't have permission to delete items from this list.")
+        return redirect('restaurantlist_detail', list_id=item.restaurant_list.id)
+    
+    restaurant_name = item.restaurant.name
+    list_id = item.restaurant_list.id
+    item.delete()
+    
+    messages.success(request, f'"{restaurant_name}" removed from the list.')
+    return redirect('restaurantlist_edit', list_id=list_id)
