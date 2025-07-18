@@ -91,6 +91,7 @@ Key function: `create_restaurant_from_osm(osm_type: OSMType, osm_id)` - takes en
 - RestaurantListItems link restaurants to lists
 - Restaurants store OSM data for re-lookup capability
 - All models use `inserted_at` for timestamps (not Django's default `created_at`)
+- **Duplicate entries are allowed**: The same restaurant can be added to the same list multiple times
 
 ### Form Patterns
 - ModelForms for database objects

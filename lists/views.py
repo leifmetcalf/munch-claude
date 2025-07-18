@@ -334,3 +334,48 @@ def restaurantlistitem_delete(request, item_id):
     
     messages.success(request, f'"{restaurant_name}" removed from the list.')
     return redirect('restaurantlist_edit', list_id=list_id)
+
+
+@login_required
+def restaurant_add_to_list(request, restaurant_id):
+    restaurant = get_object_or_404(Restaurant, id=restaurant_id)
+    
+    # Get user's restaurant lists
+    user_lists = RestaurantList.objects.filter(owner=request.user)
+    
+    if not user_lists.exists():
+        messages.error(request, "You don't have any restaurant lists. Create one first.")
+        return redirect('restaurantlist_create')
+    
+    if request.method == 'POST':
+        list_id = request.POST.get('restaurant_list')
+        notes = request.POST.get('notes', '')
+        
+        if not list_id:
+            messages.error(request, "Please select a restaurant list.")
+            return render(request, 'lists/restaurant_add_to_list.html', {
+                'restaurant': restaurant,
+                'user_lists': user_lists
+            })
+        
+        restaurant_list = get_object_or_404(RestaurantList, id=list_id, owner=request.user)
+        
+        # Auto-generate order to add to end of list
+        max_order = RestaurantListItem.objects.filter(restaurant_list=restaurant_list).aggregate(
+            max_order=models.Max('order')
+        )['max_order']
+        
+        RestaurantListItem.objects.create(
+            restaurant_list=restaurant_list,
+            restaurant=restaurant,
+            notes=notes,
+            order=(max_order or 0) + 1
+        )
+        
+        messages.success(request, f'"{restaurant.name}" added to "{restaurant_list.name}"!')
+        return redirect('restaurant_detail', restaurant_id=restaurant.id)
+    
+    return render(request, 'lists/restaurant_add_to_list.html', {
+        'restaurant': restaurant,
+        'user_lists': user_lists
+    })
