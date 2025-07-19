@@ -13,7 +13,7 @@
 
     {% if user.is_authenticated and user == restaurant_list.owner %}
         <div class="flex gap-4 mb-6">
-            <a href="{% url 'restaurantlistitem_create' restaurant_list.id %}" class="bg-blue-600 text-white hover:bg-blue-700 px-4 py-2 rounded-md text-sm font-medium transition-colors">Add Restaurant to List</a>
+            <a href="{% url 'restaurantlistitem_create' %}?list={{ restaurant_list.id }}" class="bg-blue-600 text-white hover:bg-blue-700 px-4 py-2 rounded-md text-sm font-medium transition-colors">Add Restaurant to List</a>
             <a href="{% url 'restaurantlist_edit' restaurant_list.id %}" class="bg-gray-600 text-white hover:bg-gray-700 px-4 py-2 rounded-md text-sm font-medium transition-colors">Edit List</a>
         </div>
     {% endif %}
@@ -84,7 +84,7 @@
     <div class="text-center py-12">
         <p class="text-gray-500 text-lg mb-4">No restaurants in this list yet.</p>
         {% if user.is_authenticated and user == restaurant_list.owner %}
-            <a href="{% url 'restaurantlistitem_create' restaurant_list.id %}" class="bg-blue-600 text-white hover:bg-blue-700 px-4 py-2 rounded-md text-sm font-medium transition-colors">Add your first restaurant</a>
+            <a href="{% url 'restaurantlistitem_create' %}?list={{ restaurant_list.id }}" class="bg-blue-600 text-white hover:bg-blue-700 px-4 py-2 rounded-md text-sm font-medium transition-colors">Add your first restaurant</a>
         {% endif %}
     </div>
 {% endif %}

@@ -11,7 +11,7 @@
             <h2 class="text-xl font-semibold text-gray-900">Restaurant Details</h2>
             {% if user.is_authenticated %}
                 <div class="flex gap-2">
-                    <a href="{% url 'restaurant_add_to_list' restaurant.id %}" class="bg-green-600 text-white hover:bg-green-700 px-3 py-1 rounded text-sm font-medium transition-colors">Add to List</a>
+                    <a href="{% url 'restaurantlistitem_create' %}?restaurant={{ restaurant.id }}" class="bg-green-600 text-white hover:bg-green-700 px-3 py-1 rounded text-sm font-medium transition-colors">Add to List</a>
                     <a href="{% url 'restaurant_image_add' restaurant.id %}" class="bg-blue-600 text-white hover:bg-blue-700 px-3 py-1 rounded text-sm font-medium transition-colors">Add Image</a>
                 </div>
             {% endif %}

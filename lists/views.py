@@ -64,6 +64,12 @@ def create_restaurant_from_osm(osm_type: OSMType, osm_id):
 
 
 def restaurant_nominatim(request):
+    """Import restaurants from Nominatim API into the database.
+    
+    This view's purpose is to search for restaurants via Nominatim and add them
+    to the local database. It does NOT add restaurants to user lists - that's
+    handled by other views after the restaurant exists in the database.
+    """
     if request.method == 'GET':
         query = request.GET.get('q', '')
         if query:
@@ -171,33 +177,84 @@ def restaurantlist_create(request):
 
 
 @login_required
-def restaurantlistitem_create(request, list_id):
-    restaurant_list = get_object_or_404(RestaurantList, id=list_id)
+def restaurantlistitem_create(request):
+    """Unified view for adding restaurants to lists.
     
-    # Check if user owns the list
-    if restaurant_list.owner != request.user:
-        messages.error(request, "You don't have permission to add items to this list.")
-        return redirect('restaurantlist_detail', list_id=list_id)
+    Query parameters can be used to preset form values:
+    - ?list=<id>: Pre-select a list
+    - ?restaurant=<id>: Pre-select a restaurant
+    """
+    # Check if user has lists
+    user_lists = RestaurantList.objects.filter(owner=request.user)
+    if not user_lists.exists():
+        messages.error(request, "You don't have any restaurant lists. Create one first.")
+        return redirect('restaurantlist_create')
+    
+    # Get preset values from query params
+    preset_list_id = request.GET.get('list')
+    preset_restaurant_id = request.GET.get('restaurant')
     
     if request.method == 'POST':
         form = RestaurantListItemForm(request.POST)
-        if form.is_valid():
+        
+        # Get the list ID from POST data or query params
+        list_id = request.POST.get('restaurant_list_id') or preset_list_id
+        
+        if form.is_valid() and list_id:
+            # Get the restaurant list
+            try:
+                restaurant_list = RestaurantList.objects.get(id=list_id, owner=request.user)
+            except RestaurantList.DoesNotExist:
+                messages.error(request, "Invalid restaurant list.")
+                return redirect('restaurantlist_index')
+            
             list_item = form.save(commit=False)
             list_item.restaurant_list = restaurant_list
+            
             # Auto-generate order to add to end of list
-            max_order = RestaurantListItem.objects.filter(restaurant_list=restaurant_list).aggregate(
-                max_order=models.Max('order')
-            )['max_order']
+            max_order = RestaurantListItem.objects.filter(
+                restaurant_list=restaurant_list
+            ).aggregate(max_order=models.Max('order'))['max_order']
             list_item.order = (max_order or 0) + 1
+            
             list_item.save()
             messages.success(request, f'"{list_item.restaurant.name}" added to "{restaurant_list.name}"!')
-            return redirect('restaurantlist_detail', list_id=restaurant_list.id)
+            
+            # Redirect based on where user came from
+            if preset_restaurant_id:
+                return redirect('restaurant_detail', restaurant_id=list_item.restaurant.id)
+            elif preset_list_id:
+                return redirect('restaurantlist_detail', list_id=restaurant_list.id)
+            else:
+                return redirect('restaurantlistitem_create')
+        else:
+            messages.error(request, "Please fill out all required fields.")
     else:
-        form = RestaurantListItemForm()
+        # Initialize form with preset values from query params
+        initial = {}
+        if preset_restaurant_id:
+            try:
+                restaurant_obj = Restaurant.objects.get(id=preset_restaurant_id)
+                initial['restaurant'] = restaurant_obj
+            except Restaurant.DoesNotExist:
+                pass
+        
+        form = RestaurantListItemForm(initial=initial)
+    
+    # Get preset list object if specified
+    preset_list = None
+    if preset_list_id:
+        try:
+            preset_list = RestaurantList.objects.get(id=preset_list_id, owner=request.user)
+        except RestaurantList.DoesNotExist:
+            pass
     
     return render(request, 'lists/restaurant_list_item_create.html', {
-        'form': form, 
-        'restaurant_list': restaurant_list
+        'form': form,
+        'user_lists': user_lists,
+        'preset_list': preset_list,
+        'preset_list_id': preset_list_id,
+        'preset_restaurant_id': preset_restaurant_id
     })
 
 
@@ -334,51 +391,6 @@ def restaurantlistitem_delete(request, item_id):
     
     messages.success(request, f'"{restaurant_name}" removed from the list.')
     return redirect('restaurantlist_edit', list_id=list_id)
-
-
-@login_required
-def restaurant_add_to_list(request, restaurant_id):
-    restaurant = get_object_or_404(Restaurant, id=restaurant_id)
-    
-    # Get user's restaurant lists
-    user_lists = RestaurantList.objects.filter(owner=request.user)
-    
-    if not user_lists.exists():
-        messages.error(request, "You don't have any restaurant lists. Create one first.")
-        return redirect('restaurantlist_create')
-    
-    if request.method == 'POST':
-        list_id = request.POST.get('restaurant_list')
-        notes = request.POST.get('notes', '')
-        
-        if not list_id:
-            messages.error(request, "Please select a restaurant list.")
-            return render(request, 'lists/restaurant_add_to_list.html', {
-                'restaurant': restaurant,
-                'user_lists': user_lists
-            })
-        
-        restaurant_list = get_object_or_404(RestaurantList, id=list_id, owner=request.user)
-        
-        # Auto-generate order to add to end of list
-        max_order = RestaurantListItem.objects.filter(restaurant_list=restaurant_list).aggregate(
-            max_order=models.Max('order')
-        )['max_order']
-        
-        RestaurantListItem.objects.create(
-            restaurant_list=restaurant_list,
-            restaurant=restaurant,
-            notes=notes,
-            order=(max_order or 0) + 1
-        )
-        
-        messages.success(request, f'"{restaurant.name}" added to "{restaurant_list.name}"!')
-        return redirect('restaurant_detail', restaurant_id=restaurant.id)
-    
-    return render(request, 'lists/restaurant_add_to_list.html', {
-        'restaurant': restaurant,
-        'user_lists': user_lists
-    })
 
 
 @login_required

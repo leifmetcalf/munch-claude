@@ -17,6 +17,7 @@
                     <a href="{% url 'index' %}" class="text-gray-700 hover:text-gray-900 px-2 py-2 rounded-md text-sm font-medium">Home</a>
                     {% if user.is_authenticated %}
                         <a href="{% url 'restaurantlist_index' %}" class="text-gray-700 hover:text-gray-900 px-2 py-2 rounded-md text-sm font-medium">My Lists</a>
+                        <a href="{% url 'restaurantlistitem_create' %}" class="text-gray-700 hover:text-gray-900 px-2 py-2 rounded-md text-sm font-medium">Add to List</a>
                     {% endif %}
                     <a href="{% url 'restaurant_nominatim' %}" class="text-gray-700 hover:text-gray-900 px-2 py-2 rounded-md text-sm font-medium">Import</a>
                 </div>
