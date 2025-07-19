@@ -8,7 +8,10 @@
     
     <div class="bg-white rounded-lg shadow border border-gray-200 p-4 mb-6">
         <p class="text-gray-600 mb-2"><strong>Owner:</strong> {{ restaurant_list.owner.username }}</p>
-        <p class="text-gray-500 text-sm"><strong>Created:</strong> {{ restaurant_list.inserted_at|date:"F j, Y" }}</p>
+        <p class="text-gray-500 text-sm mb-2"><strong>Created:</strong> {{ restaurant_list.inserted_at|date:"F j, Y" }}</p>
+        {% if restaurant_list.blurb %}
+            <p class="text-gray-700">{{ restaurant_list.blurb|linebreaks }}</p>
+        {% endif %}
     </div>
 
     {% if user.is_authenticated and user == restaurant_list.owner %}

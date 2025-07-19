@@ -44,6 +44,7 @@ class RestaurantImage(models.Model):
 class RestaurantList(models.Model):
     name = models.CharField(max_length=200)
     owner = models.ForeignKey(User, on_delete=models.CASCADE)
+    blurb = models.TextField(blank=True, help_text="Description or notes about this list")
     inserted_at = models.DateTimeField(auto_now_add=True)
     
     class Meta:

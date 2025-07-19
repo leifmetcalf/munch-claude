@@ -2,15 +2,9 @@
 
 {% block content %}
 <div class="max-w-4xl mx-auto">
-    <h1 class="text-3xl font-bold text-gray-900 mb-8">{{ profile_user.username }}'s Profile</h1>
-    
     <div class="bg-white rounded-lg shadow p-6 mb-8">
-        <h2 class="text-xl font-semibold mb-4">Account Information</h2>
+        <h2 class="text-xl font-semibold mb-4">{{ profile_user.username }}</h2>
         <dl class="space-y-2">
-            <div class="flex">
-                <dt class="font-medium text-gray-600 w-32">Username:</dt>
-                <dd class="text-gray-900">{{ profile_user.username }}</dd>
-            </div>
             <div class="flex">
                 <dt class="font-medium text-gray-600 w-32">Email:</dt>
                 <dd class="text-gray-900">{{ profile_user.email|default:"Not set" }}</dd>
@@ -20,20 +14,6 @@
                 <dd class="text-gray-900">{{ profile_user.date_joined|date:"F d, Y" }}</dd>
             </div>
         </dl>
-    </div>
-    
-    <div class="bg-white rounded-lg shadow p-6 mb-8">
-        <h2 class="text-xl font-semibold mb-4">Statistics</h2>
-        <div class="grid grid-cols-2 gap-4">
-            <div class="text-center">
-                <div class="text-3xl font-bold text-blue-600">{{ total_lists }}</div>
-                <div class="text-gray-600">Restaurant Lists</div>
-            </div>
-            <div class="text-center">
-                <div class="text-3xl font-bold text-green-600">{{ total_restaurants }}</div>
-                <div class="text-gray-600">Unique Restaurants</div>
-            </div>
-        </div>
     </div>
     
     <div class="bg-white rounded-lg shadow p-6">

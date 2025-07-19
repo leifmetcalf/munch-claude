@@ -16,10 +16,10 @@
                 <div class="flex space-x-1">
                     <a href="{% url 'index' %}" class="text-gray-700 hover:text-gray-900 px-2 py-2 rounded-md text-sm font-medium">Home</a>
                     {% if user.is_authenticated %}
-                        <a href="{% url 'restaurantlist_index' %}" class="text-gray-700 hover:text-gray-900 px-2 py-2 rounded-md text-sm font-medium">All Lists</a>
-                        <a href="{% url 'restaurantlistitem_create' %}" class="text-gray-700 hover:text-gray-900 px-2 py-2 rounded-md text-sm font-medium">Add to List</a>
+                        <a href="{% url 'restaurantlist_index' %}" class="text-gray-700 hover:text-gray-900 px-2 py-2 rounded-md text-sm font-medium">Explore Lists</a>
+                        <a href="{% url 'restaurant_index' %}" class="text-gray-700 hover:text-gray-900 px-2 py-2 rounded-md text-sm font-medium">Explore Restaurants</a>
+                        <a href="{% url 'restaurantlistitem_create' %}" class="text-gray-700 hover:text-gray-900 px-2 py-2 rounded-md text-sm font-medium">Log</a>
                     {% endif %}
-                    <a href="{% url 'restaurant_nominatim' %}" class="text-gray-700 hover:text-gray-900 px-2 py-2 rounded-md text-sm font-medium">Import</a>
                 </div>
                 
                 <div class="flex items-center space-x-1">

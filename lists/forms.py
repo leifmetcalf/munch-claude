@@ -34,7 +34,10 @@ class RestaurantImageForm(forms.ModelForm):
 class RestaurantListForm(forms.ModelForm):
     class Meta:
         model = RestaurantList
-        fields = ['name']
+        fields = ['name', 'blurb']
+        widgets = {
+            'blurb': forms.Textarea(attrs={'rows': 4, 'placeholder': 'Optional description or notes about this list...'})
+        }
 
 
 class RestaurantListItemForm(forms.ModelForm):

@@ -442,6 +442,26 @@ def restaurantlist_edit(request, list_id):
 
 
 @login_required
+def restaurantlist_update(request, list_id):
+    restaurant_list = get_object_or_404(RestaurantList, id=list_id)
+    
+    # Check if user owns the list
+    if restaurant_list.owner != request.user:
+        messages.error(request, "You don't have permission to edit this list.")
+        return redirect('restaurantlist_detail', list_id=list_id)
+    
+    if request.method == 'POST':
+        form = RestaurantListForm(request.POST, instance=restaurant_list)
+        if form.is_valid():
+            form.save()
+            messages.success(request, "List details updated successfully!")
+        else:
+            messages.error(request, "Please correct the errors below.")
+    
+    return redirect('restaurantlist_edit', list_id=list_id)
+
+
+@login_required
 def restaurantlistitem_delete(request, item_id):
     item = get_object_or_404(RestaurantListItem, id=item_id)
     
