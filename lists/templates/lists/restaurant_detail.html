@@ -50,6 +50,35 @@
     </div>
     {% endif %}
 
+    {% if list_items %}
+    <div class="bg-white rounded-lg shadow border border-gray-200 p-6 mb-6">
+        <h2 class="text-xl font-semibold text-gray-900 mb-4">Appears in</h2>
+        <div class="space-y-4">
+            {% for item in list_items %}
+                <div class="border border-gray-200 rounded-lg p-4">
+                    <div class="flex justify-between items-start">
+                        <div class="flex-1">
+                            <h3 class="font-medium text-lg">
+                                <a href="{% url 'restaurantlist_detail' item.restaurant_list.id %}" class="text-blue-600 hover:text-blue-800">
+                                    {{ item.restaurant_list.name }}
+                                </a>
+                            </h3>
+                            <p class="text-sm text-gray-600 mb-2">
+                                by {{ item.restaurant_list.owner.username }}
+                            </p>
+                            {% if item.notes %}
+                                <div class="bg-gray-50 border border-gray-200 rounded p-3">
+                                    <p class="text-gray-700"><strong>Notes:</strong> {{ item.notes }}</p>
+                                </div>
+                            {% endif %}
+                        </div>
+                    </div>
+                </div>
+            {% endfor %}
+        </div>
+    </div>
+    {% endif %}
+
     <div class="flex gap-4">
         <a href="{% url 'restaurant_index' %}" class="text-blue-600 hover:text-blue-800 font-medium">← All Restaurants</a>
         <span class="text-gray-400">|</span>

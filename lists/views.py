@@ -1,6 +1,7 @@
 import json
 import urllib.parse
 import urllib.request
+from collections import defaultdict
 from enum import Enum
 from django.contrib import messages
 from django.contrib.auth import login
@@ -288,9 +289,36 @@ def restaurant_detail(request, restaurant_id):
             'lng': restaurant.location.x   # longitude
         }
     
+    # Get all list items for this restaurant with deduplication logic
+    all_list_items = RestaurantListItem.objects.filter(
+        restaurant=restaurant
+    ).select_related('restaurant_list__owner').order_by('-inserted_at')
+    
+    # Group items by list, separating those with and without comments
+    items_by_list = defaultdict(lambda: {'with_comments': [], 'without_comments': []})
+    
+    for item in all_list_items:
+        list_id = item.restaurant_list.id
+        key = 'with_comments' if item.notes else 'without_comments'
+        items_by_list[list_id][key].append(item)
+    
+    # Build final list: all items with comments + one fallback per list without any comments
+    list_items = [
+        item
+        for list_data in items_by_list.values()
+        for item in (
+            list_data['with_comments'] or 
+            list_data['without_comments'][:1]  # Take only the first (most recent) if no comments
+        )
+    ]
+    
+    # Sort by insertion time (newest first)
+    list_items.sort(key=lambda item: item.inserted_at, reverse=True)
+    
     return render(request, 'lists/restaurant_detail.html', {
         'restaurant': restaurant,
-        'coordinates': coordinates
+        'coordinates': coordinates,
+        'list_items': list_items
     })
 
 
