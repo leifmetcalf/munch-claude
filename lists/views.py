@@ -11,7 +11,7 @@ from django.core.serializers.json import DjangoJSONEncoder
 from django.db import models, transaction
 from django.http import JsonResponse
 from django.shortcuts import render, redirect, get_object_or_404
-from .models import Restaurant, RestaurantList, RestaurantListItem, RestaurantImage
+from .models import Restaurant, RestaurantList, RestaurantListItem, RestaurantImage, User
 from .forms import RestaurantForm, RestaurantListForm, RestaurantListItemForm, CustomUserCreationForm, RestaurantImageForm
 
 
@@ -458,21 +458,20 @@ def restaurant_search_api(request):
     return JsonResponse({'restaurants': results})
 
 
-@login_required
-def profile(request):
-    user = request.user
+def profile(request, user_id):
+    profile_user = get_object_or_404(User, id=user_id)
     
     # Get user's restaurant lists
-    user_lists = RestaurantList.objects.filter(owner=user).order_by('-inserted_at')
+    user_lists = RestaurantList.objects.filter(owner=profile_user).order_by('-inserted_at')
     
     # Get statistics
     total_lists = user_lists.count()
     total_restaurants = RestaurantListItem.objects.filter(
-        restaurant_list__owner=user
+        restaurant_list__owner=profile_user
     ).values('restaurant').distinct().count()
     
     return render(request, 'lists/profile.html', {
-        'user': user,
+        'profile_user': profile_user,
         'user_lists': user_lists,
         'total_lists': total_lists,
         'total_restaurants': total_restaurants
