@@ -128,8 +128,24 @@ def restaurant_nominatim(request):
 
 
 def restaurant_index(request):
-    restaurants = Restaurant.objects.all()
-    return render(request, 'lists/restaurant_index.html', {'restaurants': restaurants})
+    query = request.GET.get('q', '').strip()
+    
+    if query:
+        # Search restaurants by name, address, suburb, region, or country
+        restaurants = Restaurant.objects.filter(
+            models.Q(name__icontains=query) |
+            models.Q(address__icontains=query) |
+            models.Q(suburb__icontains=query) |
+            models.Q(region__icontains=query) |
+            models.Q(country__icontains=query)
+        ).order_by('name')
+    else:
+        restaurants = Restaurant.objects.all().order_by('name')
+    
+    return render(request, 'lists/restaurant_index.html', {
+        'restaurants': restaurants,
+        'query': query
+    })
 
 
 def restaurantlist_index(request):

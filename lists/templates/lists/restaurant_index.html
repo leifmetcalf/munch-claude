@@ -3,7 +3,40 @@
 {% block title %}Restaurants - Munch{% endblock %}
 
 {% block content %}
-<h1 class="text-3xl font-bold text-gray-900 mb-6">All Restaurants</h1>
+<div class="mb-6">
+    <h1 class="text-3xl font-bold text-gray-900 mb-6">All Restaurants</h1>
+    
+    <div class="bg-white rounded-lg shadow border border-gray-200 p-6 mb-6">
+        <form method="get" class="flex gap-4">
+            <div class="flex-1">
+                <input 
+                    type="text" 
+                    name="q" 
+                    value="{{ query|default:'' }}" 
+                    placeholder="Search restaurants by name, address, or location..." 
+                    class="w-full px-4 py-2 border border-gray-300 rounded-md focus:ring-blue-500 focus:border-blue-500">
+            </div>
+            <button type="submit" class="bg-blue-600 text-white hover:bg-blue-700 px-6 py-2 rounded-md text-sm font-medium transition-colors">
+                Search
+            </button>
+            {% if query %}
+                <a href="{% url 'restaurant_index' %}" class="bg-gray-200 text-gray-700 hover:bg-gray-300 px-6 py-2 rounded-md text-sm font-medium transition-colors">
+                    Clear
+                </a>
+            {% endif %}
+        </form>
+    </div>
+</div>
+
+{% if query %}
+    <p class="text-gray-600 mb-4">
+        {% if restaurants %}
+            Showing {{ restaurants|length }} result{{ restaurants|length|pluralize }} for "{{ query }}"
+        {% else %}
+            No results found for "{{ query }}"
+        {% endif %}
+    </p>
+{% endif %}
 
 {% if restaurants %}
     <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
