@@ -197,38 +197,30 @@ def restaurantlistitem_create(request):
     if request.method == 'POST':
         form = RestaurantListItemForm(request.POST)
         
-        # Get the list ID from POST data or query params
-        list_id = request.POST.get('restaurant_list_id') or preset_list_id
-        
-        if form.is_valid() and list_id:
-            # Get the restaurant list
-            try:
-                restaurant_list = RestaurantList.objects.get(id=list_id, owner=request.user)
-            except RestaurantList.DoesNotExist:
-                messages.error(request, "Invalid restaurant list.")
+        if form.is_valid():
+            # Verify user owns the selected list
+            if form.cleaned_data['restaurant_list'].owner != request.user:
+                messages.error(request, "You don't have permission to add items to this list.")
                 return redirect('restaurantlist_index')
             
             list_item = form.save(commit=False)
-            list_item.restaurant_list = restaurant_list
             
             # Auto-generate order to add to end of list
             max_order = RestaurantListItem.objects.filter(
-                restaurant_list=restaurant_list
+                restaurant_list=list_item.restaurant_list
             ).aggregate(max_order=models.Max('order'))['max_order']
             list_item.order = (max_order or 0) + 1
             
             list_item.save()
-            messages.success(request, f'"{list_item.restaurant.name}" added to "{restaurant_list.name}"!')
+            messages.success(request, f'"{list_item.restaurant.name}" added to "{list_item.restaurant_list.name}"!')
             
             # Redirect based on where user came from
             if preset_restaurant_id:
                 return redirect('restaurant_detail', restaurant_id=list_item.restaurant.id)
             elif preset_list_id:
-                return redirect('restaurantlist_detail', list_id=restaurant_list.id)
+                return redirect('restaurantlist_detail', list_id=list_item.restaurant_list.id)
             else:
                 return redirect('restaurantlistitem_create')
-        else:
-            messages.error(request, "Please fill out all required fields.")
     else:
         # Initialize form with preset values from query params
         initial = {}
@@ -239,22 +231,36 @@ def restaurantlistitem_create(request):
             except Restaurant.DoesNotExist:
                 pass
         
+        if preset_list_id:
+            try:
+                list_obj = RestaurantList.objects.get(id=preset_list_id, owner=request.user)
+                initial['restaurant_list'] = list_obj
+            except RestaurantList.DoesNotExist:
+                pass
+        
         form = RestaurantListItemForm(initial=initial)
     
-    # Get preset list object if specified
+    # Get preset objects for template
     preset_list = None
+    preset_restaurant = None
+    
     if preset_list_id:
         try:
             preset_list = RestaurantList.objects.get(id=preset_list_id, owner=request.user)
         except RestaurantList.DoesNotExist:
             pass
     
+    if preset_restaurant_id:
+        try:
+            preset_restaurant = Restaurant.objects.get(id=preset_restaurant_id)
+        except Restaurant.DoesNotExist:
+            pass
+    
     return render(request, 'lists/restaurant_list_item_create.html', {
         'form': form,
         'user_lists': user_lists,
         'preset_list': preset_list,
-        'preset_list_id': preset_list_id,
-        'preset_restaurant_id': preset_restaurant_id
+        'preset_restaurant': preset_restaurant
     })
 
 
@@ -391,6 +397,37 @@ def restaurantlistitem_delete(request, item_id):
     
     messages.success(request, f'"{restaurant_name}" removed from the list.')
     return redirect('restaurantlist_edit', list_id=list_id)
+
+
+def restaurant_search_api(request):
+    """API endpoint for restaurant autocomplete search.
+    
+    Returns JSON with restaurant matches for the given query.
+    """
+    query = request.GET.get('q', '').strip()
+    
+    if not query or len(query) < 2:
+        return JsonResponse({'restaurants': []})
+    
+    # Search restaurants by name, address, or suburb
+    restaurants = Restaurant.objects.filter(
+        models.Q(name__icontains=query) |
+        models.Q(address__icontains=query) |
+        models.Q(suburb__icontains=query)
+    ).order_by('name')[:20]
+    
+    # Format results for JSON response
+    results = []
+    for restaurant in restaurants:
+        results.append({
+            'id': restaurant.id,
+            'name': restaurant.name,
+            'address': restaurant.address,
+            'suburb': restaurant.suburb or '',
+            'display_text': f"{restaurant.name} - {restaurant.address}"
+        })
+    
+    return JsonResponse({'restaurants': results})
 
 
 @login_required

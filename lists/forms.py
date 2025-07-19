@@ -40,8 +40,10 @@ class RestaurantListForm(forms.ModelForm):
 class RestaurantListItemForm(forms.ModelForm):
     class Meta:
         model = RestaurantListItem
-        fields = ['restaurant', 'notes']
+        fields = ['restaurant', 'restaurant_list', 'notes']
         widgets = {
+            'restaurant': forms.HiddenInput(),
+            'restaurant_list': forms.HiddenInput(),
             'notes': forms.Textarea(attrs={'rows': 3, 'placeholder': 'Optional notes about this restaurant...'}),
         }
 
