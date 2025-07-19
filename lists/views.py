@@ -379,3 +379,24 @@ def restaurant_add_to_list(request, restaurant_id):
         'restaurant': restaurant,
         'user_lists': user_lists
     })
+
+
+@login_required
+def profile(request):
+    user = request.user
+    
+    # Get user's restaurant lists
+    user_lists = RestaurantList.objects.filter(owner=user).order_by('-inserted_at')
+    
+    # Get statistics
+    total_lists = user_lists.count()
+    total_restaurants = RestaurantListItem.objects.filter(
+        restaurant_list__owner=user
+    ).values('restaurant').distinct().count()
+    
+    return render(request, 'lists/profile.html', {
+        'user': user,
+        'user_lists': user_lists,
+        'total_lists': total_lists,
+        'total_restaurants': total_restaurants
+    })
