@@ -20,17 +20,21 @@
         {% if restaurant.images.all %}
             <div class="mb-4">
                 <h3 class="text-lg font-medium text-gray-900 mb-3">Images</h3>
-                <div class="grid grid-cols-1 gap-4">
-                    {% for image in restaurant.images.all %}
-                        <div class="border border-gray-300 rounded-lg overflow-hidden">
-                            <img src="{{ image.image.url }}" alt="{{ image.alt_text|default:restaurant.name }}" class="w-full max-w-sm h-64 object-cover">
-                            {% if image.alt_text %}
-                                <div class="p-3 bg-gray-50">
-                                    <p class="text-sm text-gray-700">{{ image.alt_text }}</p>
-                                </div>
-                            {% endif %}
-                        </div>
-                    {% endfor %}
+                <div class="overflow-x-auto">
+                    <div class="flex space-x-4 pb-2">
+                        {% for image in restaurant.images.all %}
+                            <div class="flex-none w-80 border border-gray-300 rounded-lg overflow-hidden">
+                                <a href="{{ image.image.url }}" target="_blank" class="block">
+                                    <img src="{{ image.image.url }}" alt="{{ image.alt_text|default:restaurant.name }}" class="w-full h-64 object-cover hover:opacity-90 transition-opacity cursor-pointer">
+                                </a>
+                                {% if image.alt_text %}
+                                    <div class="p-3 bg-gray-50">
+                                        <p class="text-sm text-gray-700">{{ image.alt_text }}</p>
+                                    </div>
+                                {% endif %}
+                            </div>
+                        {% endfor %}
+                    </div>
                 </div>
             </div>
         {% endif %}
