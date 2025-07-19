@@ -75,8 +75,11 @@ def restaurant_nominatim(request):
         query = request.GET.get('q', '')
         if query:
             # Search Nominatim API
-            encoded_query = urllib.parse.quote(f"restaurant {query}")
-            url = f"https://nominatim.openstreetmap.org/search?q={encoded_query}&format=jsonv2&limit=20"
+            encoded_query = urllib.parse.quote(query)
+            url = f"https://nominatim.openstreetmap.org/search?q={encoded_query}&format=jsonv2"
+            
+            # Print the Nominatim search request
+            print(f"Nominatim search request: {url}")
             
             try:
                 with urllib.request.urlopen(url, timeout=10) as response:
@@ -149,8 +152,20 @@ def restaurant_index(request):
 
 
 def restaurantlist_index(request):
+    query = request.GET.get('q', '')
     restaurant_lists = RestaurantList.objects.all()
-    return render(request, 'lists/restaurant_list_index.html', {'restaurant_lists': restaurant_lists})
+    
+    if query:
+        # Search by list name or owner username
+        restaurant_lists = restaurant_lists.filter(
+            models.Q(name__icontains=query) |
+            models.Q(owner__username__icontains=query)
+        )
+    
+    return render(request, 'lists/restaurant_list_index.html', {
+        'restaurant_lists': restaurant_lists,
+        'query': query
+    })
 
 
 def restaurantlist_detail(request, list_id):

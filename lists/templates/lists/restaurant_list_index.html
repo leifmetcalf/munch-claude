@@ -3,10 +3,43 @@
 {% block title %}Restaurant Lists - Munch{% endblock %}
 
 {% block content %}
-<div class="flex justify-between items-center mb-6">
-    <h1 class="text-3xl font-bold text-gray-900">All Restaurant Lists</h1>
-    <a href="{% url 'restaurantlist_create' %}" class="bg-blue-600 text-white hover:bg-blue-700 px-4 py-2 rounded-md text-sm font-medium transition-colors">Create New List</a>
+<div class="mb-6">
+    <div class="flex justify-between items-center mb-6">
+        <h1 class="text-3xl font-bold text-gray-900">All Restaurant Lists</h1>
+        <a href="{% url 'restaurantlist_create' %}" class="bg-blue-600 text-white hover:bg-blue-700 px-4 py-2 rounded-md text-sm font-medium transition-colors">Create New List</a>
+    </div>
+    
+    <div class="bg-white rounded-lg shadow border border-gray-200 p-6">
+        <form method="get" class="flex gap-4">
+            <div class="flex-1">
+                <input 
+                    type="text" 
+                    name="q" 
+                    value="{{ query|default:'' }}" 
+                    placeholder="Search lists by name or owner..." 
+                    class="w-full px-4 py-2 border border-gray-300 rounded-md focus:ring-blue-500 focus:border-blue-500">
+            </div>
+            <button type="submit" class="bg-blue-600 text-white hover:bg-blue-700 px-6 py-2 rounded-md text-sm font-medium transition-colors">
+                Search
+            </button>
+            {% if query %}
+                <a href="{% url 'restaurantlist_index' %}" class="bg-gray-200 text-gray-700 hover:bg-gray-300 px-6 py-2 rounded-md text-sm font-medium transition-colors">
+                    Clear
+                </a>
+            {% endif %}
+        </form>
+    </div>
 </div>
+
+{% if query %}
+    <p class="text-gray-600 mb-4">
+        {% if restaurant_lists %}
+            Showing {{ restaurant_lists|length }} result{{ restaurant_lists|length|pluralize }} for "{{ query }}"
+        {% else %}
+            No results found for "{{ query }}"
+        {% endif %}
+    </p>
+{% endif %}
 
 {% if restaurant_lists %}
     <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
