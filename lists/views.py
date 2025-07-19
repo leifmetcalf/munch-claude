@@ -225,8 +225,8 @@ def restaurantlistitem_create(request):
             # Auto-generate order to add to end of list
             max_order = RestaurantListItem.objects.filter(
                 restaurant_list=list_item.restaurant_list
-            ).aggregate(max_order=models.Max('order'))['max_order']
-            list_item.order = (max_order or 0) + 1
+            ).aggregate(models.Max('order'))['order__max'] or 0
+            list_item.order = max_order + 1
             
             list_item.save()
             messages.success(request, f'"{list_item.restaurant.name}" added to "{list_item.restaurant_list.name}"!')
@@ -243,14 +243,14 @@ def restaurantlistitem_create(request):
         initial = {}
         if preset_restaurant_id:
             try:
-                restaurant_obj = Restaurant.objects.get(id=preset_restaurant_id)
+                restaurant_obj = Restaurant.objects.get(pk=preset_restaurant_id)
                 initial['restaurant'] = restaurant_obj
             except Restaurant.DoesNotExist:
                 pass
         
         if preset_list_id:
             try:
-                list_obj = RestaurantList.objects.get(id=preset_list_id, owner=request.user)
+                list_obj = RestaurantList.objects.get(pk=preset_list_id, owner=request.user)
                 initial['restaurant_list'] = list_obj
             except RestaurantList.DoesNotExist:
                 pass
@@ -263,13 +263,13 @@ def restaurantlistitem_create(request):
     
     if preset_list_id:
         try:
-            preset_list = RestaurantList.objects.get(id=preset_list_id, owner=request.user)
+            preset_list = RestaurantList.objects.get(pk=preset_list_id, owner=request.user)
         except RestaurantList.DoesNotExist:
             pass
     
     if preset_restaurant_id:
         try:
-            preset_restaurant = Restaurant.objects.get(id=preset_restaurant_id)
+            preset_restaurant = Restaurant.objects.get(pk=preset_restaurant_id)
         except Restaurant.DoesNotExist:
             pass
     
@@ -484,7 +484,7 @@ def profile(request, user_id):
     total_lists = user_lists.count()
     total_restaurants = RestaurantListItem.objects.filter(
         restaurant_list__owner=profile_user
-    ).values('restaurant').distinct().count()
+    ).values('restaurant_id').distinct().count()
     
     return render(request, 'lists/profile.html', {
         'profile_user': profile_user,
