@@ -1,24 +1,26 @@
-- home page
-    - recently added restaurants from friends
-    - recommended lists
-    - updates from lists you follow
+[] home page
+    [x] recently added restaurants from friends
+    [] recommended lists
+    [] updates from lists you follow
 
-- lists
-    - delete lists
-    - comments on lists
-    - follow lists
-    - special list for "munchie log"
+[] lists
+    [x] delete lists
+    [] comments on lists
+    [] follow lists
+    [] upvote a 
+    [] special list for "munchie log"
 
-- restaurants
-    - comments on restaurants (maybe)
+[] restaurants
+    [] comments on restaurants (maybe)
 
-- profile
-    - "favourite" lists
-    - add followers and following
+[] profile
+    [] "favourite" lists
+    [] add followers and following
+    [] add "invite friend" functionality.
 
-- about page
-    - importing restaurants
-    - link to point people to update osm
+[] about page
+    [] importing restaurants
+    [] link to point people to update osm
 
-- Import restaurnat
-    - auto fill in query from search to query to nominatim
+[x] Import restaurnat
+    [x] auto fill in query from search to query to nominatim
