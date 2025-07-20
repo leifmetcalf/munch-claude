@@ -8,6 +8,8 @@ Munch is a Django 5.2.4 restaurant list management application where users can s
 
 ## Development Commands
 
+**Note:** The application uses production-first settings. Development uses `dev_settings.py` which is automatically set in `manage.py`.
+
 **Start development server:**
 ```bash
 uv run manage.py runserver
@@ -27,6 +29,11 @@ uv run manage.py createsuperuser
 **Django shell:**
 ```bash
 uv run manage.py shell
+```
+
+**Production deployment check:**
+```bash
+DJANGO_SETTINGS_MODULE=munch.settings SECRET_KEY=your-secret-key uv run manage.py check --deploy
 ```
 
 **Build Tailwind CSS:**
