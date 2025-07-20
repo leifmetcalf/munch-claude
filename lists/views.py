@@ -22,7 +22,14 @@ class OSMType(Enum):
 
 
 def index(request):
-    return render(request, 'lists/home.html')
+    # Get the 6 most recently added restaurant list items
+    recent_items = RestaurantListItem.objects.select_related(
+        'restaurant', 'restaurant_list', 'restaurant_list__owner'
+    ).order_by('-inserted_at')[:6]
+    
+    return render(request, 'lists/home.html', {
+        'recent_items': recent_items
+    })
 
 
 def create_restaurant_from_osm(osm_type: OSMType, osm_id):
