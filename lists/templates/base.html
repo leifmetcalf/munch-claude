@@ -19,6 +19,7 @@
                         <a href="{% url 'restaurantlist_index' %}" class="text-gray-700 hover:text-gray-900 px-2 py-2 rounded-md text-sm font-medium">Explore Lists</a>
                         <a href="{% url 'restaurant_index' %}" class="text-gray-700 hover:text-gray-900 px-2 py-2 rounded-md text-sm font-medium">Explore Restaurants</a>
                         <a href="{% url 'user_restaurantlist_index' %}" class="text-gray-700 hover:text-gray-900 px-2 py-2 rounded-md text-sm font-medium">My Lists</a>
+                        <a href="{% url 'user_following_lists' user.id %}" class="text-gray-700 hover:text-gray-900 px-2 py-2 rounded-md text-sm font-medium">Following</a>
                         <a href="{% url 'restaurantlistitem_create' %}" class="text-gray-700 hover:text-gray-900 px-2 py-2 rounded-md text-sm font-medium">Log</a>
                     {% endif %}
                 </div>

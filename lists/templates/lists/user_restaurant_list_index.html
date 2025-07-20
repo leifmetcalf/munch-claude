@@ -48,6 +48,7 @@
                 <h3 class="text-xl font-semibold text-gray-900 mb-2">
                     <a href="{% url 'restaurantlist_detail' restaurant_list.id %}" class="hover:text-blue-600">{{ restaurant_list.name }}</a>
                 </h3>
+                <p class="text-gray-600 mb-2"><strong>Followers:</strong> {{ restaurant_list.follower_count }}</p>
                 {% if restaurant_list.blurb %}
                     <p class="text-gray-600 mb-2">{{ restaurant_list.blurb|truncatewords:20 }}</p>
                 {% endif %}

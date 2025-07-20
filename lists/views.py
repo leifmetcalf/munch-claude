@@ -11,7 +11,7 @@ from django.core.serializers.json import DjangoJSONEncoder
 from django.db import models, transaction
 from django.http import JsonResponse
 from django.shortcuts import render, redirect, get_object_or_404
-from .models import Restaurant, RestaurantList, RestaurantListItem, RestaurantImage, User, ListComment
+from .models import Restaurant, RestaurantList, RestaurantListItem, RestaurantImage, User, ListComment, ListFollow
 from .forms import RestaurantForm, RestaurantListForm, RestaurantListItemForm, CustomUserCreationForm, RestaurantImageForm, ListCommentForm
 
 
@@ -27,8 +27,19 @@ def index(request):
         'restaurant', 'restaurant_list', 'restaurant_list__owner'
     ).order_by('-inserted_at')[:6]
     
+    # If user is authenticated, also get activity from lists they're following
+    following_activity = []
+    if request.user.is_authenticated:
+        followed_lists = ListFollow.objects.filter(follower=request.user).values_list('restaurant_list_id', flat=True)
+        following_activity = RestaurantListItem.objects.filter(
+            restaurant_list_id__in=followed_lists
+        ).select_related(
+            'restaurant', 'restaurant_list', 'restaurant_list__owner'
+        ).order_by('-inserted_at')[:6]
+    
     return render(request, 'lists/home.html', {
-        'recent_items': recent_items
+        'recent_items': recent_items,
+        'following_activity': following_activity
     })
 
 
@@ -160,7 +171,9 @@ def restaurant_index(request):
 
 def restaurantlist_index(request):
     query = request.GET.get('q', '')
-    restaurant_lists = RestaurantList.objects.all()
+    restaurant_lists = RestaurantList.objects.all().annotate(
+        follower_count=models.Count('followers')
+    )
     
     if query:
         # Search by list name or owner username
@@ -178,7 +191,9 @@ def restaurantlist_index(request):
 @login_required
 def user_restaurantlist_index(request):
     query = request.GET.get('q', '')
-    restaurant_lists = RestaurantList.objects.filter(owner=request.user)
+    restaurant_lists = RestaurantList.objects.filter(owner=request.user).annotate(
+        follower_count=models.Count('followers')
+    )
     
     if query:
         # Search by list name
@@ -194,6 +209,17 @@ def restaurantlist_detail(request, list_id):
     restaurant_list = get_object_or_404(RestaurantList, id=list_id)
     list_items = RestaurantListItem.objects.filter(restaurant_list=restaurant_list).order_by('order')
     comments = restaurant_list.comments.all()
+    
+    # Check if current user is following this list
+    is_following = False
+    if request.user.is_authenticated:
+        is_following = ListFollow.objects.filter(
+            follower=request.user,
+            restaurant_list=restaurant_list
+        ).exists()
+    
+    # Get follower count
+    follower_count = restaurant_list.followers.count()
     
     # Handle comment form submission
     if request.method == 'POST' and request.user.is_authenticated:
@@ -225,7 +251,9 @@ def restaurantlist_detail(request, list_id):
         'comments': comments,
         'comment_form': comment_form,
         'restaurant_coordinates': restaurant_coordinates,
-        'restaurant_coordinates_json': json.dumps(restaurant_coordinates, cls=DjangoJSONEncoder)
+        'restaurant_coordinates_json': json.dumps(restaurant_coordinates, cls=DjangoJSONEncoder),
+        'is_following': is_following,
+        'follower_count': follower_count
     })
 
 
@@ -577,4 +605,61 @@ def profile(request, user_id):
         'user_lists': user_lists,
         'total_lists': total_lists,
         'total_restaurants': total_restaurants
+    })
+
+
+@login_required
+def toggle_list_follow(request, list_id):
+    """Toggle following status for a restaurant list."""
+    if request.method != 'POST':
+        return redirect('restaurantlist_detail', list_id=list_id)
+    
+    restaurant_list = get_object_or_404(RestaurantList, id=list_id)
+    
+    # Prevent users from following their own lists
+    if restaurant_list.owner == request.user:
+        messages.error(request, "You cannot follow your own list.")
+        return redirect('restaurantlist_detail', list_id=list_id)
+    
+    follow, created = ListFollow.objects.get_or_create(
+        follower=request.user,
+        restaurant_list=restaurant_list
+    )
+    
+    if created:
+        messages.success(request, f'You are now following "{restaurant_list.name}"!')
+    else:
+        follow.delete()
+        messages.success(request, f'You have unfollowed "{restaurant_list.name}".')
+    
+    return redirect('restaurantlist_detail', list_id=list_id)
+
+
+def user_following_lists(request, user_id):
+    """Show lists that a user is following."""
+    followed_user = get_object_or_404(User, id=user_id)
+    
+    # Get all lists this user is following
+    following = ListFollow.objects.filter(follower=followed_user).select_related(
+        'restaurant_list', 'restaurant_list__owner'
+    ).order_by('-followed_at')
+    
+    return render(request, 'lists/user_following_lists.html', {
+        'followed_user': followed_user,
+        'following': following
+    })
+
+
+def list_followers(request, list_id):
+    """Show who follows a specific list."""
+    restaurant_list = get_object_or_404(RestaurantList, id=list_id)
+    
+    # Get all followers of this list
+    followers = ListFollow.objects.filter(restaurant_list=restaurant_list).select_related(
+        'follower'
+    ).order_by('-followed_at')
+    
+    return render(request, 'lists/list_followers.html', {
+        'restaurant_list': restaurant_list,
+        'followers': followers
     })

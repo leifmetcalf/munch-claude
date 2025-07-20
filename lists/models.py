@@ -107,3 +107,20 @@ class ListComment(models.Model):
     
     def __str__(self):
         return f"Comment by {self.author.username} on {self.restaurant_list.name}"
+
+
+class ListFollow(models.Model):
+    follower = models.ForeignKey(User, on_delete=models.CASCADE, related_name='following_lists')
+    restaurant_list = models.ForeignKey(RestaurantList, on_delete=models.CASCADE, related_name='followers')
+    followed_at = models.DateTimeField(auto_now_add=True)
+    
+    class Meta:
+        unique_together = ['follower', 'restaurant_list']  # Prevent duplicate follows
+        ordering = ['-followed_at']  # Most recent first
+        indexes = [
+            models.Index(fields=['follower', '-followed_at']),
+            models.Index(fields=['restaurant_list', '-followed_at']),
+        ]
+    
+    def __str__(self):
+        return f"{self.follower.username} follows {self.restaurant_list.name}"

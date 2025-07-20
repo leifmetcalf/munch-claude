@@ -9,17 +9,30 @@
     <div class="bg-white rounded-lg shadow border border-gray-200 p-4 mb-6">
         <p class="text-gray-600 mb-2"><strong>Owner:</strong> {{ restaurant_list.owner.username }}</p>
         <p class="text-gray-500 text-sm mb-2"><strong>Created:</strong> {{ restaurant_list.inserted_at|date:"F j, Y" }}</p>
+        <p class="text-gray-500 text-sm mb-2">
+            <strong>Followers:</strong> 
+            <a href="{% url 'list_followers' restaurant_list.id %}" class="text-blue-600 hover:text-blue-800">{{ follower_count }}</a>
+        </p>
         {% if restaurant_list.blurb %}
             <p class="text-gray-700">{{ restaurant_list.blurb|linebreaks }}</p>
         {% endif %}
     </div>
 
-    {% if user.is_authenticated and user == restaurant_list.owner %}
-        <div class="flex gap-4 mb-6">
+    <div class="flex gap-4 mb-6">
+        {% if user.is_authenticated and user == restaurant_list.owner %}
             <a href="{% url 'restaurantlistitem_create' %}?list={{ restaurant_list.id }}" class="bg-blue-600 text-white hover:bg-blue-700 px-4 py-2 rounded-md text-sm font-medium transition-colors">Add Restaurant to List</a>
             <a href="{% url 'restaurantlist_edit' restaurant_list.id %}" class="bg-gray-600 text-white hover:bg-gray-700 px-4 py-2 rounded-md text-sm font-medium transition-colors">Edit List</a>
-        </div>
-    {% endif %}
+        {% elif user.is_authenticated and user != restaurant_list.owner %}
+            <form method="post" action="{% url 'toggle_list_follow' restaurant_list.id %}" class="inline">
+                {% csrf_token %}
+                {% if is_following %}
+                    <button type="submit" class="bg-red-600 text-white hover:bg-red-700 px-4 py-2 rounded-md text-sm font-medium transition-colors">Unfollow List</button>
+                {% else %}
+                    <button type="submit" class="bg-green-600 text-white hover:bg-green-700 px-4 py-2 rounded-md text-sm font-medium transition-colors">Follow List</button>
+                {% endif %}
+            </form>
+        {% endif %}
+    </div>
 </div>
 
 {% if list_items %}

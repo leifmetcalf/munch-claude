@@ -13,6 +13,14 @@
                 <dt class="font-medium text-gray-600 w-32">Joined:</dt>
                 <dd class="text-gray-900">{{ profile_user.date_joined|date:"F d, Y" }}</dd>
             </div>
+            <div class="flex">
+                <dt class="font-medium text-gray-600 w-32">Following:</dt>
+                <dd class="text-gray-900">
+                    <a href="{% url 'user_following_lists' profile_user.id %}" class="text-blue-600 hover:text-blue-800">
+                        View lists {{ profile_user.username }} is following
+                    </a>
+                </dd>
+            </div>
         </dl>
     </div>
     

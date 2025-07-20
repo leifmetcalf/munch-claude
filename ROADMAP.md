@@ -5,7 +5,7 @@
 
 [] lists
     [x] delete lists
-    [] comments on lists
+    [x] comments on lists
     [] follow lists
     [] upvote a 
     [] special list for "munchie log"
