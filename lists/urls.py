@@ -7,6 +7,7 @@ urlpatterns = [
     path('import/', views.restaurant_nominatim, name='restaurant_nominatim'),
     path('restaurants/', views.restaurant_index, name='restaurant_index'),
     path('list/', views.restaurantlist_index, name='restaurantlist_index'),
+    path('list/my/', views.user_restaurantlist_index, name='user_restaurantlist_index'),
     path('list/create/', views.restaurantlist_create, name='restaurantlist_create'),
     path('list/<int:list_id>/', views.restaurantlist_detail, name='restaurantlist_detail'),
     path('list/<int:list_id>/edit/', views.restaurantlist_edit, name='restaurantlist_edit'),

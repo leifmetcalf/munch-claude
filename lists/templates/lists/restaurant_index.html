@@ -57,6 +57,6 @@
 {% endif %}
 
 <div class="text-center">
-    <a href="{% url 'restaurant_nominatim' %}" class="bg-blue-600 text-white hover:bg-blue-700 px-4 py-2 rounded-md text-sm font-medium transition-colors">Import restaurants</a>
+    <a href="{% url 'restaurant_nominatim' %}{% if query %}?q={{ query|urlencode }}{% endif %}" class="bg-blue-600 text-white hover:bg-blue-700 px-4 py-2 rounded-md text-sm font-medium transition-colors">Import restaurants</a>
 </div>
 {% endblock %}

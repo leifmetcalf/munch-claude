@@ -175,6 +175,21 @@ def restaurantlist_index(request):
     })
 
 
+@login_required
+def user_restaurantlist_index(request):
+    query = request.GET.get('q', '')
+    restaurant_lists = RestaurantList.objects.filter(owner=request.user)
+    
+    if query:
+        # Search by list name
+        restaurant_lists = restaurant_lists.filter(name__icontains=query)
+    
+    return render(request, 'lists/user_restaurant_list_index.html', {
+        'restaurant_lists': restaurant_lists,
+        'query': query
+    })
+
+
 def restaurantlist_detail(request, list_id):
     restaurant_list = get_object_or_404(RestaurantList, id=list_id)
     list_items = RestaurantListItem.objects.filter(restaurant_list=restaurant_list).order_by('order')
