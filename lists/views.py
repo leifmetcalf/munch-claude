@@ -197,13 +197,11 @@ def restaurantlist_create(request):
     if request.method == 'POST':
         form = RestaurantListForm(request.POST)
         if form.is_valid():
-            restaurant_list = form.save(commit=False)
-            restaurant_list.owner = request.user
-            restaurant_list.save()
+            restaurant_list = form.save()
             messages.success(request, f'Restaurant list "{restaurant_list.name}" created successfully!')
             return redirect('restaurantlist_index')
     else:
-        form = RestaurantListForm()
+        form = RestaurantListForm(initial={'owner': request.user})
     
     return render(request, 'lists/restaurant_list_create.html', {'form': form})
 
@@ -360,14 +358,11 @@ def restaurant_image_add(request, restaurant_id):
     if request.method == 'POST':
         form = RestaurantImageForm(request.POST, request.FILES)
         if form.is_valid():
-            image = form.save(commit=False)
-            image.restaurant = restaurant
-            image.added_by = request.user
-            image.save()
+            image = form.save()
             messages.success(request, f'Image added for "{restaurant.name}"!')
             return redirect('restaurant_detail', restaurant_id=restaurant.id)
     else:
-        form = RestaurantImageForm()
+        form = RestaurantImageForm(initial={'restaurant': restaurant, 'added_by': request.user})
     
     return render(request, 'lists/restaurant_image_add.html', {
         'form': form,

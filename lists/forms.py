@@ -11,10 +11,12 @@ class RestaurantForm(forms.Form):
 class RestaurantImageForm(forms.ModelForm):
     class Meta:
         model = RestaurantImage
-        fields = ['image', 'alt_text']
+        fields = ['image', 'alt_text', 'restaurant', 'added_by']
         widgets = {
             'image': forms.ClearableFileInput(attrs={'accept': 'image/*'}),
             'alt_text': forms.TextInput(attrs={'placeholder': 'Alt text for accessibility...'}),
+            'restaurant': forms.HiddenInput(),
+            'added_by': forms.HiddenInput(),
         }
     
     def clean_image(self):
@@ -34,9 +36,10 @@ class RestaurantImageForm(forms.ModelForm):
 class RestaurantListForm(forms.ModelForm):
     class Meta:
         model = RestaurantList
-        fields = ['name', 'blurb']
+        fields = ['name', 'blurb', 'owner']
         widgets = {
-            'blurb': forms.Textarea(attrs={'rows': 4, 'placeholder': 'Optional description or notes about this list...'})
+            'blurb': forms.Textarea(attrs={'rows': 4, 'placeholder': 'Optional description or notes about this list...'}),
+            'owner': forms.HiddenInput(),
         }
 
 
