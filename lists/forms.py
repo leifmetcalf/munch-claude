@@ -1,6 +1,6 @@
 from django import forms
 from django.contrib.auth.forms import UserCreationForm
-from .models import RestaurantList, RestaurantListItem, Restaurant, RestaurantImage, User
+from .models import RestaurantList, RestaurantListItem, Restaurant, RestaurantImage, User, ListComment
 
 
 class RestaurantForm(forms.Form):
@@ -58,3 +58,13 @@ class RestaurantListItemForm(forms.ModelForm):
 class CustomUserCreationForm(UserCreationForm):
     class Meta(UserCreationForm.Meta):
         model = User
+
+
+class ListCommentForm(forms.ModelForm):
+    class Meta:
+        model = ListComment
+        fields = ['content', 'restaurant_list']
+        widgets = {
+            'content': forms.Textarea(attrs={'rows': 3, 'placeholder': 'Add a comment about this list...'}),
+            'restaurant_list': forms.HiddenInput(),
+        }

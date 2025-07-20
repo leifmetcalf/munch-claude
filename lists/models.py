@@ -90,3 +90,20 @@ def delete_old_restaurant_image(sender, instance, **kwargs):
     if old_image and old_image != instance.image:
         if os.path.isfile(old_image.path):
             os.remove(old_image.path)
+
+
+class ListComment(models.Model):
+    restaurant_list = models.ForeignKey(RestaurantList, on_delete=models.CASCADE, related_name='comments')
+    author = models.ForeignKey(User, on_delete=models.CASCADE)
+    content = models.TextField(max_length=1000, help_text="Comment about this restaurant list")
+    inserted_at = models.DateTimeField(auto_now_add=True)
+    updated_at = models.DateTimeField(auto_now=True)
+    
+    class Meta:
+        ordering = ['-inserted_at']  # Most recent first
+        indexes = [
+            models.Index(fields=['restaurant_list', '-inserted_at']),
+        ]
+    
+    def __str__(self):
+        return f"Comment by {self.author.username} on {self.restaurant_list.name}"

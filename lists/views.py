@@ -11,8 +11,8 @@ from django.core.serializers.json import DjangoJSONEncoder
 from django.db import models, transaction
 from django.http import JsonResponse
 from django.shortcuts import render, redirect, get_object_or_404
-from .models import Restaurant, RestaurantList, RestaurantListItem, RestaurantImage, User
-from .forms import RestaurantForm, RestaurantListForm, RestaurantListItemForm, CustomUserCreationForm, RestaurantImageForm
+from .models import Restaurant, RestaurantList, RestaurantListItem, RestaurantImage, User, ListComment
+from .forms import RestaurantForm, RestaurantListForm, RestaurantListItemForm, CustomUserCreationForm, RestaurantImageForm, ListCommentForm
 
 
 class OSMType(Enum):
@@ -193,6 +193,19 @@ def user_restaurantlist_index(request):
 def restaurantlist_detail(request, list_id):
     restaurant_list = get_object_or_404(RestaurantList, id=list_id)
     list_items = RestaurantListItem.objects.filter(restaurant_list=restaurant_list).order_by('order')
+    comments = restaurant_list.comments.all()
+    
+    # Handle comment form submission
+    if request.method == 'POST' and request.user.is_authenticated:
+        comment_form = ListCommentForm(request.POST)
+        if comment_form.is_valid():
+            comment = comment_form.save(commit=False)
+            comment.author = request.user
+            comment.save()
+            messages.success(request, 'Your comment has been added!')
+            return redirect('restaurantlist_detail', list_id=list_id)
+    else:
+        comment_form = ListCommentForm(initial={'restaurant_list': restaurant_list})
     
     # Extract coordinates for the map
     restaurant_coordinates = []
@@ -209,6 +222,8 @@ def restaurantlist_detail(request, list_id):
     return render(request, 'lists/restaurant_list_detail.html', {
         'restaurant_list': restaurant_list,
         'list_items': list_items,
+        'comments': comments,
+        'comment_form': comment_form,
         'restaurant_coordinates': restaurant_coordinates,
         'restaurant_coordinates_json': json.dumps(restaurant_coordinates, cls=DjangoJSONEncoder)
     })
