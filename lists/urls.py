@@ -12,6 +12,7 @@ urlpatterns = [
     path('list/<int:list_id>/', views.restaurantlist_detail, name='restaurantlist_detail'),
     path('list/<int:list_id>/edit/', views.restaurantlist_edit, name='restaurantlist_edit'),
     path('list/<int:list_id>/update/', views.restaurantlist_update, name='restaurantlist_update'),
+    path('list/<int:list_id>/delete/', views.restaurantlist_delete, name='restaurantlist_delete'),
     path('listitem/create/', views.restaurantlistitem_create, name='restaurantlistitem_create'),
     path('listitem/<int:item_id>/move-up/', views.move_item_up, name='move_item_up'),
     path('listitem/<int:item_id>/move-down/', views.move_item_down, name='move_item_down'),

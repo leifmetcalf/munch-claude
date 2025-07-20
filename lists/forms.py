@@ -38,6 +38,7 @@ class RestaurantListForm(forms.ModelForm):
         model = RestaurantList
         fields = ['name', 'blurb', 'owner']
         widgets = {
+            'name': forms.TextInput(attrs={'placeholder': 'My Awesome List'}),
             'blurb': forms.Textarea(attrs={'rows': 4, 'placeholder': 'Optional description or notes about this list...'}),
             'owner': forms.HiddenInput(),
         }

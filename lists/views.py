@@ -479,6 +479,25 @@ def restaurantlist_update(request, list_id):
 
 
 @login_required
+def restaurantlist_delete(request, list_id):
+    restaurant_list = get_object_or_404(RestaurantList, id=list_id)
+    
+    # Check if user owns the list
+    if restaurant_list.owner != request.user:
+        messages.error(request, "You don't have permission to delete this list.")
+        return redirect('restaurantlist_detail', list_id=list_id)
+    
+    if request.method == 'POST':
+        list_name = restaurant_list.name
+        restaurant_list.delete()
+        messages.success(request, f'List "{list_name}" has been deleted.')
+        return redirect('user_restaurantlist_index')
+    
+    # For GET requests, redirect back to edit page
+    return redirect('restaurantlist_edit', list_id=list_id)
+
+
+@login_required
 def restaurantlistitem_delete(request, item_id):
     item = get_object_or_404(RestaurantListItem, id=item_id)
     
