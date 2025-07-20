@@ -49,6 +49,9 @@
                     <a href="{% url 'restaurantlist_detail' restaurant_list.id %}" class="hover:text-blue-600">{{ restaurant_list.name }}</a>
                 </h3>
                 <p class="text-gray-600 mb-2"><strong>Owner:</strong> {{ restaurant_list.owner.username }}</p>
+                {% if restaurant_list.blurb %}
+                    <p class="text-gray-600 mb-2">{{ restaurant_list.blurb|truncatewords:20 }}</p>
+                {% endif %}
                 <p class="text-gray-500 text-sm"><strong>Created:</strong> {{ restaurant_list.inserted_at|date:"F j, Y" }}</p>
             </div>
         {% endfor %}
