@@ -39,7 +39,7 @@
         {% if user_lists %}
             <ul class="space-y-3">
                 {% for list in user_lists %}
-                    <li class="flex justify-between items-center p-3 hover:bg-gray-50 rounded-lg">
+                    <li class="flex justify-between items-center p-3 hover:bg-yakiimo-cream rounded-lg">
                         <div>
                             <a href="{% url 'restaurantlist_detail' list.id %}" class="text-yakiimo-purple-light hover:text-yakiimo-purple font-medium">
                                 {{ list.name }}

@@ -707,6 +707,13 @@
       }
     }
   }
+  .hover\:bg-yakiimo-cream {
+    &:hover {
+      @media (hover: hover) {
+        background-color: var(--color-yakiimo-cream);
+      }
+    }
+  }
   .hover\:bg-yakiimo-yellow-hover {
     &:hover {
       @media (hover: hover) {

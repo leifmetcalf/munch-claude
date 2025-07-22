@@ -9,9 +9,11 @@
     [] follow lists
     [] upvote a 
     [] special list for "munchie log"
+    [] fix followers and folling list ui
 
 [] restaurants
     [] comments on restaurants (maybe)
+    [] restaurnt add to list form autocomplete with url is wrong.
 
 [] profile
     [] "favourite" lists

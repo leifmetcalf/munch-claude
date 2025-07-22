@@ -6,16 +6,16 @@
 <div class="max-w-2xl mx-auto">
     <h1 class="text-3xl font-bold text-yakiimo-purple mb-6">Add Restaurant to List</h1>
 
-    <div class="bg-yakiimo-cream-light rounded-lg border border-gray-200 p-6">
+    <div class="bg-yakiimo-cream-light rounded-lg border border-yakiimo-purple-border p-6">
         <form method="post" class="space-y-6">
             {% csrf_token %}
             
             <!-- Restaurant Selection -->
             <div>
-                <label class="block text-sm font-medium text-yakiimo-purple mb-2">Restaurant</label>
+                <label class="block text-sm font-medium text-yakiimo-purple mb-2">Restaurant (...or <a href="{% url 'restaurant_nominatim' %}" class="text-yakiimo-purple-light hover:text-yakiimo-purple">import a restaurant</a>)</label>
                 {% if preset_restaurant %}
                     <!-- Restaurant is pre-selected -->
-                    <div class="p-3 bg-gray-50 border border-gray-300 rounded-md">
+                    <div class="p-3 bg-yakiimo-cream border border-yakiimo-purple-border rounded-md">
                         <div class="font-medium">{{ preset_restaurant.name }}</div>
                         <div class="text-sm text-yakiimo-purple-light">{{ preset_restaurant.address }}</div>
                     </div>
@@ -28,7 +28,7 @@
                             placeholder="Search for a restaurant..." 
                             class="w-full px-3 py-2 border border-yakiimo-purple-border rounded-md focus:border-yakiimo-yellow"
                             autocomplete="off">
-                        <div id="restaurant-results" class="absolute z-10 w-full bg-yakiimo-cream-light border border-gray-300 rounded-md mt-1 hidden"></div>
+                        <div id="restaurant-results" class="absolute z-10 w-full bg-yakiimo-cream-light border border-yakiimo-purple-border rounded-md mt-1 hidden"></div>
                         <div id="no-js-message" class="mt-2 text-sm text-yakiimo-purple-light">
                             <noscript>
                                 JavaScript is required for restaurant search. You can add restaurants to lists from individual restaurant pages.
@@ -51,7 +51,7 @@
                 <label class="block text-sm font-medium text-yakiimo-purple mb-2">Restaurant List</label>
                 {% if preset_list %}
                     <!-- List is pre-selected -->
-                    <div class="p-3 bg-gray-50 border border-gray-300 rounded-md">
+                    <div class="p-3 bg-yakiimo-cream border border-yakiimo-purple-border rounded-md">
                         <strong>{{ preset_list.name }}</strong>
                     </div>
                 {% else %}
@@ -113,10 +113,6 @@
         </form>
     </div>
     
-    <div class="mt-6 text-center">
-        <p class="text-yakiimo-purple-light mb-2">Can't find the restaurant you're looking for?</p>
-        <a href="{% url 'restaurant_nominatim' %}" class="text-yakiimo-purple-light hover:text-yakiimo-purple">Import from Nominatim</a>
-    </div>
 </div>
 
 <style>
@@ -225,7 +221,7 @@ document.addEventListener('DOMContentLoaded', function() {
         }
         
         const html = restaurants.map(restaurant => 
-            `<div class="result-item p-3 hover:bg-gray-50 cursor-pointer border-b border-gray-100 last:border-b-0" 
+            `<div class="result-item p-3 hover:bg-yakiimo-cream cursor-pointer border-b border-yakiimo-purple-border last:border-b-0" 
                   data-id="${restaurant.id}" 
                   data-name="${escapeHtml(restaurant.name)}" 
                   data-address="${escapeHtml(restaurant.address)}">

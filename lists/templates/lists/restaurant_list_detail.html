@@ -9,7 +9,7 @@
         <span class="text-base ml-2">by <a href="{% url 'profile' user_id=restaurant_list.owner.id %}" class="hover:text-yakiimo-purple-light">{{ restaurant_list.owner.username }}</a></span>
     </div>
     
-    <div class="bg-yakiimo-cream-light rounded-lg border border-gray-200 p-4 mb-6">
+    <div class="bg-yakiimo-cream-light rounded-lg border border-yakiimo-purple-border p-4 mb-6">
         <p class="text-black text-sm mb-2"><strong>Created:</strong> {{ restaurant_list.inserted_at|date:"F j, Y" }}</p>
         <p class="text-black text-sm mb-2">
             <strong>Followers:</strong> 
@@ -41,7 +41,7 @@
     <h2 class="text-2xl font-semibold text-yakiimo-purple mb-4">Restaurants in this list</h2>
     
     {% if restaurant_coordinates %}
-        <div id="map" class="h-96 w-full my-6 border border-gray-300 rounded-lg"></div>
+        <div id="map" class="h-96 w-full my-6 border border-yakiimo-purple-border rounded-lg"></div>
         <script>
             // Initialize the map
             var map = L.map('map');
@@ -75,7 +75,7 @@
     
     <div class="space-y-4">
         {% for item in list_items %}
-            <div class="bg-yakiimo-cream-light rounded-lg border border-gray-200 p-6">
+            <div class="bg-yakiimo-cream-light rounded-lg border border-yakiimo-purple-border p-6">
                 <div class="flex gap-4">
                     <div class="flex-1">
                         <h3 class="text-xl font-semibold text-yakiimo-purple mb-2">
@@ -103,11 +103,11 @@
 {% endif %}
 
 <!-- Comments Section -->
-<div class="mt-8 pt-6 border-t border-gray-200">
+<div class="mt-8 pt-6 border-t border-yakiimo-purple-border">
     <h2 class="text-2xl font-semibold text-yakiimo-purple mb-4">Comments</h2>
     
     {% if user.is_authenticated %}
-        <div class="bg-yakiimo-cream-light rounded-lg border border-gray-200 p-6 mb-6">
+        <div class="bg-yakiimo-cream-light rounded-lg border border-yakiimo-purple-border p-6 mb-6">
             <form method="post" class="space-y-4">
                 {% csrf_token %}
                 {% for field in comment_form %}
@@ -133,7 +133,7 @@
             </form>
         </div>
     {% else %}
-        <div class="bg-gray-50 rounded-lg p-4 mb-6">
+        <div class="bg-yakiimo-cream-light rounded-lg border border-yakiimo-purple-border p-4 mb-6">
             <p class="text-yakiimo-purple-light">
                 <a href="{% url 'login' %}" class="text-yakiimo-purple-light hover:text-yakiimo-purple font-medium">Login</a> to add a comment.
             </p>
@@ -143,7 +143,7 @@
     {% if comments %}
         <div class="space-y-4 mb-6">
             {% for comment in comments %}
-                <div class="bg-yakiimo-cream-light rounded-lg border border-gray-200 p-6">
+                <div class="bg-yakiimo-cream-light rounded-lg border border-yakiimo-purple-border p-6">
                     <div class="flex justify-between items-start mb-3">
                         <div class="flex items-center">
                             <a href="{% url 'profile' user_id=comment.author.id %}" class="font-medium text-yakiimo-purple hover:text-yakiimo-purple-light">{{ comment.author.username }}</a>
@@ -163,7 +163,7 @@
     {% endif %}
 </div>
 
-<div class="mt-8 pt-6 border-t border-gray-200">
+<div class="mt-8 pt-6 border-t border-yakiimo-purple-border">
     <a href="{% url 'restaurantlist_index' %}" class="text-yakiimo-purple-light hover:text-yakiimo-purple font-medium">← Back to Lists</a>
 </div>
 {% endblock %}

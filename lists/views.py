@@ -115,7 +115,6 @@ def restaurant_nominatim(request):
                         'osm_id': item.get('osm_id'),
                     }
                     for item in data
-                    if 'amenity' in item.get('category', '') or 'restaurant' in item.get('type', '').lower()
                 ]
                 
                 return render(request, 'lists/restaurant_search.html', {'restaurants': restaurants, 'query': query})
