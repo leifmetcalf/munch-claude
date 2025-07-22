@@ -4,22 +4,22 @@
 
 {% block content %}
 <div class="max-w-4xl mx-auto">
-    <h1 class="text-3xl font-bold text-gray-900 mb-6">{{ restaurant.name }}</h1>
+    <h1 class="text-3xl font-bold text-yakiimo-purple mb-6">{{ restaurant.name }}</h1>
 
-    <div class="bg-white rounded-lg shadow border border-gray-200 p-6 mb-6">
+    <div class="bg-yakiimo-cream-light rounded-lg border border-gray-200 p-6 mb-6">
         <div class="flex justify-between items-start mb-4">
-            <h2 class="text-xl font-semibold text-gray-900">Restaurant Details</h2>
+            <h2 class="text-xl font-semibold text-yakiimo-purple">Restaurant Details</h2>
             {% if user.is_authenticated %}
                 <div class="flex gap-2">
-                    <a href="{% url 'restaurantlistitem_create' %}?restaurant={{ restaurant.id }}" class="bg-green-600 text-white hover:bg-green-700 px-3 py-1 rounded text-sm font-medium transition-colors">Add to List</a>
-                    <a href="{% url 'restaurant_image_add' restaurant.id %}" class="bg-blue-600 text-white hover:bg-blue-700 px-3 py-1 rounded text-sm font-medium transition-colors">Add Image</a>
+                    <a href="{% url 'restaurantlistitem_create' %}?restaurant={{ restaurant.id }}" class="bg-yakiimo-yellow hover:bg-yakiimo-yellow-hover text-yakiimo-purple px-3 py-1 rounded text-sm font-medium transition-colors">Add to List</a>
+                    <a href="{% url 'restaurant_image_add' restaurant.id %}" class="bg-yakiimo-yellow text-yakiimo-purple hover:bg-yakiimo-yellow-hover px-3 py-1 rounded text-sm font-medium transition-colors">Add Image</a>
                 </div>
             {% endif %}
         </div>
         
         {% if restaurant.images.all %}
             <div class="mb-4">
-                <h3 class="text-lg font-medium text-gray-900 mb-3">Images</h3>
+                <h3 class="text-lg font-medium text-yakiimo-purple mb-3">Images</h3>
                 <div class="overflow-x-auto">
                     <div class="flex space-x-4 pb-2">
                         {% for image in restaurant.images.all %}
@@ -29,7 +29,7 @@
                                 </a>
                                 {% if image.alt_text %}
                                     <div class="p-3 bg-gray-50">
-                                        <p class="text-sm text-gray-700">{{ image.alt_text }}</p>
+                                        <p class="text-sm text-yakiimo-purple">{{ image.alt_text }}</p>
                                     </div>
                                 {% endif %}
                             </div>
@@ -40,39 +40,39 @@
         {% endif %}
         
         <div class="space-y-2">
-            <p class="text-gray-600"><strong>Address:</strong> {{ restaurant.address }}</p>
-            <p class="text-gray-600"><strong>Suburb:</strong> {{ restaurant.suburb|default:"N/A" }}</p>
-            <p class="text-gray-600"><strong>Region:</strong> {{ restaurant.region|default:"N/A" }}</p>
-            <p class="text-gray-600"><strong>Country:</strong> {{ restaurant.country|default:"N/A" }}</p>
+            <p class="text-black"><strong>Address:</strong> {{ restaurant.address }}</p>
+            <p class="text-black"><strong>Suburb:</strong> {{ restaurant.suburb|default:"N/A" }}</p>
+            <p class="text-black"><strong>Region:</strong> {{ restaurant.region|default:"N/A" }}</p>
+            <p class="text-black"><strong>Country:</strong> {{ restaurant.country|default:"N/A" }}</p>
         </div>
     </div>
 
     {% if coordinates %}
-    <div class="bg-white rounded-lg shadow border border-gray-200 p-6 mb-6">
-        <h2 class="text-xl font-semibold text-gray-900 mb-4">Location</h2>
+    <div class="bg-yakiimo-cream-light rounded-lg border border-gray-200 p-6 mb-6">
+        <h2 class="text-xl font-semibold text-yakiimo-purple mb-4">Location</h2>
         <div id="map" class="h-96 w-full border border-gray-300 rounded-lg"></div>
     </div>
     {% endif %}
 
     {% if list_items %}
-    <div class="bg-white rounded-lg shadow border border-gray-200 p-6 mb-6">
-        <h2 class="text-xl font-semibold text-gray-900 mb-4">Appears in</h2>
+    <div class="bg-yakiimo-cream-light rounded-lg border border-gray-200 p-6 mb-6">
+        <h2 class="text-xl font-semibold text-yakiimo-purple mb-4">Appears in</h2>
         <div class="space-y-4">
             {% for item in list_items %}
                 <div class="border border-gray-200 rounded-lg p-4">
                     <div class="flex justify-between items-start">
                         <div class="flex-1">
                             <h3 class="font-medium text-lg">
-                                <a href="{% url 'restaurantlist_detail' item.restaurant_list.id %}" class="text-blue-600 hover:text-blue-800">
+                                <a href="{% url 'restaurantlist_detail' item.restaurant_list.id %}" class="text-yakiimo-purple-light hover:text-yakiimo-purple">
                                     {{ item.restaurant_list.name }}
                                 </a>
                             </h3>
-                            <p class="text-sm text-gray-600 mb-2">
-                                by <a href="{% url 'profile' item.restaurant_list.owner.id %}" class="text-blue-600 hover:text-blue-800">{{ item.restaurant_list.owner.username }}</a> • added {{ item.inserted_at|date:"M d, Y" }}
+                            <p class="text-sm text-yakiimo-purple-light mb-2">
+                                by <a href="{% url 'profile' item.restaurant_list.owner.id %}" class="text-yakiimo-purple-light hover:text-yakiimo-purple">{{ item.restaurant_list.owner.username }}</a> • added {{ item.inserted_at|date:"M d, Y" }}
                             </p>
                             {% if item.notes %}
                                 <div class="bg-gray-50 border border-gray-200 rounded p-3">
-                                    <p class="text-gray-700"><strong>Notes:</strong> {{ item.notes }}</p>
+                                    <p class="text-yakiimo-purple"><strong>Notes:</strong> {{ item.notes }}</p>
                                 </div>
                             {% endif %}
                         </div>
@@ -84,9 +84,9 @@
     {% endif %}
 
     <div class="flex gap-4">
-        <a href="{% url 'restaurant_index' %}" class="text-blue-600 hover:text-blue-800 font-medium">← All Restaurants</a>
-        <span class="text-gray-400">|</span>
-        <a href="{% url 'restaurant_nominatim' %}" class="text-blue-600 hover:text-blue-800 font-medium">Back to Import</a>
+        <a href="{% url 'restaurant_index' %}" class="text-yakiimo-purple-light hover:text-yakiimo-purple font-medium">← All Restaurants</a>
+        <span class="text-yakiimo-purple-light">|</span>
+        <a href="{% url 'restaurant_nominatim' %}" class="text-yakiimo-purple-light hover:text-yakiimo-purple font-medium">Back to Import</a>
     </div>
 </div>
 

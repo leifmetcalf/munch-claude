@@ -1,15 +1,15 @@
 {% extends 'base.html' %}
 
-{% block title %}Logged Out - Munch{% endblock %}
+{% block title %}Munch - Logged Out{% endblock %}
 
 {% block content %}
 <div class="max-w-md mx-auto text-center">
-    <div class="bg-white rounded-lg shadow border border-gray-200 p-8">
-        <h1 class="text-2xl font-bold text-gray-900 mb-4">Logged Out</h1>
+    <div class="bg-yakiimo-cream-light rounded-lg border border-gray-200 p-8">
+        <h1 class="text-2xl font-bold text-yakiimo-purple mb-4">Logged Out</h1>
         
-        <p class="text-gray-600 mb-6">You have been successfully logged out.</p>
+        <p class="text-yakiimo-purple-light mb-6">You have been successfully logged out.</p>
         
-        <a href="{% url 'login' %}" class="bg-blue-600 text-white hover:bg-blue-700 px-4 py-2 rounded-md text-sm font-medium transition-colors inline-block">Login again</a>
+        <a href="{% url 'login' %}" class="bg-yakiimo-yellow text-yakiimo-purple hover:bg-yakiimo-yellow-hover px-4 py-2 rounded-md text-sm font-medium transition-colors inline-block">Login again</a>
     </div>
 </div>
 {% endblock %}

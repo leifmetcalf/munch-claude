@@ -4,62 +4,62 @@
 
 {% block content %}
 <div class="mb-6">
-    <h1 class="text-3xl font-bold text-gray-900 mb-4">Edit {{ restaurant_list.name }}</h1>
+    <h1 class="text-3xl font-bold text-yakiimo-purple mb-4">Edit {{ restaurant_list.name }}</h1>
     
-    <div class="bg-white rounded-lg shadow border border-gray-200 p-6 mb-6">
+    <div class="bg-yakiimo-cream-light rounded-lg border border-gray-200 p-6 mb-6">
         <h2 class="text-xl font-semibold mb-4">List Details</h2>
         <form method="post" action="{% url 'restaurantlist_update' restaurant_list.id %}">
             {% csrf_token %}
             <input type="hidden" name="owner" value="{{ restaurant_list.owner.id }}">
             <div class="mb-4">
-                <label for="id_name" class="block text-sm font-medium text-gray-700 mb-2">List Name</label>
+                <label for="id_name" class="block text-sm font-medium text-yakiimo-purple mb-2">List Name</label>
                 <input type="text" name="name" id="id_name" value="{{ restaurant_list.name }}" required 
-                       class="w-full px-3 py-2 border border-gray-300 rounded-md focus:ring-blue-500 focus:border-blue-500">
+                       class="w-full px-3 py-2 border border-yakiimo-purple-border rounded-md focus:border-yakiimo-yellow">
             </div>
             <div class="mb-4">
-                <label for="id_blurb" class="block text-sm font-medium text-gray-700 mb-2">Description</label>
+                <label for="id_blurb" class="block text-sm font-medium text-yakiimo-purple mb-2">Description</label>
                 <textarea name="blurb" id="id_blurb" rows="4" 
                           placeholder="Optional description or notes about this list..."
-                          class="w-full px-3 py-2 border border-gray-300 rounded-md focus:ring-blue-500 focus:border-blue-500">{{ restaurant_list.blurb }}</textarea>
+                          class="w-full px-3 py-2 border border-yakiimo-purple-border rounded-md focus:border-yakiimo-yellow">{{ restaurant_list.blurb }}</textarea>
             </div>
-            <button type="submit" class="bg-blue-600 text-white hover:bg-blue-700 px-4 py-2 rounded-md text-sm font-medium transition-colors">
+            <button type="submit" class="bg-yakiimo-yellow text-yakiimo-purple hover:bg-yakiimo-yellow-hover px-4 py-2 rounded-md text-sm font-medium transition-colors">
                 Update List Details
             </button>
         </form>
-        <div class="mt-4 text-sm text-gray-600">
+        <div class="mt-4 text-sm text-yakiimo-purple-light">
             <p><strong>Owner:</strong> {{ restaurant_list.owner.username }}</p>
             <p><strong>Created:</strong> {{ restaurant_list.inserted_at|date:"F j, Y" }}</p>
         </div>
     </div>
 
     <div class="flex gap-4 mb-6">
-        <a href="{% url 'restaurantlistitem_create' %}?list={{ restaurant_list.id }}" class="bg-blue-600 text-white hover:bg-blue-700 px-4 py-2 rounded-md text-sm font-medium transition-colors">Add Restaurant to List</a>
-        <a href="{% url 'restaurantlist_detail' restaurant_list.id %}" class="bg-green-600 text-white hover:bg-green-700 px-4 py-2 rounded-md text-sm font-medium transition-colors">Done editing</a>
+        <a href="{% url 'restaurantlistitem_create' %}?list={{ restaurant_list.id }}" class="bg-yakiimo-yellow text-yakiimo-purple hover:bg-yakiimo-yellow-hover px-4 py-2 rounded-md text-sm font-medium transition-colors">Add Restaurant to List</a>
+        <a href="{% url 'restaurantlist_detail' restaurant_list.id %}" class="bg-yakiimo-yellow hover:bg-yakiimo-yellow-hover text-yakiimo-purple px-4 py-2 rounded-md text-sm font-medium transition-colors">Done editing</a>
     </div>
 </div>
 
 {% if list_items %}
-    <h2 class="text-2xl font-semibold text-gray-900 mb-4">Restaurants in this list</h2>
+    <h2 class="text-2xl font-semibold text-yakiimo-purple mb-4">Restaurants in this list</h2>
     <div class="space-y-4">
         {% for item in list_items %}
-            <div class="bg-white rounded-lg shadow border border-gray-200 p-6">
+            <div class="bg-yakiimo-cream-light rounded-lg border border-gray-200 p-6">
                 <div class="flex justify-between items-start">
                     <div class="flex-1">
-                        <h3 class="text-xl font-semibold text-gray-900 mb-2">
-                            <a href="{% url 'restaurant_detail' item.restaurant.id %}" class="hover:text-blue-600">{{ item.restaurant.name }}</a>
+                        <h3 class="text-xl font-semibold text-yakiimo-purple mb-2">
+                            <a href="{% url 'restaurant_detail' item.restaurant.id %}" class="hover:text-yakiimo-purple-light">{{ item.restaurant.name }}</a>
                         </h3>
-                        <p class="text-gray-600 mb-2">{{ item.restaurant.address }}</p>
-                        <p class="text-gray-500 text-sm mb-2"><strong>Added:</strong> {{ item.inserted_at|date:"F j, Y" }}</p>
+                        <p class="text-yakiimo-purple-light mb-2">{{ item.restaurant.address }}</p>
+                        <p class="text-yakiimo-purple-light text-sm mb-2"><strong>Added:</strong> {{ item.inserted_at|date:"F j, Y" }}</p>
                         {% if item.notes %}
                             <div class="bg-gray-50 border border-gray-200 rounded p-3 mt-3">
-                                <p class="text-gray-700"><strong>Notes:</strong> {{ item.notes }}</p>
+                                <p class="text-yakiimo-purple"><strong>Notes:</strong> {{ item.notes }}</p>
                             </div>
                         {% endif %}
                     </div>
                     <div class="flex flex-col gap-2 ml-4">
-                        <a href="{% url 'move_item_up' item.id %}" class="bg-blue-600 text-white hover:bg-blue-700 px-3 py-2 rounded text-center text-sm font-medium transition-colors">↑</a>
-                        <a href="{% url 'move_item_down' item.id %}" class="bg-blue-600 text-white hover:bg-blue-700 px-3 py-2 rounded text-center text-sm font-medium transition-colors">↓</a>
-                        <a href="{% url 'restaurantlistitem_delete' item.id %}" class="bg-red-600 text-white hover:bg-red-700 px-3 py-2 rounded text-center text-sm font-medium transition-colors">✕</a>
+                        <a href="{% url 'move_item_up' item.id %}" class="bg-yakiimo-yellow text-yakiimo-purple hover:bg-yakiimo-yellow-hover px-3 py-2 rounded text-center text-sm font-medium transition-colors">↑</a>
+                        <a href="{% url 'move_item_down' item.id %}" class="bg-yakiimo-yellow text-yakiimo-purple hover:bg-yakiimo-yellow-hover px-3 py-2 rounded text-center text-sm font-medium transition-colors">↓</a>
+                        <a href="{% url 'restaurantlistitem_delete' item.id %}" class="bg-yakiimo-yellow hover:bg-yakiimo-yellow-hover text-yakiimo-purple px-3 py-2 rounded text-center text-sm font-medium transition-colors">✕</a>
                     </div>
                 </div>
             </div>
@@ -67,22 +67,22 @@
     </div>
 {% else %}
     <div class="text-center py-12">
-        <p class="text-gray-500 text-lg">No restaurants in this list yet.</p>
+        <p class="text-yakiimo-purple-light text-lg">No restaurants in this list yet.</p>
     </div>
 {% endif %}
 
 <div class="mt-8 pt-6 border-t border-gray-200">
     <h3 class="text-lg font-semibold text-red-600 mb-2">Danger Zone</h3>
-    <p class="text-gray-600 mb-4">Deleting this list will permanently remove it and all its items. This action cannot be undone.</p>
+    <p class="text-yakiimo-purple-light mb-4">Deleting this list will permanently remove it and all its items. This action cannot be undone.</p>
     <form method="post" action="{% url 'restaurantlist_delete' restaurant_list.id %}" onsubmit="return confirm('Are you sure you want to delete this list? This action cannot be undone.');">
         {% csrf_token %}
-        <button type="submit" class="bg-red-600 text-white hover:bg-red-700 px-4 py-2 rounded-md text-sm font-medium transition-colors">
+        <button type="submit" class="bg-yakiimo-yellow hover:bg-yakiimo-yellow-hover text-yakiimo-purple px-4 py-2 rounded-md text-sm font-medium transition-colors">
             Delete This List
         </button>
     </form>
 </div>
 
 <div class="mt-8 pt-6 border-t border-gray-200">
-    <a href="{% url 'restaurantlist_index' %}" class="text-blue-600 hover:text-blue-800 font-medium">← Back to Lists</a>
+    <a href="{% url 'restaurantlist_index' %}" class="text-yakiimo-purple-light hover:text-yakiimo-purple font-medium">← Back to Lists</a>
 </div>
 {% endblock %}

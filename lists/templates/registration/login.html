@@ -1,20 +1,20 @@
 {% extends 'base.html' %}
 
-{% block title %}Login - Munch{% endblock %}
+{% block title %}Munch - Login{% endblock %}
 
 {% block content %}
 <div class="max-w-md mx-auto">
-    <div class="bg-white rounded-lg shadow border border-gray-200 p-8">
-        <h1 class="text-2xl font-bold text-gray-900 text-center mb-6">Login</h1>
+    <div class="bg-yakiimo-cream-light rounded-lg border border-gray-200 p-8">
+        <h1 class="text-2xl font-bold text-yakiimo-purple text-center mb-6">Login</h1>
 
         <form method="post" class="space-y-6">
             {% csrf_token %}
             {% for field in form %}
                 <div>
-                    <label for="{{ field.id_for_label }}" class="block text-sm font-medium text-gray-700 mb-2">{{ field.label }}</label>
+                    <label for="{{ field.id_for_label }}" class="block text-sm font-medium text-yakiimo-purple mb-2">{{ field.label }}</label>
                     {{ field }}
                     {% if field.help_text %}
-                        <p class="mt-1 text-sm text-gray-500">{{ field.help_text }}</p>
+                        <p class="mt-1 text-sm text-yakiimo-purple-light">{{ field.help_text }}</p>
                     {% endif %}
                     {% if field.errors %}
                         <div class="mt-1 text-sm text-red-600">
@@ -25,11 +25,11 @@
                     {% endif %}
                 </div>
             {% endfor %}
-            <button type="submit" class="w-full bg-blue-600 text-white hover:bg-blue-700 px-4 py-2 rounded-md text-sm font-medium transition-colors">Login</button>
+            <button type="submit" class="w-full bg-yakiimo-yellow text-yakiimo-purple hover:bg-yakiimo-yellow-hover px-4 py-2 rounded-md text-sm font-medium transition-colors">Login</button>
         </form>
 
         <div class="mt-6 text-center">
-            <p class="text-gray-600">Don't have an account? <a href="{% url 'register' %}" class="text-blue-600 hover:text-blue-800 font-medium">Register here</a></p>
+            <p class="text-yakiimo-purple-light">Don't have an account? <a href="{% url 'register' %}" class="text-yakiimo-purple-light hover:text-yakiimo-purple font-medium">Register here</a></p>
         </div>
     </div>
 </div>

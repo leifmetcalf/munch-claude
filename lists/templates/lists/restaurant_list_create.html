@@ -1,12 +1,12 @@
 {% extends 'base.html' %}
 
-{% block title %}Create Restaurant List - Munch{% endblock %}
+{% block title %}Munch - Create Restaurant List{% endblock %}
 
 {% block content %}
 <div class="max-w-2xl mx-auto">
-    <h1 class="text-3xl font-bold text-gray-900 mb-6">Create Restaurant List</h1>
+    <h1 class="text-3xl font-bold text-yakiimo-purple mb-6">Create Restaurant List</h1>
 
-    <div class="bg-white rounded-lg shadow border border-gray-200 p-6">
+    <div class="bg-yakiimo-cream-light rounded-lg border border-gray-200 p-6">
         <form method="post" class="space-y-6">
             {% csrf_token %}
             {% for field in form %}
@@ -14,10 +14,10 @@
                     {{ field }}
                 {% else %}
                     <div>
-                        <label for="{{ field.id_for_label }}" class="block text-sm font-medium text-gray-700 mb-2">{{ field.label }}</label>
+                        <label for="{{ field.id_for_label }}" class="block text-sm font-medium text-yakiimo-purple mb-2">{{ field.label }}</label>
                         {{ field }}
                         {% if field.help_text %}
-                            <p class="mt-1 text-sm text-gray-500">{{ field.help_text }}</p>
+                            <p class="mt-1 text-sm text-yakiimo-purple-light">{{ field.help_text }}</p>
                         {% endif %}
                         {% if field.errors %}
                             <div class="mt-1 text-sm text-red-600">
@@ -30,13 +30,13 @@
                 {% endif %}
             {% endfor %}
             <div class="flex justify-end">
-                <button type="submit" class="bg-blue-600 text-white hover:bg-blue-700 px-4 py-2 rounded-md text-sm font-medium transition-colors">Create List</button>
+                <button type="submit" class="bg-yakiimo-yellow text-yakiimo-purple hover:bg-yakiimo-yellow-hover px-4 py-2 rounded-md text-sm font-medium transition-colors">Create List</button>
             </div>
         </form>
     </div>
 
     <div class="mt-6">
-        <a href="{% url 'restaurantlist_index' %}" class="text-blue-600 hover:text-blue-800 font-medium">← Back to Lists</a>
+        <a href="{% url 'restaurantlist_index' %}" class="text-yakiimo-purple-light hover:text-yakiimo-purple font-medium">← Back to Lists</a>
     </div>
 </div>
 {% endblock %}

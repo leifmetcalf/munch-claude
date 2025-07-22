@@ -1,15 +1,15 @@
 {% extends 'base.html' %}
 
-{% block title %}My Lists - Munch{% endblock %}
+{% block title %}Munch - My Lists{% endblock %}
 
 {% block content %}
 <div class="mb-6">
     <div class="flex justify-between items-center mb-6">
-        <h1 class="text-3xl font-bold text-gray-900">My Lists</h1>
-        <a href="{% url 'restaurantlist_create' %}" class="bg-blue-600 text-white hover:bg-blue-700 px-4 py-2 rounded-md text-sm font-medium transition-colors">Create New List</a>
+        <h1 class="text-3xl font-bold text-yakiimo-purple">My Lists</h1>
+        <a href="{% url 'restaurantlist_create' %}" class="bg-yakiimo-yellow text-yakiimo-purple hover:bg-yakiimo-yellow-hover px-4 py-2 rounded-md text-sm font-medium transition-colors">Create New List</a>
     </div>
     
-    <div class="bg-white rounded-lg shadow border border-gray-200 p-6">
+    <div class="bg-yakiimo-cream-light rounded-lg border border-gray-200 p-6">
         <form method="get" class="flex gap-4">
             <div class="flex-1">
                 <input 
@@ -17,13 +17,13 @@
                     name="q" 
                     value="{{ query|default:'' }}" 
                     placeholder="Search your lists by name..." 
-                    class="w-full px-4 py-2 border border-gray-300 rounded-md focus:ring-blue-500 focus:border-blue-500">
+                    class="w-full px-4 py-2 border border-yakiimo-purple-border rounded-md focus:border-yakiimo-yellow">
             </div>
-            <button type="submit" class="bg-blue-600 text-white hover:bg-blue-700 px-6 py-2 rounded-md text-sm font-medium transition-colors">
+            <button type="submit" class="bg-yakiimo-yellow text-yakiimo-purple hover:bg-yakiimo-yellow-hover px-6 py-2 rounded-md text-sm font-medium transition-colors">
                 Search
             </button>
             {% if query %}
-                <a href="{% url 'user_restaurantlist_index' %}" class="bg-gray-200 text-gray-700 hover:bg-gray-300 px-6 py-2 rounded-md text-sm font-medium transition-colors">
+                <a href="{% url 'user_restaurantlist_index' %}" class="bg-yakiimo-yellow hover:bg-yakiimo-yellow-hover text-yakiimo-purple px-6 py-2 rounded-md text-sm font-medium transition-colors">
                     Clear
                 </a>
             {% endif %}
@@ -32,7 +32,7 @@
 </div>
 
 {% if query %}
-    <p class="text-gray-600 mb-4">
+    <p class="text-yakiimo-purple-light mb-4">
         {% if restaurant_lists %}
             Showing {{ restaurant_lists|length }} result{{ restaurant_lists|length|pluralize }} for "{{ query }}"
         {% else %}
@@ -44,22 +44,22 @@
 {% if restaurant_lists %}
     <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
         {% for restaurant_list in restaurant_lists %}
-            <div class="bg-white rounded-lg shadow border border-gray-200 p-6 hover:shadow-md transition-shadow">
-                <h3 class="text-xl font-semibold text-gray-900 mb-2">
-                    <a href="{% url 'restaurantlist_detail' restaurant_list.id %}" class="hover:text-blue-600">{{ restaurant_list.name }}</a>
+            <div class="bg-yakiimo-cream-light rounded-lg border border-gray-200 p-6">
+                <h3 class="text-xl font-semibold text-yakiimo-purple mb-2">
+                    <a href="{% url 'restaurantlist_detail' restaurant_list.id %}" class="hover:text-yakiimo-purple-light">{{ restaurant_list.name }}</a>
                 </h3>
-                <p class="text-gray-600 mb-2"><strong>Followers:</strong> {{ restaurant_list.follower_count }}</p>
+                <p class="text-black mb-2"><strong>Followers:</strong> {{ restaurant_list.follower_count }}</p>
                 {% if restaurant_list.blurb %}
-                    <p class="text-gray-600 mb-2">{{ restaurant_list.blurb|truncatewords:20 }}</p>
+                    <p class="text-black mb-2">{{ restaurant_list.blurb|truncatewords:20 }}</p>
                 {% endif %}
-                <p class="text-gray-500 text-sm"><strong>Created:</strong> {{ restaurant_list.inserted_at|date:"F j, Y" }}</p>
+                <p class="text-black text-sm"><strong>Created:</strong> {{ restaurant_list.inserted_at|date:"F j, Y" }}</p>
             </div>
         {% endfor %}
     </div>
 {% else %}
     <div class="text-center py-12">
-        <p class="text-gray-500 text-lg">You haven't created any restaurant lists yet.</p>
-        <a href="{% url 'restaurantlist_create' %}" class="mt-4 inline-block bg-blue-600 text-white hover:bg-blue-700 px-4 py-2 rounded-md text-sm font-medium transition-colors">Create your first list</a>
+        <p class="text-yakiimo-purple-light text-lg">You haven't created any restaurant lists yet.</p>
+        <a href="{% url 'restaurantlist_create' %}" class="mt-4 inline-block bg-yakiimo-yellow text-yakiimo-purple hover:bg-yakiimo-yellow-hover px-4 py-2 rounded-md text-sm font-medium transition-colors">Create your first list</a>
     </div>
 {% endif %}
 

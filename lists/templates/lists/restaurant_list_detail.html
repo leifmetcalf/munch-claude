@@ -4,31 +4,33 @@
 
 {% block content %}
 <div class="mb-6">
-    <h1 class="text-3xl font-bold text-gray-900 mb-4">{{ restaurant_list.name }}</h1>
+    <div class="flex items-baseline mb-4 text-yakiimo-purple font-bold">
+        <h1 class="text-3xl">{{ restaurant_list.name }}</h1>
+        <span class="text-base ml-2">by <a href="{% url 'profile' user_id=restaurant_list.owner.id %}" class="hover:text-yakiimo-purple-light">{{ restaurant_list.owner.username }}</a></span>
+    </div>
     
-    <div class="bg-white rounded-lg shadow border border-gray-200 p-4 mb-6">
-        <p class="text-gray-600 mb-2"><strong>Owner:</strong> {{ restaurant_list.owner.username }}</p>
-        <p class="text-gray-500 text-sm mb-2"><strong>Created:</strong> {{ restaurant_list.inserted_at|date:"F j, Y" }}</p>
-        <p class="text-gray-500 text-sm mb-2">
+    <div class="bg-yakiimo-cream-light rounded-lg border border-gray-200 p-4 mb-6">
+        <p class="text-black text-sm mb-2"><strong>Created:</strong> {{ restaurant_list.inserted_at|date:"F j, Y" }}</p>
+        <p class="text-black text-sm mb-2">
             <strong>Followers:</strong> 
-            <a href="{% url 'list_followers' restaurant_list.id %}" class="text-blue-600 hover:text-blue-800">{{ follower_count }}</a>
+            <a href="{% url 'list_followers' restaurant_list.id %}" class="text-black hover:text-yakiimo-purple">{{ follower_count }}</a>
         </p>
         {% if restaurant_list.blurb %}
-            <p class="text-gray-700">{{ restaurant_list.blurb|linebreaks }}</p>
+            <div class="text-black">{{ restaurant_list.blurb|linebreaks }}</div>
         {% endif %}
     </div>
 
     <div class="flex gap-4 mb-6">
         {% if user.is_authenticated and user == restaurant_list.owner %}
-            <a href="{% url 'restaurantlistitem_create' %}?list={{ restaurant_list.id }}" class="bg-blue-600 text-white hover:bg-blue-700 px-4 py-2 rounded-md text-sm font-medium transition-colors">Add Restaurant to List</a>
-            <a href="{% url 'restaurantlist_edit' restaurant_list.id %}" class="bg-gray-600 text-white hover:bg-gray-700 px-4 py-2 rounded-md text-sm font-medium transition-colors">Edit List</a>
+            <a href="{% url 'restaurantlistitem_create' %}?list={{ restaurant_list.id }}" class="bg-yakiimo-yellow text-yakiimo-purple hover:bg-yakiimo-yellow-hover px-4 py-2 rounded-md text-sm font-medium transition-colors">Add Restaurant to List</a>
+            <a href="{% url 'restaurantlist_edit' restaurant_list.id %}" class="bg-yakiimo-yellow hover:bg-yakiimo-yellow-hover text-yakiimo-purple px-4 py-2 rounded-md text-sm font-medium transition-colors">Edit List</a>
         {% elif user.is_authenticated and user != restaurant_list.owner %}
             <form method="post" action="{% url 'toggle_list_follow' restaurant_list.id %}" class="inline">
                 {% csrf_token %}
                 {% if is_following %}
-                    <button type="submit" class="bg-red-600 text-white hover:bg-red-700 px-4 py-2 rounded-md text-sm font-medium transition-colors">Unfollow List</button>
+                    <button type="submit" class="bg-yakiimo-yellow hover:bg-yakiimo-yellow-hover text-yakiimo-purple px-4 py-2 rounded-md text-sm font-medium transition-colors">Unfollow List</button>
                 {% else %}
-                    <button type="submit" class="bg-green-600 text-white hover:bg-green-700 px-4 py-2 rounded-md text-sm font-medium transition-colors">Follow List</button>
+                    <button type="submit" class="bg-yakiimo-yellow hover:bg-yakiimo-yellow-hover text-yakiimo-purple px-4 py-2 rounded-md text-sm font-medium transition-colors">Follow List</button>
                 {% endif %}
             </form>
         {% endif %}
@@ -36,10 +38,10 @@
 </div>
 
 {% if list_items %}
-    <h2 class="text-2xl font-semibold text-gray-900 mb-4">Restaurants in this list</h2>
+    <h2 class="text-2xl font-semibold text-yakiimo-purple mb-4">Restaurants in this list</h2>
     
     {% if restaurant_coordinates %}
-        <div id="map" class="h-96 w-full my-6 border border-gray-300 rounded-lg shadow-sm"></div>
+        <div id="map" class="h-96 w-full my-6 border border-gray-300 rounded-lg"></div>
         <script>
             // Initialize the map
             var map = L.map('map');
@@ -73,18 +75,16 @@
     
     <div class="space-y-4">
         {% for item in list_items %}
-            <div class="bg-white rounded-lg shadow border border-gray-200 p-6">
+            <div class="bg-yakiimo-cream-light rounded-lg border border-gray-200 p-6">
                 <div class="flex gap-4">
                     <div class="flex-1">
-                        <h3 class="text-xl font-semibold text-gray-900 mb-2">
-                            <a href="{% url 'restaurant_detail' item.restaurant.id %}" class="hover:text-blue-600">{{ item.restaurant.name }}</a>
+                        <h3 class="text-xl font-semibold text-yakiimo-purple mb-2">
+                            <a href="{% url 'restaurant_detail' item.restaurant.id %}" class="hover:text-yakiimo-purple-light">{{ item.restaurant.name }}</a>
                         </h3>
-                        <p class="text-gray-600 mb-2">{{ item.restaurant.address }}</p>
-                        <p class="text-gray-500 text-sm mb-2"><strong>Added:</strong> {{ item.inserted_at|date:"F j, Y" }}</p>
+                        <p class="text-black text-sm mb-2">{{ item.restaurant.address }}</p>
+                        <p class="text-black text-sm mb-2"><strong>Added:</strong> {{ item.inserted_at|date:"F j, Y" }}</p>
                         {% if item.notes %}
-                            <div class="bg-gray-50 border border-gray-200 rounded p-3 mt-3">
-                                <p class="text-gray-700"><strong>Notes:</strong> {{ item.notes }}</p>
-                            </div>
+                            <p class="text-black mt-3">"{{ item.notes }}"</p>
                         {% endif %}
                     </div>
                     {% if item.restaurant.images.first %}
@@ -98,17 +98,16 @@
     </div>
 {% else %}
     <div class="text-center py-12">
-        <p class="text-gray-500 text-lg">No restaurants in this list yet.</p>
+        <p class="text-yakiimo-purple-light text-lg">No restaurants in this list yet.</p>
     </div>
 {% endif %}
 
 <!-- Comments Section -->
 <div class="mt-8 pt-6 border-t border-gray-200">
-    <h2 class="text-2xl font-semibold text-gray-900 mb-4">Comments</h2>
+    <h2 class="text-2xl font-semibold text-yakiimo-purple mb-4">Comments</h2>
     
     {% if user.is_authenticated %}
-        <div class="bg-white rounded-lg shadow border border-gray-200 p-6 mb-6">
-            <h3 class="text-lg font-medium text-gray-900 mb-4">Add a Comment</h3>
+        <div class="bg-yakiimo-cream-light rounded-lg border border-gray-200 p-6 mb-6">
             <form method="post" class="space-y-4">
                 {% csrf_token %}
                 {% for field in comment_form %}
@@ -116,7 +115,7 @@
                         {{ field }}
                     {% else %}
                         <div>
-                            <label for="{{ field.id_for_label }}" class="block text-sm font-medium text-gray-700 mb-2">{{ field.label }}</label>
+                            <label for="{{ field.id_for_label }}" class="block text-sm font-medium text-yakiimo-purple mb-2">{{ field.label }}</label>
                             {{ field }}
                             {% if field.errors %}
                                 <div class="mt-1 text-sm text-red-600">
@@ -128,15 +127,15 @@
                         </div>
                     {% endif %}
                 {% endfor %}
-                <button type="submit" class="bg-blue-600 text-white hover:bg-blue-700 px-4 py-2 rounded-md text-sm font-medium transition-colors">
+                <button type="submit" class="bg-yakiimo-yellow text-yakiimo-purple hover:bg-yakiimo-yellow-hover px-4 py-2 rounded-md text-sm font-medium transition-colors">
                     Post Comment
                 </button>
             </form>
         </div>
     {% else %}
         <div class="bg-gray-50 rounded-lg p-4 mb-6">
-            <p class="text-gray-600">
-                <a href="{% url 'login' %}" class="text-blue-600 hover:text-blue-800 font-medium">Login</a> to add a comment.
+            <p class="text-yakiimo-purple-light">
+                <a href="{% url 'login' %}" class="text-yakiimo-purple-light hover:text-yakiimo-purple font-medium">Login</a> to add a comment.
             </p>
         </div>
     {% endif %}
@@ -144,14 +143,14 @@
     {% if comments %}
         <div class="space-y-4 mb-6">
             {% for comment in comments %}
-                <div class="bg-white rounded-lg shadow border border-gray-200 p-6">
+                <div class="bg-yakiimo-cream-light rounded-lg border border-gray-200 p-6">
                     <div class="flex justify-between items-start mb-3">
                         <div class="flex items-center">
-                            <a href="{% url 'profile' user_id=comment.author.id %}" class="font-medium text-blue-600 hover:text-blue-800">{{ comment.author.username }}</a>
-                            <span class="text-gray-500 text-sm ml-2">{{ comment.inserted_at|date:"M j, Y g:i A" }}</span>
+                            <a href="{% url 'profile' user_id=comment.author.id %}" class="font-medium text-yakiimo-purple hover:text-yakiimo-purple-light">{{ comment.author.username }}</a>
+                            <span class="text-yakiimo-purple text-sm ml-2">{{ comment.inserted_at|date:"M j, Y g:i A" }}</span>
                         </div>
                     </div>
-                    <div class="text-gray-700">
+                    <div class="text-black">
                         {{ comment.content|linebreaks }}
                     </div>
                 </div>
@@ -159,12 +158,12 @@
         </div>
     {% else %}
         <div class="text-center py-8 mb-6">
-            <p class="text-gray-500">No comments yet. Be the first to comment!</p>
+            <p class="text-yakiimo-purple-light">No comments yet. Be the first to comment!</p>
         </div>
     {% endif %}
 </div>
 
 <div class="mt-8 pt-6 border-t border-gray-200">
-    <a href="{% url 'restaurantlist_index' %}" class="text-blue-600 hover:text-blue-800 font-medium">← Back to Lists</a>
+    <a href="{% url 'restaurantlist_index' %}" class="text-yakiimo-purple-light hover:text-yakiimo-purple font-medium">← Back to Lists</a>
 </div>
 {% endblock %}

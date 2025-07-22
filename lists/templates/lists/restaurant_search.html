@@ -1,15 +1,15 @@
 {% extends 'base.html' %}
 
-{% block title %}Import Restaurants - Munch{% endblock %}
+{% block title %}Munch - Import Restaurants{% endblock %}
 
 {% block content %}
 <div class="max-w-4xl mx-auto">
-    <h1 class="text-3xl font-bold text-gray-900 mb-6">Import Restaurants</h1>
+    <h1 class="text-3xl font-bold text-yakiimo-purple mb-6">Import Restaurants</h1>
 
-    <div class="bg-white rounded-lg shadow border border-gray-200 p-6 mb-6">
+    <div class="bg-yakiimo-cream-light rounded-lg border border-gray-200 p-6 mb-6">
         <form method="get" class="flex gap-4">
-            <input type="text" name="q" value="{{ query|default:'' }}" placeholder="Enter location or restaurant name" class="flex-1 px-3 py-2 border border-gray-300 rounded-md shadow-sm focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-blue-500">
-            <button type="submit" class="bg-blue-600 text-white hover:bg-blue-700 px-6 py-2 rounded-md text-sm font-medium transition-colors">Search</button>
+            <input type="text" name="q" value="{{ query|default:'' }}" placeholder="Enter location or restaurant name" class="flex-1 px-3 py-2 border border-yakiimo-purple-border rounded-md focus:border-yakiimo-yellow">
+            <button type="submit" class="bg-yakiimo-yellow text-yakiimo-purple hover:bg-yakiimo-yellow-hover px-6 py-2 rounded-md text-sm font-medium transition-colors">Search</button>
         </form>
     </div>
 
@@ -20,18 +20,18 @@
     {% endif %}
 
     {% if restaurants %}
-        <h2 class="text-2xl font-semibold text-gray-900 mb-4">Search Results</h2>
+        <h2 class="text-2xl font-semibold text-yakiimo-purple mb-4">Search Results</h2>
         <div class="space-y-4">
             {% for restaurant in restaurants %}
-                <div class="bg-white rounded-lg shadow border border-gray-200 p-6">
-                    <h3 class="text-xl font-semibold text-gray-900 mb-2">{{ restaurant.name }}</h3>
-                    <p class="text-gray-600 mb-4">{{ restaurant.display_name }}</p>
+                <div class="bg-yakiimo-cream-light rounded-lg border border-gray-200 p-6">
+                    <h3 class="text-xl font-semibold text-yakiimo-purple mb-2">{{ restaurant.name }}</h3>
+                    <p class="text-yakiimo-purple-light mb-4">{{ restaurant.display_name }}</p>
                     
                     <form method="post" class="inline-block">
                         {% csrf_token %}
                         <input type="hidden" name="osm_type" value="{{ restaurant.osm_type }}">
                         <input type="hidden" name="osm_id" value="{{ restaurant.osm_id }}">
-                        <button type="submit" class="bg-green-600 text-white hover:bg-green-700 px-4 py-2 rounded-md text-sm font-medium transition-colors">Add to Database</button>
+                        <button type="submit" class="bg-yakiimo-yellow hover:bg-yakiimo-yellow-hover text-yakiimo-purple px-4 py-2 rounded-md text-sm font-medium transition-colors">Add to Database</button>
                     </form>
                 </div>
             {% endfor %}

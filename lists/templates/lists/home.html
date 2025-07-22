@@ -2,34 +2,34 @@
 
 {% block content %}
 <div class="text-center">
-    <h1 class="text-4xl font-bold text-gray-900 mb-4">Welcome to Munch</h1>
-    <p class="text-xl text-gray-600 mb-8">Create and manage your restaurant lists</p>
+    <h1 class="text-4xl font-bold text-yakiimo-purple mb-4">Welcome to Munch</h1>
+    <p class="text-xl text-yakiimo-purple-light mb-8">Munch away, then share your munchalishious finds!</p>
 
     <div class="grid grid-cols-1 md:grid-cols-3 gap-4 max-w-2xl mx-auto">
-        <a href="{% url 'restaurantlist_index' %}" class="bg-white hover:bg-gray-50 p-6 rounded-lg shadow border border-gray-200 text-center transition-colors">
-            <div class="text-blue-600 font-semibold">View All Lists</div>
+        <a href="{% url 'restaurantlist_index' %}" class="bg-yakiimo-yellow hover:bg-yakiimo-yellow-hover p-6 rounded-lg text-center transition-colors">
+            <div class="text-yakiimo-purple font-semibold">View All Lists</div>
         </a>
-        <a href="{% url 'restaurant_index' %}" class="bg-white hover:bg-gray-50 p-6 rounded-lg shadow border border-gray-200 text-center transition-colors">
-            <div class="text-green-600 font-semibold">View All Restaurants</div>
+        <a href="{% url 'restaurant_index' %}" class="bg-yakiimo-yellow hover:bg-yakiimo-yellow-hover p-6 rounded-lg text-center transition-colors">
+            <div class="text-yakiimo-purple font-semibold">View All Restaurants</div>
         </a>
-        <a href="{% url 'restaurant_nominatim' %}" class="bg-white hover:bg-gray-50 p-6 rounded-lg shadow border border-gray-200 text-center transition-colors">
-            <div class="text-purple-600 font-semibold">Import Restaurants</div>
+        <a href="{% url 'restaurant_nominatim' %}" class="bg-yakiimo-yellow hover:bg-yakiimo-yellow-hover p-6 rounded-lg text-center transition-colors">
+            <div class="text-yakiimo-purple font-semibold">Import Restaurants</div>
         </a>
     </div>
 
     {% if recent_items %}
     <div class="mt-12 max-w-2xl mx-auto">
-        <h2 class="text-2xl font-bold text-gray-900 mb-4 text-left">Recent Activity</h2>
+        <h2 class="text-2xl font-bold text-yakiimo-purple mb-4 text-left">Recent Activity</h2>
         <div>
             <ul class="space-y-2">
                 {% for item in recent_items %}
-                <li class="bg-white p-3 rounded-lg shadow border border-gray-200 text-left">
-                    <span class="text-gray-700">
-                        <a href="{% url 'profile' user_id=item.restaurant_list.owner.id %}" class="text-blue-600 hover:text-blue-800 font-medium">{{ item.restaurant_list.owner.username }}</a>
+                <li class="bg-yakiimo-cream-light p-3 rounded-lg border border-yakiimo-purple-border text-left">
+                    <span class="text-yakiimo-purple">
+                        <a href="{% url 'profile' user_id=item.restaurant_list.owner.id %}" class="text-yakiimo-purple-light hover:text-yakiimo-purple font-medium">{{ item.restaurant_list.owner.username }}</a>
                         added
-                        <a href="{% url 'restaurant_detail' restaurant_id=item.restaurant.id %}" class="text-green-600 hover:text-green-800 font-medium">{{ item.restaurant.name }}</a>
+                        <a href="{% url 'restaurant_detail' restaurant_id=item.restaurant.id %}" class="text-yakiimo-purple-light hover:text-yakiimo-purple font-medium">{{ item.restaurant.name }}</a>
                         to their list
-                        <a href="{% url 'restaurantlist_detail' list_id=item.restaurant_list.id %}" class="text-purple-600 hover:text-purple-800 font-medium">{{ item.restaurant_list.name }}</a>
+                        <a href="{% url 'restaurantlist_detail' list_id=item.restaurant_list.id %}" class="text-yakiimo-purple-light hover:text-yakiimo-purple font-medium">{{ item.restaurant_list.name }}</a>
                     </span>
                 </li>
                 {% endfor %}
@@ -39,33 +39,33 @@
     {% endif %}
 
     <div class="mt-12 max-w-2xl mx-auto">
-        <h2 class="text-2xl font-bold text-gray-900 mb-4 text-left">Activity from Lists You Follow</h2>
+        <h2 class="text-2xl font-bold text-yakiimo-purple mb-4 text-left">Activity from Lists You Follow</h2>
         <div>
             {% if not user.is_authenticated %}
-                <div class="bg-white p-3 rounded-lg shadow border border-gray-200 text-left">
-                    <span class="text-gray-700">
-                        <a href="{% url 'login' %}" class="text-blue-600 hover:text-blue-800 font-medium">Log in to follow lists</a>
+                <div class="bg-yakiimo-cream-light p-3 rounded-lg border border-yakiimo-purple-border text-left">
+                    <span class="text-yakiimo-purple">
+                        <a href="{% url 'login' %}" class="text-yakiimo-purple-light hover:text-yakiimo-purple font-medium">Log in to follow lists</a>
                     </span>
                 </div>
             {% elif user.is_authenticated and following_activity %}
                 <ul class="space-y-2">
                     {% for item in following_activity %}
-                    <li class="bg-white p-3 rounded-lg shadow border border-gray-200 text-left">
-                        <span class="text-gray-700">
-                            <a href="{% url 'profile' user_id=item.restaurant_list.owner.id %}" class="text-blue-600 hover:text-blue-800 font-medium">{{ item.restaurant_list.owner.username }}</a>
+                    <li class="bg-yakiimo-cream-light p-3 rounded-lg border border-yakiimo-purple-border text-left">
+                        <span class="text-yakiimo-purple">
+                            <a href="{% url 'profile' user_id=item.restaurant_list.owner.id %}" class="text-yakiimo-purple-light hover:text-yakiimo-purple font-medium">{{ item.restaurant_list.owner.username }}</a>
                             added
-                            <a href="{% url 'restaurant_detail' restaurant_id=item.restaurant.id %}" class="text-green-600 hover:text-green-800 font-medium">{{ item.restaurant.name }}</a>
+                            <a href="{% url 'restaurant_detail' restaurant_id=item.restaurant.id %}" class="text-yakiimo-purple-light hover:text-yakiimo-purple font-medium">{{ item.restaurant.name }}</a>
                             to their list
-                            <a href="{% url 'restaurantlist_detail' list_id=item.restaurant_list.id %}" class="text-purple-600 hover:text-purple-800 font-medium">{{ item.restaurant_list.name }}</a>
+                            <a href="{% url 'restaurantlist_detail' list_id=item.restaurant_list.id %}" class="text-yakiimo-purple-light hover:text-yakiimo-purple font-medium">{{ item.restaurant_list.name }}</a>
                         </span>
                     </li>
                     {% endfor %}
                 </ul>
             {% else %}
-                <div class="bg-white p-3 rounded-lg shadow border border-gray-200 text-left">
-                    <span class="text-gray-700">
+                <div class="bg-yakiimo-cream-light p-3 rounded-lg border border-yakiimo-purple-border text-left">
+                    <span class="text-yakiimo-purple">
                         You're not following any lists yet. 
-                        <a href="{% url 'restaurantlist_index' %}" class="text-blue-600 hover:text-blue-800 font-medium">Browse lists to follow</a>
+                        <a href="{% url 'restaurantlist_index' %}" class="text-yakiimo-purple-light hover:text-yakiimo-purple font-medium">Browse lists to follow</a>
                     </span>
                 </div>
             {% endif %}

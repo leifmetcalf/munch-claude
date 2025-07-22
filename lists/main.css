@@ -1,1 +1,13 @@
 @import "tailwindcss";
+
+@theme {
+  --color-yakiimo-cream-light: oklch(0.9961 0.007 91.67);
+  --color-yakiimo-cream: oklch(0.9843 0.017 91.67);
+  --color-yakiimo-cream-dark: oklch(0.9725 0.027 91.67);
+  --color-yakiimo-purple: oklch(0.3921 0.1566 354.84);
+  --color-yakiimo-purple-light: oklch(0.5439 0.1566 354.84);
+  --color-yakiimo-purple-vibrant: oklch(0.4667 0.192 354.84);
+  --color-yakiimo-purple-border: oklch(0.8824 0.05 332.31);
+  --color-yakiimo-yellow: oklch(0.9137 0.141 94.67);
+  --color-yakiimo-yellow-hover: oklch(0.8921 0.1468 94.67);
+}
