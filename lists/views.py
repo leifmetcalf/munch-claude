@@ -274,7 +274,7 @@ def restaurantlist_create(request):
 def restaurantlistitem_create(request):
     """Unified view for adding restaurants to lists.
     
-    Query parameters can be used to preset form values:
+    Query parameters can be used to set default form values:
     - ?list=<id>: Pre-select a list
     - ?restaurant=<id>: Pre-select a restaurant
     """
@@ -284,9 +284,9 @@ def restaurantlistitem_create(request):
         messages.error(request, "You don't have any restaurant lists. Create one first.")
         return redirect('restaurantlist_create')
     
-    # Get preset values from query params
-    preset_list_id = request.GET.get('list')
-    preset_restaurant_id = request.GET.get('restaurant')
+    # Get URL parameter values
+    list_id = request.GET.get('list')
+    restaurant_id = request.GET.get('restaurant')
     
     if request.method == 'POST':
         form = RestaurantListItemForm(request.POST)
@@ -309,52 +309,45 @@ def restaurantlistitem_create(request):
             messages.success(request, f'"{list_item.restaurant.name}" added to "{list_item.restaurant_list.name}"!')
             
             # Redirect based on where user came from
-            if preset_restaurant_id:
+            if restaurant_id:
                 return redirect('restaurant_detail', restaurant_id=list_item.restaurant.id)
-            elif preset_list_id:
+            elif list_id:
                 return redirect('restaurantlist_detail', list_id=list_item.restaurant_list.id)
             else:
                 return redirect('restaurantlistitem_create')
     else:
-        # Initialize form with preset values from query params
+        # Initialize form with URL parameter values
         initial = {}
-        if preset_restaurant_id:
+        if restaurant_id:
             try:
-                restaurant_obj = Restaurant.objects.get(pk=preset_restaurant_id)
-                initial['restaurant'] = restaurant_obj
+                restaurant = Restaurant.objects.get(pk=restaurant_id)
+                initial['restaurant'] = restaurant
             except Restaurant.DoesNotExist:
                 pass
         
-        if preset_list_id:
+        if list_id:
             try:
-                list_obj = RestaurantList.objects.get(pk=preset_list_id, owner=request.user)
+                list_obj = RestaurantList.objects.get(pk=list_id, owner=request.user)
                 initial['restaurant_list'] = list_obj
             except RestaurantList.DoesNotExist:
                 pass
         
         form = RestaurantListItemForm(initial=initial)
     
-    # Get preset objects for template
-    preset_list = None
-    preset_restaurant = None
-    
-    if preset_list_id:
+    # Get selected restaurant info for display
+    selected_restaurant = None
+    if restaurant_id:
         try:
-            preset_list = RestaurantList.objects.get(pk=preset_list_id, owner=request.user)
-        except RestaurantList.DoesNotExist:
-            pass
-    
-    if preset_restaurant_id:
-        try:
-            preset_restaurant = Restaurant.objects.get(pk=preset_restaurant_id)
+            selected_restaurant = Restaurant.objects.get(pk=restaurant_id)
         except Restaurant.DoesNotExist:
             pass
     
     return render(request, 'lists/restaurant_list_item_create.html', {
         'form': form,
         'user_lists': user_lists,
-        'preset_list': preset_list,
-        'preset_restaurant': preset_restaurant
+        'selected_list_id': list_id,
+        'selected_restaurant_id': restaurant_id,
+        'selected_restaurant': selected_restaurant
     })
 
 

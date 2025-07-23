@@ -13,29 +13,22 @@
             <!-- Restaurant Selection -->
             <div>
                 <label class="block text-sm font-medium text-yakiimo-purple mb-2">Restaurant (...or <a href="{% url 'restaurant_nominatim' %}" class="text-yakiimo-purple-light hover:text-yakiimo-purple">import a restaurant</a>)</label>
-                {% if preset_restaurant %}
-                    <!-- Restaurant is pre-selected -->
-                    <div class="p-3 bg-yakiimo-cream border border-yakiimo-purple-border rounded-md">
-                        <div class="font-medium">{{ preset_restaurant.name }}</div>
-                        <div class="text-sm text-yakiimo-purple-light">{{ preset_restaurant.address }}</div>
+                <!-- Autocomplete search input -->
+                <div class="relative">
+                    <input 
+                        type="text" 
+                        id="restaurant-search" 
+                        placeholder="Search for a restaurant..." 
+                        value="{% if selected_restaurant %}{{ selected_restaurant.name }} - {{ selected_restaurant.address }}{% endif %}"
+                        class="w-full px-3 py-2 border border-yakiimo-purple-border rounded-md focus:border-yakiimo-yellow"
+                        autocomplete="off">
+                    <div id="restaurant-results" class="absolute z-10 w-full bg-yakiimo-cream-light border border-yakiimo-purple-border rounded-md mt-1 hidden"></div>
+                    <div id="no-js-message" class="mt-2 text-sm text-yakiimo-purple-light">
+                        <noscript>
+                            JavaScript is required for restaurant search. You can add restaurants to lists from individual restaurant pages.
+                        </noscript>
                     </div>
-                {% else %}
-                    <!-- Autocomplete search input -->
-                    <div class="relative">
-                        <input 
-                            type="text" 
-                            id="restaurant-search" 
-                            placeholder="Search for a restaurant..." 
-                            class="w-full px-3 py-2 border border-yakiimo-purple-border rounded-md focus:border-yakiimo-yellow"
-                            autocomplete="off">
-                        <div id="restaurant-results" class="absolute z-10 w-full bg-yakiimo-cream-light border border-yakiimo-purple-border rounded-md mt-1 hidden"></div>
-                        <div id="no-js-message" class="mt-2 text-sm text-yakiimo-purple-light">
-                            <noscript>
-                                JavaScript is required for restaurant search. You can add restaurants to lists from individual restaurant pages.
-                            </noscript>
-                        </div>
-                    </div>
-                {% endif %}
+                </div>
                 {{ form.restaurant }}
                 {% if form.restaurant.errors %}
                     <div class="mt-1 text-sm text-red-600">
@@ -49,20 +42,13 @@
             <!-- Restaurant List Selection -->
             <div>
                 <label class="block text-sm font-medium text-yakiimo-purple mb-2">Restaurant List</label>
-                {% if preset_list %}
-                    <!-- List is pre-selected -->
-                    <div class="p-3 bg-yakiimo-cream border border-yakiimo-purple-border rounded-md">
-                        <strong>{{ preset_list.name }}</strong>
-                    </div>
-                {% else %}
-                    <!-- Show list selection dropdown -->
-                    <select id="list-selector" class="w-full px-3 py-2 border border-yakiimo-purple-border rounded-md focus:border-yakiimo-yellow">
-                        <option value="">Choose a list...</option>
-                        {% for list in user_lists %}
-                            <option value="{{ list.id }}">{{ list.name }}</option>
-                        {% endfor %}
-                    </select>
-                {% endif %}
+                <!-- Show list selection dropdown -->
+                <select id="list-selector" class="w-full px-3 py-2 border border-yakiimo-purple-border rounded-md focus:border-yakiimo-yellow">
+                    <option value="">Choose a list...</option>
+                    {% for list in user_lists %}
+                        <option value="{{ list.id }}" {% if selected_list_id == list.id|stringformat:"s" %}selected{% endif %}>{{ list.name }}</option>
+                    {% endfor %}
+                </select>
                 {{ form.restaurant_list }}
                 {% if form.restaurant_list.errors %}
                     <div class="mt-1 text-sm text-red-600">
