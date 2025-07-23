@@ -4,7 +4,7 @@
 
 {% block content %}
 <div class="max-w-4xl mx-auto">
-    <div class="bg-yakiimo-cream-light rounded-lg p-6 mb-8">
+    <div class="bg-yakiimo-cream-light rounded-lg border border-yakiimo-purple-border p-6 mb-8">
         <h2 class="text-xl font-semibold mb-4">{{ profile_user.username }}</h2>
         <dl class="space-y-2">
             <div class="flex">
@@ -26,7 +26,7 @@
         </dl>
     </div>
     
-    <div class="bg-yakiimo-cream-light rounded-lg p-6">
+    <div class="bg-yakiimo-cream-light rounded-lg border border-yakiimo-purple-border p-6">
         <div class="flex justify-between items-center mb-4">
             <h2 class="text-xl font-semibold">{{ profile_user.username }}'s Restaurant Lists</h2>
             {% if user.is_authenticated and user.id == profile_user.id %}

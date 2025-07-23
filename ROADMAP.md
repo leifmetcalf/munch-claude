@@ -1,19 +1,19 @@
 [] home page
     [x] recently added restaurants from friends
     [] recommended lists
-    [] updates from lists you follow
+    [x] updates from lists you follow
 
 [] lists
     [x] delete lists
     [x] comments on lists
-    [] follow lists
-    [] upvote a 
+    [x] follow lists
+    [] upvote a list or comment (?)
     [] special list for "munchie log"
-    [] fix followers and folling list ui
+    [x] fix followers and folling list ui
 
 [] restaurants
     [] comments on restaurants (maybe)
-    [] restaurnt add to list form autocomplete with url is wrong.
+    [x] restaurnt add to list form autocomplete with url is wrong.
 
 [] profile
     [] "favourite" lists

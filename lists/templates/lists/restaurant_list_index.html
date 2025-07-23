@@ -9,7 +9,7 @@
         <a href="{% url 'restaurantlist_create' %}" class="bg-yakiimo-yellow text-yakiimo-purple hover:bg-yakiimo-yellow-hover px-4 py-2 rounded-md text-sm font-medium transition-colors">Create New List</a>
     </div>
     
-    <div class="bg-yakiimo-cream-light rounded-lg border border-gray-200 p-6">
+    <div class="bg-yakiimo-cream-light rounded-lg border border-yakiimo-purple-border p-6">
         <form method="get" class="flex gap-4">
             <div class="flex-1">
                 <input 
@@ -44,7 +44,7 @@
 {% if restaurant_lists %}
     <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
         {% for restaurant_list in restaurant_lists %}
-            <div class="bg-yakiimo-cream-light rounded-lg border border-gray-200 p-6">
+            <div class="bg-yakiimo-cream-light rounded-lg border border-yakiimo-purple-border p-6">
                 <h3 class="text-xl font-semibold text-yakiimo-purple mb-2">
                     <a href="{% url 'restaurantlist_detail' restaurant_list.id %}" class="hover:text-yakiimo-purple-light">{{ restaurant_list.name }}</a>
                 </h3>

@@ -13,7 +13,7 @@
 {% if followers %}
     <div class="space-y-4">
         {% for follow in followers %}
-            <div class="bg-yakiimo-cream-light rounded-lg border border-gray-200 p-6">
+            <div class="bg-yakiimo-cream-light rounded-lg border border-yakiimo-purple-border p-6">
                 <div class="flex justify-between items-start">
                     <div class="flex-1">
                         <h3 class="text-xl font-semibold text-yakiimo-purple mb-2">
@@ -31,7 +31,7 @@
     </div>
 {% endif %}
 
-<div class="mt-8 pt-6 border-t border-gray-200">
+<div class="mt-8">
     <a href="{% url 'restaurantlist_detail' restaurant_list.id %}" class="text-yakiimo-purple-light hover:text-yakiimo-purple font-medium">← Back to "{{ restaurant_list.name }}"</a>
 </div>
 {% endblock %}
