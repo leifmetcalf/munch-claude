@@ -170,7 +170,9 @@ def restaurant_index(request):
 
 def restaurantlist_index(request):
     query = request.GET.get('q', '')
-    restaurant_lists = RestaurantList.objects.all().annotate(
+    restaurant_lists = RestaurantList.objects.filter(
+        is_munch_log=False
+    ).annotate(
         follower_count=models.Count('followers')
     )
     
@@ -190,7 +192,10 @@ def restaurantlist_index(request):
 @login_required
 def user_restaurantlist_index(request):
     query = request.GET.get('q', '')
-    restaurant_lists = RestaurantList.objects.filter(owner=request.user).annotate(
+    restaurant_lists = RestaurantList.objects.filter(
+        owner=request.user,
+        is_munch_log=False
+    ).annotate(
         follower_count=models.Count('followers')
     )
     
@@ -277,16 +282,28 @@ def restaurantlistitem_create(request):
     Query parameters can be used to set default form values:
     - ?list=<id>: Pre-select a list
     - ?restaurant=<id>: Pre-select a restaurant
+    - ?munchlog=true: Pre-select the user's munch log
     """
-    # Check if user has lists
-    user_lists = RestaurantList.objects.filter(owner=request.user)
-    if not user_lists.exists():
-        messages.error(request, "You don't have any restaurant lists. Create one first.")
-        return redirect('restaurantlist_create')
+    # Ensure user has a munch log
+    munch_log = request.user.get_or_create_munch_log()
+    
+    # Get all user's lists (including munch log)
+    user_lists = RestaurantList.objects.filter(owner=request.user).order_by(
+        models.Case(
+            models.When(is_munch_log=True, then=0),
+            default=1
+        ),
+        '-inserted_at'
+    )
     
     # Get URL parameter values
     list_id = request.GET.get('list')
     restaurant_id = request.GET.get('restaurant')
+    use_munch_log = request.GET.get('munchlog') == 'true'
+    
+    # If munchlog=true, override list_id to use munch log
+    if use_munch_log:
+        list_id = str(munch_log.id)
     
     if request.method == 'POST':
         form = RestaurantListItemForm(request.POST)
@@ -583,8 +600,11 @@ def restaurant_search_api(request):
 def profile(request, user_id):
     profile_user = get_object_or_404(User, id=user_id)
     
-    # Get user's restaurant lists
-    user_lists = RestaurantList.objects.filter(owner=profile_user).order_by('-inserted_at')
+    # Get user's restaurant lists (excluding munch log)
+    user_lists = RestaurantList.objects.filter(
+        owner=profile_user,
+        is_munch_log=False
+    ).order_by('-inserted_at')
     
     # Get statistics
     total_lists = user_lists.count()
@@ -654,4 +674,66 @@ def list_followers(request, list_id):
     return render(request, 'lists/list_followers.html', {
         'restaurant_list': restaurant_list,
         'followers': followers
+    })
+
+
+def munch_log(request, user_id):
+    """Display a user's Munch Log."""
+    munch_log_user = get_object_or_404(User, id=user_id)
+    
+    # Get or create the user's munch log
+    restaurant_list = munch_log_user.get_or_create_munch_log()
+    
+    # Get all items in the munch log, ordered by most recent first (reverse chronological)
+    list_items = RestaurantListItem.objects.filter(
+        restaurant_list=restaurant_list
+    ).order_by('-inserted_at')
+    
+    # Get comments for the munch log
+    comments = restaurant_list.comments.all()
+    
+    # Check if current user is following this munch log
+    is_following = False
+    if request.user.is_authenticated:
+        is_following = ListFollow.objects.filter(
+            follower=request.user,
+            restaurant_list=restaurant_list
+        ).exists()
+    
+    # Get follower count
+    follower_count = restaurant_list.followers.count()
+    
+    # Handle comment form submission
+    if request.method == 'POST' and request.user.is_authenticated:
+        comment_form = ListCommentForm(request.POST)
+        if comment_form.is_valid():
+            comment = comment_form.save(commit=False)
+            comment.author = request.user
+            comment.save()
+            messages.success(request, 'Your comment has been added!')
+            return redirect('munch_log', user_id=user_id)
+    else:
+        comment_form = ListCommentForm(initial={'restaurant_list': restaurant_list})
+    
+    # Extract coordinates for the map
+    restaurant_coordinates = []
+    for item in list_items:
+        if item.restaurant.location:
+            restaurant_coordinates.append({
+                'lat': item.restaurant.location.y,  # latitude
+                'lng': item.restaurant.location.x,  # longitude
+                'name': item.restaurant.name,
+                'address': item.restaurant.address,
+                'notes': item.notes or ''
+            })
+    
+    return render(request, 'lists/restaurant_list_detail.html', {
+        'restaurant_list': restaurant_list,
+        'list_items': list_items,
+        'comments': comments,
+        'comment_form': comment_form,
+        'restaurant_coordinates': restaurant_coordinates,
+        'restaurant_coordinates_json': json.dumps(restaurant_coordinates, cls=DjangoJSONEncoder),
+        'is_following': is_following,
+        'follower_count': follower_count
     })

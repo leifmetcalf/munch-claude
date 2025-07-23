@@ -7,7 +7,17 @@ from django.dispatch import receiver
 
 
 class User(AbstractUser):
-    pass
+    def get_or_create_munch_log(self):
+        """Get or create the user's Munch Log."""
+        munch_log, created = RestaurantList.objects.get_or_create(
+            owner=self,
+            is_munch_log=True,
+            defaults={
+                'name': f"{self.username}'s Munch Log",
+                'blurb': "My personal log of restaurant visits and food adventures!"
+            }
+        )
+        return munch_log
 
 
 class Restaurant(models.Model):
@@ -46,9 +56,17 @@ class RestaurantList(models.Model):
     owner = models.ForeignKey(User, on_delete=models.CASCADE)
     blurb = models.TextField(blank=True, help_text="Description or notes about this list")
     inserted_at = models.DateTimeField(auto_now_add=True)
+    is_munch_log = models.BooleanField(default=False, help_text="Designates if this is the user's special Munch Log")
     
     class Meta:
         ordering = ['-inserted_at']
+        constraints = [
+            models.UniqueConstraint(
+                fields=['owner', 'is_munch_log'],
+                condition=models.Q(is_munch_log=True),
+                name='unique_munch_log_per_user'
+            )
+        ]
     
     def __str__(self):
         return self.name
