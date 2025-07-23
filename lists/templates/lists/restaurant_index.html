@@ -41,7 +41,7 @@
 {% if restaurants %}
     <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6 mb-6">
         {% for restaurant in restaurants %}
-            <div class="bg-yakiimo-cream-light rounded-lg border border-yakiimo-purple-border hover:border-yakiimo-yellow p-6 transition-colors">
+            <div class="bg-yakiimo-cream-light rounded-lg border border-yakiimo-purple-border p-6">
                 <h3 class="text-xl font-semibold text-yakiimo-purple mb-2">
                     <a href="{% url 'restaurant_detail' restaurant.id %}" class="hover:text-yakiimo-purple-light">{{ restaurant.name }}</a>
                 </h3>
