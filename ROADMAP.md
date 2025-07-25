@@ -10,6 +10,8 @@
     [] upvote a list or comment (?)
     [] special list for "munchie log"
     [x] fix followers and folling list ui
+    [] BUG when someone access munchie log via the list number it is not sorter properly
+    [] you can rearrang your munch log when you edit it.
 
 [] restaurants
     [] comments on restaurants (maybe)
@@ -26,3 +28,11 @@
 
 [x] Import restaurnat
     [x] auto fill in query from search to query to nominatim
+
+[] munch log
+    [] currently decide if i need to second view for munch log or change existing view
+    [] not deleting munch log
+    [] change values fine
+    [] shouldnt come up on restaurants
+    [] "recent logs"
+    

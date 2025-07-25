@@ -5,7 +5,7 @@
 {% block content %}
 <div class="mb-6">
     <div class="flex justify-between items-center mb-6">
-        <h1 class="text-3xl font-bold text-yakiimo-purple">My Lists</h1>
+        <h1 class="text-3xl font-bold text-yakiimo-purple">{{ list_user.username }}'s Lists</h1>
         <a href="{% url 'restaurantlist_create' %}" class="bg-yakiimo-yellow text-yakiimo-purple hover:bg-yakiimo-yellow-hover px-4 py-2 rounded-md text-sm font-medium transition-colors">Create New List</a>
     </div>
     
@@ -23,7 +23,7 @@
                 Search
             </button>
             {% if query %}
-                <a href="{% url 'user_restaurantlist_index' %}" class="bg-yakiimo-yellow hover:bg-yakiimo-yellow-hover text-yakiimo-purple px-6 py-2 rounded-md text-sm font-medium transition-colors">
+                <a href="{% url 'user_restaurantlist_index' list_user.id %}" class="bg-yakiimo-yellow hover:bg-yakiimo-yellow-hover text-yakiimo-purple px-6 py-2 rounded-md text-sm font-medium transition-colors">
                     Clear
                 </a>
             {% endif %}
@@ -58,7 +58,7 @@
     </div>
 {% else %}
     <div class="text-center py-12">
-        <p class="text-yakiimo-purple-light text-lg">You haven't created any restaurant lists yet.</p>
+        <p class="text-yakiimo-purple-light text-lg">{{ list_user.username }} hasn't created any restaurant lists yet.</p>
         <a href="{% url 'restaurantlist_create' %}" class="mt-4 inline-block bg-yakiimo-yellow text-yakiimo-purple hover:bg-yakiimo-yellow-hover px-4 py-2 rounded-md text-sm font-medium transition-colors">Create your first list</a>
     </div>
 {% endif %}

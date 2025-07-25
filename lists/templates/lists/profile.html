@@ -23,18 +23,33 @@
                     </a>
                 </dd>
             </div>
+            {% if user.is_authenticated and user.id == profile_user.id %}
+                <div class="mt-4 pt-4 border-t border-yakiimo-purple-border">
+                    <form method="post" action="{% url 'logout' %}" class="inline">
+                        {% csrf_token %}
+                        <button type="submit" class="text-yakiimo-purple-light hover:text-yakiimo-purple text-sm font-medium">Logout</button>
+                    </form>
+                </div>
+            {% endif %}
         </dl>
     </div>
     
-    <div class="mb-4">
+    <div class="mb-4 flex gap-4">
         <a href="{% url 'munch_log' user_id=profile_user.id %}" class="inline-block bg-yakiimo-yellow text-yakiimo-purple hover:bg-yakiimo-yellow-hover px-6 py-3 rounded-md font-medium transition-colors">
             🍠 View {{ profile_user.username }}'s Munch Log
+        </a>
+        <a href="{% url 'user_restaurantlist_index' profile_user.id %}" class="inline-block bg-yakiimo-yellow text-yakiimo-purple hover:bg-yakiimo-yellow-hover px-6 py-3 rounded-md font-medium transition-colors">
+            All {{ profile_user.username }}'s Lists
         </a>
     </div>
     
     <div class="bg-yakiimo-cream-light rounded-lg border border-yakiimo-purple-border p-6">
         <div class="flex justify-between items-center mb-4">
-            <h2 class="text-xl font-semibold">{{ profile_user.username }}'s Restaurant Lists</h2>
+            <h2 class="text-xl font-semibold">
+                <a href="{% url 'user_restaurantlist_index' profile_user.id %}" class="text-yakiimo-purple hover:text-yakiimo-purple-light">
+                    {{ profile_user.username }}'s Lists
+                </a>
+            </h2>
             {% if user.is_authenticated and user.id == profile_user.id %}
                 <a href="{% url 'restaurantlist_create' %}" class="bg-yakiimo-yellow hover:bg-yakiimo-yellow-hover text-yakiimo-purple px-4 py-2 rounded transition-colors">
                     Create New List

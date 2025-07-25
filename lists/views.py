@@ -189,11 +189,11 @@ def restaurantlist_index(request):
     })
 
 
-@login_required
-def user_restaurantlist_index(request):
+def user_restaurantlist_index(request, user_id):
+    list_user = get_object_or_404(User, id=user_id)
     query = request.GET.get('q', '')
     restaurant_lists = RestaurantList.objects.filter(
-        owner=request.user,
+        owner=list_user,
         is_munch_log=False
     ).annotate(
         follower_count=models.Count('followers')
@@ -205,7 +205,8 @@ def user_restaurantlist_index(request):
     
     return render(request, 'lists/user_restaurant_list_index.html', {
         'restaurant_lists': restaurant_lists,
-        'query': query
+        'query': query,
+        'list_user': list_user
     })
 
 
@@ -543,7 +544,7 @@ def restaurantlist_delete(request, list_id):
         list_name = restaurant_list.name
         restaurant_list.delete()
         messages.success(request, f'List "{list_name}" has been deleted.')
-        return redirect('user_restaurantlist_index')
+        return redirect('user_restaurantlist_index', user_id=request.user.id)
     
     # For GET requests, redirect back to edit page
     return redirect('restaurantlist_edit', list_id=list_id)
@@ -684,7 +685,7 @@ def munch_log(request, user_id):
     # Get or create the user's munch log
     restaurant_list = munch_log_user.get_or_create_munch_log()
     
-    # Get all items in the munch log, ordered by most recent first (reverse chronological)
+    # Get all items in the munch log, ordered by oldest first (chronological)
     list_items = RestaurantListItem.objects.filter(
         restaurant_list=restaurant_list
     ).order_by('-inserted_at')
