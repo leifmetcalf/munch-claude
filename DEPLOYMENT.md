@@ -19,7 +19,7 @@ source $HOME/.cargo/env
 
 ### Create application user
 ```bash
-sudo useradd -m -s /bin/bash munch
+sudo useradd -m munch
 ```
 
 ## 2. Database Setup
