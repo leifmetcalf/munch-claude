@@ -79,7 +79,7 @@ DB_PORT=5432
 
 **Important**: Generate a secure SECRET_KEY:
 ```bash
-python3 -c "from django.core.management.utils import get_random_secret_key; print(get_random_secret_key())"
+uv run python -c "from django.core.management.utils import get_random_secret_key; print(get_random_secret_key())"
 ```
 
 ### Set environment file permissions

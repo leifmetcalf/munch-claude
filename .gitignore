@@ -17,3 +17,6 @@ node_modules/
 
 # Media files (user uploads)
 media/
+
+# Environment variables
+.env
