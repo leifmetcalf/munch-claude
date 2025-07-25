@@ -35,4 +35,8 @@
     [] change values fine
     [] shouldnt come up on restaurants
     [] "recent logs"
-    
+    [] back log munch
+   
+[] other
+    [] change map layer
+    [] figure out systemd security - leif
