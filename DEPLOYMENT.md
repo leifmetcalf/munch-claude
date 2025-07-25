@@ -92,6 +92,18 @@ set -a; source .env; set +a
 uv run manage.py collectstatic --noinput
 ```
 
+### Set static files permissions
+```bash
+# Exit munch user session
+exit
+
+# Set permissions so Caddy can serve static files
+sudo chmod 755 /home/munch
+sudo chmod 755 /home/munch/munchzone
+sudo chmod -R 755 /home/munch/munchzone/staticfiles
+sudo chmod -R 755 /home/munch/munchzone/media
+```
+
 ### Run database migrations
 ```bash
 set -a; source .env; set +a
