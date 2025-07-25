@@ -88,25 +88,25 @@ chmod 600 /home/munch/munchzone/.env
 
 ### Build static files
 ```bash
-source .env
+set -a; source .env; set +a
 uv run manage.py collectstatic --noinput
 ```
 
 ### Run database migrations
 ```bash
-source .env
+set -a; source .env; set +a
 uv run manage.py migrate
 ```
 
 ### Create Django superuser
 ```bash
-source .env
+set -a; source .env; set +a
 uv run manage.py createsuperuser
 ```
 
 ### Test the application
 ```bash
-source .env
+set -a; source .env; set +a
 uv run manage.py check --deploy
 ```
 
@@ -310,10 +310,10 @@ git pull origin master
 uv sync
 
 # Rebuild static files
-source .env && uv run manage.py collectstatic --noinput
+set -a; source .env; set +a && uv run manage.py collectstatic --noinput
 
 # Apply database migrations
-source .env && uv run manage.py migrate
+set -a; source .env; set +a && uv run manage.py migrate
 
 # Restart services
 sudo systemctl restart munchzone
