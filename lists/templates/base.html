@@ -20,7 +20,7 @@
                         <a href="{% url 'restaurant_index' %}" class="text-yakiimo-cream hover:text-white px-2 py-2 rounded-md text-sm font-medium">Explore Restaurants</a>
                         <a href="{% url 'user_restaurantlist_index' user.id %}" class="text-yakiimo-cream hover:text-white px-2 py-2 rounded-md text-sm font-medium">My Lists</a>
                         <a href="{% url 'user_following_lists' user.id %}" class="text-yakiimo-cream hover:text-white px-2 py-2 rounded-md text-sm font-medium">Following</a>
-                        <a href="{% url 'restaurantlistitem_create' %}?munchlog=true" class="bg-yakiimo-yellow hover:bg-yakiimo-yellow-hover text-yakiimo-purple px-2 py-2 rounded-md text-sm font-bold transition-colors">Log a Munch</a>
+                        <a href="{% url 'munchlogitem_create' %}" class="bg-yakiimo-yellow hover:bg-yakiimo-yellow-hover text-yakiimo-purple px-2 py-2 rounded-md text-sm font-bold transition-colors">Log a Munch</a>
                     {% endif %}
                 </div>
                 

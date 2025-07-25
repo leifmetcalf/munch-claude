@@ -1,0 +1,43 @@
+<!-- Shared restaurant search component -->
+<!-- Parameters: form_field_id, search_input_id, results_container_id, selected_restaurant -->
+<div>
+    <label class="block text-sm font-medium text-yakiimo-purple mb-2">
+        Restaurant (...or <a href="{% url 'restaurant_nominatim' %}" class="text-yakiimo-purple-light hover:text-yakiimo-purple">import a restaurant</a>)
+    </label>
+    <!-- Autocomplete search input -->
+    <div class="relative">
+        <input 
+            type="text" 
+            id="{{ search_input_id }}" 
+            placeholder="Search for a restaurant..." 
+            value="{% if selected_restaurant %}{{ selected_restaurant.name }} - {{ selected_restaurant.address }}{% endif %}"
+            class="w-full px-3 py-2 border border-yakiimo-purple-border rounded-md focus:border-yakiimo-yellow"
+            autocomplete="off">
+        <div id="{{ results_container_id }}" class="absolute z-10 w-full bg-yakiimo-cream-light border border-yakiimo-purple-border rounded-md mt-1 hidden"></div>
+        <div id="no-js-message" class="mt-2 text-sm text-yakiimo-purple-light">
+            <noscript>
+                JavaScript is required for restaurant search. You can add restaurants to lists from individual restaurant pages.
+            </noscript>
+        </div>
+    </div>
+    
+    <!-- Hidden form field -->
+    <div class="hidden">
+        {{ restaurant_field }}
+    </div>
+    
+    <!-- Display errors -->
+    {% if restaurant_field.errors %}
+        <div class="mt-1 text-sm text-red-600">
+            {% for error in restaurant_field.errors %}
+                <p>{{ error }}</p>
+            {% endfor %}
+        </div>
+    {% endif %}
+</div>
+
+<style>
+.result-item.selected {
+    background-color: var(--color-blue-50);
+}
+</style>

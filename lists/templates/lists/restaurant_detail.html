@@ -12,6 +12,7 @@
             {% if user.is_authenticated %}
                 <div class="flex gap-2">
                     <a href="{% url 'restaurantlistitem_create' %}?restaurant={{ restaurant.id }}" class="bg-yakiimo-yellow hover:bg-yakiimo-yellow-hover text-yakiimo-purple px-3 py-1 rounded text-sm font-medium transition-colors">Add to List</a>
+                    <a href="{% url 'munchlogitem_create' %}?restaurant={{ restaurant.id }}" class="bg-yakiimo-yellow hover:bg-yakiimo-yellow-hover text-yakiimo-purple px-3 py-1 rounded text-sm font-medium transition-colors">🍠 Add to Munch Log</a>
                     <a href="{% url 'restaurant_image_add' restaurant.id %}" class="bg-yakiimo-yellow text-yakiimo-purple hover:bg-yakiimo-yellow-hover px-3 py-1 rounded text-sm font-medium transition-colors">Add Image</a>
                 </div>
             {% endif %}

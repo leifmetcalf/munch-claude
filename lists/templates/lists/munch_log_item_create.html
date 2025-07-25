@@ -1,10 +1,10 @@
 {% extends 'base.html' %}
 
-{% block title %}Munch - Add Restaurant to List{% endblock %}
+{% block title %}Munch - Add Restaurant to Munch Log{% endblock %}
 
 {% block content %}
 <div class="max-w-2xl mx-auto">
-    <h1 class="text-3xl font-bold text-yakiimo-purple mb-6">Add Restaurant to List</h1>
+    <h1 class="text-3xl font-bold text-yakiimo-purple mb-6">🍠 Add Restaurant to Munch Log</h1>
 
     <div class="bg-yakiimo-cream-light rounded-lg border border-yakiimo-purple-border p-6">
         <form method="post" class="space-y-6">
@@ -13,26 +13,9 @@
             <!-- Restaurant Selection -->
             {% include 'lists/_restaurant_search.html' with search_input_id='restaurant-search' results_container_id='restaurant-results' restaurant_field=form.restaurant selected_restaurant=selected_restaurant %}
             
-            <!-- Restaurant List Selection -->
-            <div>
-                <label class="block text-sm font-medium text-yakiimo-purple mb-2">Restaurant List</label>
-                <!-- Show list selection dropdown -->
-                <select id="list-selector" class="w-full px-3 py-2 border border-yakiimo-purple-border rounded-md focus:border-yakiimo-yellow">
-                    <option value="">Choose a list...</option>
-                    {% for list in user_lists %}
-                        <option value="{{ list.id }}" {% if selected_list_id == list.id|stringformat:"s" %}selected{% endif %}>{{ list.name }}</option>
-                    {% endfor %}
-                </select>
-                <div class="hidden">
-                    {{ form.restaurant_list }}
-                </div>
-                {% if form.restaurant_list.errors %}
-                    <div class="mt-1 text-sm text-red-600">
-                        {% for error in form.restaurant_list.errors %}
-                            <p>{{ error }}</p>
-                        {% endfor %}
-                    </div>
-                {% endif %}
+            <!-- Munch Log (hidden) -->
+            <div class="hidden">
+                {{ form.munch_log }}
             </div>
             
             <div>
@@ -58,18 +41,14 @@
                         <a href="{% url 'restaurant_detail' request.GET.restaurant %}" class="text-yakiimo-purple-light hover:text-yakiimo-purple font-medium">
                             ← Back to restaurant
                         </a>
-                    {% elif request.GET.list %}
-                        <a href="{% url 'restaurantlist_detail' request.GET.list %}" class="text-yakiimo-purple-light hover:text-yakiimo-purple font-medium">
-                            ← Back to list
-                        </a>
                     {% else %}
-                        <a href="{% url 'restaurantlist_index' %}" class="text-yakiimo-purple-light hover:text-yakiimo-purple font-medium">
-                            ← Back to lists
+                        <a href="{% url 'munch_log' user_id=munch_log.owner.id %}" class="text-yakiimo-purple-light hover:text-yakiimo-purple font-medium">
+                            ← Back to Munch Log
                         </a>
                     {% endif %}
                 </div>
                 <button type="submit" class="bg-yakiimo-yellow text-yakiimo-purple hover:bg-yakiimo-yellow-hover px-4 py-2 rounded-md text-sm font-medium transition-colors">
-                    Add to List
+                    🍠 Add to Munch Log
                 </button>
             </div>
         </form>
@@ -86,16 +65,6 @@ document.addEventListener('DOMContentLoaded', function() {
         'restaurant-results', 
         '{{ form.restaurant.id_for_label }}'
     );
-    
-    // Update hidden list input when list selector changes
-    const listSelector = document.getElementById('list-selector');
-    const listHiddenInput = document.getElementById('{{ form.restaurant_list.id_for_label }}');
-    
-    if (listSelector && listHiddenInput) {
-        listSelector.addEventListener('change', function() {
-            listHiddenInput.value = this.value;
-        });
-    }
 });
 </script>
 {% endblock %}

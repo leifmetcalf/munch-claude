@@ -14,6 +14,7 @@ urlpatterns = [
     path('list/<int:list_id>/delete/', views.restaurantlist_delete, name='restaurantlist_delete'),
     path('list/<int:list_id>/follow/', views.toggle_list_follow, name='toggle_list_follow'),
     path('listitem/create/', views.restaurantlistitem_create, name='restaurantlistitem_create'),
+    path('munchlogitem/create/', views.munchlogitem_create, name='munchlogitem_create'),
     path('listitem/<int:item_id>/move-up/', views.move_item_up, name='move_item_up'),
     path('listitem/<int:item_id>/move-down/', views.move_item_down, name='move_item_down'),
     path('listitem/<int:item_id>/delete/', views.restaurantlistitem_delete, name='restaurantlistitem_delete'),

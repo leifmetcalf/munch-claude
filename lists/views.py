@@ -275,84 +275,57 @@ def restaurantlist_create(request):
 
 @login_required
 def restaurantlistitem_create(request):
-    """Unified view for adding restaurants to lists.
+    """View for adding restaurants to lists.
     
     Query parameters can be used to set default form values:
     - ?list=<id>: Pre-select a list
     - ?restaurant=<id>: Pre-select a restaurant
-    - ?munchlog=true: Pre-select the user's munch log
     """
-    # Ensure user has a munch log
-    munch_log = request.user.get_or_create_munch_log()
-    
-    # Get all user's lists (munch log is now a separate model)
+    # Get all user's lists
     user_lists = RestaurantList.objects.filter(owner=request.user).order_by('-inserted_at')
     
     # Get URL parameter values
     list_id = request.GET.get('list')
     restaurant_id = request.GET.get('restaurant')
-    use_munch_log = request.GET.get('munchlog') == 'true'
     
     if request.method == 'POST':
-        if use_munch_log or request.POST.get('add_to_munchlog'):
-            # Handle munch log item creation
-            form = MunchLogItemForm(request.POST)
-            if form.is_valid():
-                # Verify user owns the selected munch log
-                if form.cleaned_data['munch_log'].owner != request.user:
-                    messages.error(request, "You don't have permission to add items to this munch log.")
-                    return redirect('restaurantlist_index')
-                
-                munch_log_item = form.save()
-                messages.success(request, f'"{munch_log_item.restaurant.name}" added to your Munch Log!')
-                
-                # Redirect based on where user came from
-                if restaurant_id:
-                    return redirect('restaurant_detail', restaurant_id=munch_log_item.restaurant.id)
-                else:
-                    return redirect('munch_log', user_id=request.user.id)
-        else:
-            # Handle regular list item creation
-            form = RestaurantListItemForm(request.POST)
-            if form.is_valid():
-                # Verify user owns the selected list
-                if form.cleaned_data['restaurant_list'].owner != request.user:
-                    messages.error(request, "You don't have permission to add items to this list.")
-                    return redirect('restaurantlist_index')
-                
-                list_item = form.save(commit=False)
-                
-                # Auto-generate order to add to end of list
-                max_order = RestaurantListItem.objects.filter(
-                    restaurant_list=list_item.restaurant_list
-                ).aggregate(models.Max('order'))['order__max'] or 0
-                list_item.order = max_order + 1
-                
-                list_item.save()
-                messages.success(request, f'"{list_item.restaurant.name}" added to "{list_item.restaurant_list.name}"!')
-                
-                # Redirect based on where user came from
-                if restaurant_id:
-                    return redirect('restaurant_detail', restaurant_id=list_item.restaurant.id)
-                elif list_id:
-                    return redirect('restaurantlist_detail', list_id=list_item.restaurant_list.id)
-                else:
-                    return redirect('restaurantlistitem_create')
+        form = RestaurantListItemForm(request.POST)
+        if form.is_valid():
+            # Verify user owns the selected list
+            if form.cleaned_data['restaurant_list'].owner != request.user:
+                messages.error(request, "You don't have permission to add items to this list.")
+                return redirect('restaurantlist_index')
+            
+            list_item = form.save(commit=False)
+            
+            # Auto-generate order to add to end of list
+            max_order = RestaurantListItem.objects.filter(
+                restaurant_list=list_item.restaurant_list
+            ).aggregate(models.Max('order'))['order__max'] or 0
+            list_item.order = max_order + 1
+            
+            list_item.save()
+            messages.success(request, f'"{list_item.restaurant.name}" added to "{list_item.restaurant_list.name}"!')
+            
+            # Redirect based on where user came from
+            if restaurant_id:
+                return redirect('restaurant_detail', restaurant_id=list_item.restaurant.id)
+            elif list_id:
+                return redirect('restaurantlist_detail', list_id=list_item.restaurant_list.id)
+            else:
+                return redirect('restaurantlistitem_create')
     else:
-        # Initialize forms with URL parameter values
+        # Initialize form with URL parameter values
         initial = {}
-        munch_log_initial = {}
         
         if restaurant_id:
             try:
                 restaurant = Restaurant.objects.get(pk=restaurant_id)
                 initial['restaurant'] = restaurant
-                munch_log_initial['restaurant'] = restaurant
-                munch_log_initial['munch_log'] = munch_log
             except Restaurant.DoesNotExist:
                 pass
         
-        if list_id and not use_munch_log:
+        if list_id:
             try:
                 list_obj = RestaurantList.objects.get(pk=list_id, owner=request.user)
                 initial['restaurant_list'] = list_obj
@@ -360,7 +333,6 @@ def restaurantlistitem_create(request):
                 pass
         
         form = RestaurantListItemForm(initial=initial)
-        munch_log_form = MunchLogItemForm(initial=munch_log_initial)
     
     # Get selected restaurant info for display
     selected_restaurant = None
@@ -372,13 +344,10 @@ def restaurantlistitem_create(request):
     
     return render(request, 'lists/restaurant_list_item_create.html', {
         'form': form,
-        'munch_log_form': munch_log_form,
         'user_lists': user_lists,
-        'munch_log': munch_log,
         'selected_list_id': list_id,
         'selected_restaurant_id': restaurant_id,
-        'selected_restaurant': selected_restaurant,
-        'use_munch_log': use_munch_log
+        'selected_restaurant': selected_restaurant
     })
 
 
@@ -731,6 +700,64 @@ def munch_log(request, user_id):
         'munch_log_items': munch_log_items,
         'restaurant_coordinates': restaurant_coordinates,
         'restaurant_coordinates_json': json.dumps(restaurant_coordinates, cls=DjangoJSONEncoder),
+    })
+
+
+@login_required
+def munchlogitem_create(request):
+    """Dedicated view for adding restaurants to munch logs.
+    
+    Query parameters can be used to set default form values:
+    - ?restaurant=<id>: Pre-select a restaurant
+    """
+    # Ensure user has a munch log
+    munch_log = request.user.get_or_create_munch_log()
+    
+    # Get URL parameter values
+    restaurant_id = request.GET.get('restaurant')
+    
+    if request.method == 'POST':
+        form = MunchLogItemForm(request.POST)
+        if form.is_valid():
+            # Verify user owns the selected munch log
+            if form.cleaned_data['munch_log'].owner != request.user:
+                messages.error(request, "You don't have permission to add items to this munch log.")
+                return redirect('munch_log', user_id=request.user.id)
+            
+            munch_log_item = form.save()
+            messages.success(request, f'"{munch_log_item.restaurant.name}" added to your Munch Log!')
+            
+            # Redirect based on where user came from
+            if restaurant_id:
+                return redirect('restaurant_detail', restaurant_id=munch_log_item.restaurant.id)
+            else:
+                return redirect('munch_log', user_id=request.user.id)
+    else:
+        # Initialize form with URL parameter values
+        initial = {'munch_log': munch_log}
+        
+        if restaurant_id:
+            try:
+                restaurant = Restaurant.objects.get(pk=restaurant_id)
+                initial['restaurant'] = restaurant
+            except Restaurant.DoesNotExist:
+                pass
+        
+        form = MunchLogItemForm(initial=initial)
+    
+    # Get selected restaurant info for display
+    selected_restaurant = None
+    if restaurant_id:
+        try:
+            selected_restaurant = Restaurant.objects.get(pk=restaurant_id)
+        except Restaurant.DoesNotExist:
+            pass
+    
+    return render(request, 'lists/munch_log_item_create.html', {
+        'form': form,
+        'munch_log': munch_log,
+        'selected_restaurant_id': restaurant_id,
+        'selected_restaurant': selected_restaurant
     })
 
 
