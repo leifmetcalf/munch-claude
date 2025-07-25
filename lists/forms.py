@@ -1,6 +1,6 @@
 from django import forms
 from django.contrib.auth.forms import UserCreationForm
-from .models import RestaurantList, RestaurantListItem, Restaurant, RestaurantImage, User, ListComment
+from .models import RestaurantList, RestaurantListItem, Restaurant, RestaurantImage, User, ListComment, MunchLog, MunchLogItem
 
 
 class RestaurantForm(forms.Form):
@@ -72,6 +72,21 @@ class RestaurantListItemForm(forms.ModelForm):
 class CustomUserCreationForm(UserCreationForm):
     class Meta(UserCreationForm.Meta):
         model = User
+
+
+class MunchLogItemForm(forms.ModelForm):
+    class Meta:
+        model = MunchLogItem
+        fields = ['restaurant', 'munch_log', 'notes']
+        widgets = {
+            'restaurant': forms.HiddenInput(),
+            'munch_log': forms.HiddenInput(),
+            'notes': forms.Textarea(attrs={
+                'rows': 3, 
+                'placeholder': 'Optional notes about this restaurant...',
+                'class': 'w-full px-3 py-2 border border-yakiimo-purple-border rounded-md focus:border-yakiimo-yellow'
+            }),
+        }
 
 
 class ListCommentForm(forms.ModelForm):

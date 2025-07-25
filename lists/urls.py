@@ -24,5 +24,6 @@ urlpatterns = [
     path('profile/<int:user_id>/munchlog/', views.munch_log, name='munch_log'),
     path('profile/<int:user_id>/following/', views.user_following_lists, name='user_following_lists'),
     path('list/<int:list_id>/followers/', views.list_followers, name='list_followers'),
+    path('munchlogitem/<int:item_id>/delete/', views.munchlogitem_delete, name='munchlogitem_delete'),
     path('api/restaurant/search/', views.restaurant_search_api, name='restaurant_search_api'),
 ]

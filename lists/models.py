@@ -9,12 +9,10 @@ from django.dispatch import receiver
 class User(AbstractUser):
     def get_or_create_munch_log(self):
         """Get or create the user's Munch Log."""
-        munch_log, created = RestaurantList.objects.get_or_create(
+        munch_log, created = MunchLog.objects.get_or_create(
             owner=self,
-            is_munch_log=True,
             defaults={
-                'name': f"{self.username}'s Munch Log",
-                'blurb': "My personal log of restaurant visits and food adventures!"
+                'name': f"{self.username}'s Munch Log"
             }
         )
         return munch_log
@@ -56,17 +54,17 @@ class RestaurantList(models.Model):
     owner = models.ForeignKey(User, on_delete=models.CASCADE)
     blurb = models.TextField(blank=True, help_text="Description or notes about this list")
     inserted_at = models.DateTimeField(auto_now_add=True)
-    is_munch_log = models.BooleanField(default=False, help_text="Designates if this is the user's special Munch Log")
     
     class Meta:
         ordering = ['-inserted_at']
-        constraints = [
-            models.UniqueConstraint(
-                fields=['owner', 'is_munch_log'],
-                condition=models.Q(is_munch_log=True),
-                name='unique_munch_log_per_user'
-            )
-        ]
+    
+    def __str__(self):
+        return self.name
+
+
+class MunchLog(models.Model):
+    name = models.CharField(max_length=200)
+    owner = models.OneToOneField(User, on_delete=models.CASCADE, related_name='munch_log')
     
     def __str__(self):
         return self.name
@@ -84,6 +82,19 @@ class RestaurantListItem(models.Model):
     
     def __str__(self):
         return f"{self.restaurant.name} in {self.restaurant_list.name}"
+
+
+class MunchLogItem(models.Model):
+    restaurant = models.ForeignKey(Restaurant, on_delete=models.CASCADE)
+    munch_log = models.ForeignKey(MunchLog, on_delete=models.CASCADE)
+    inserted_at = models.DateTimeField(auto_now_add=True)
+    notes = models.TextField(blank=True, help_text="Optional notes about this restaurant")
+    
+    class Meta:
+        ordering = ['-inserted_at']
+    
+    def __str__(self):
+        return f"{self.restaurant.name} in {self.munch_log.name}"
 
 
 @receiver(post_delete, sender=RestaurantImage)

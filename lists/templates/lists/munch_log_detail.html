@@ -1,0 +1,105 @@
+{% extends 'base.html' %}
+
+{% block title %}{{ munch_log.name }} - Munch{% endblock %}
+
+{% block content %}
+<div class="mb-6">
+    <div class="flex items-baseline mb-4 text-yakiimo-purple font-bold">
+        <h1 class="text-3xl">🍠 {{ munch_log.name }}</h1>
+        <span class="text-base ml-2">by <a href="{% url 'profile' user_id=munch_log.owner.id %}" class="hover:text-yakiimo-purple-light">{{ munch_log.owner.username }}</a></span>
+    </div>
+    
+    <div class="bg-yakiimo-cream-light rounded-lg border border-yakiimo-purple-border p-4 mb-6">
+        <p class="text-black text-sm mb-2"><strong>Personal restaurant log for {{ munch_log.owner.username }}</strong></p>
+        <p class="text-black text-sm">{{ munch_log_items|length }} entr{{ munch_log_items|length|pluralize:"y,ies" }}</p>
+    </div>
+
+    <div class="flex gap-4 mb-6">
+        {% if user.is_authenticated and user == munch_log.owner %}
+            <a href="{% url 'restaurantlistitem_create' %}?munchlog=true" class="bg-yakiimo-yellow text-yakiimo-purple hover:bg-yakiimo-yellow-hover px-4 py-2 rounded-md text-sm font-medium transition-colors">Add Restaurant to Munch Log</a>
+        {% endif %}
+    </div>
+</div>
+
+{% if munch_log_items %}
+    <h2 class="text-2xl font-semibold text-yakiimo-purple mb-4">Restaurant Adventures</h2>
+    
+    {% if restaurant_coordinates %}
+        <div id="map" class="h-96 w-full my-6 border border-yakiimo-purple-border rounded-lg"></div>
+        <script>
+            // Initialize the map
+            var map = L.map('map');
+            
+            // Add tile layer
+            L.tileLayer('https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png', {
+                attribution: '© OpenStreetMap contributors'
+            }).addTo(map);
+            
+            // Add markers for all restaurants
+            var restaurants = {{ restaurant_coordinates_json|safe }};
+            var markers = [];
+            
+            restaurants.forEach(function(restaurant) {
+                var marker = L.marker([restaurant.lat, restaurant.lng]).addTo(map);
+                var popupContent = '<strong>' + restaurant.name + '</strong><br>' + restaurant.address;
+                if (restaurant.notes) {
+                    popupContent += '<br><em>Notes: ' + restaurant.notes + '</em>';
+                }
+                marker.bindPopup(popupContent);
+                markers.push(marker);
+            });
+            
+            // Fit map to show all markers
+            if (markers.length > 0) {
+                var group = new L.featureGroup(markers);
+                map.fitBounds(group.getBounds().pad(0.1));
+            }
+        </script>
+    {% endif %}
+    
+    <div class="space-y-4">
+        {% for item in munch_log_items %}
+            <div class="bg-yakiimo-cream-light rounded-lg border border-yakiimo-purple-border p-6">
+                <div class="flex gap-4">
+                    <div class="flex-1">
+                        <h3 class="text-xl font-semibold text-yakiimo-purple mb-2">
+                            <a href="{% url 'restaurant_detail' item.restaurant.id %}" class="hover:text-yakiimo-purple-light">{{ item.restaurant.name }}</a>
+                        </h3>
+                        <p class="text-black text-sm mb-2">{{ item.restaurant.address }}</p>
+                        <p class="text-black text-sm mb-2"><strong>Visited:</strong> {{ item.inserted_at|date:"F j, Y" }}</p>
+                        {% if item.notes %}
+                            <p class="text-black mt-3">"{{ item.notes }}"</p>
+                        {% endif %}
+                    </div>
+                    {% if item.restaurant.images.first %}
+                        <div class="w-32 h-32 flex-shrink-0">
+                            <img src="{{ item.restaurant.images.first.image.url }}" alt="{{ item.restaurant.images.first.alt_text|default:item.restaurant.name }}" class="w-full h-full object-cover rounded-lg">
+                        </div>
+                    {% endif %}
+                </div>
+                {% if user.is_authenticated and user == munch_log.owner %}
+                    <div class="mt-4 pt-4 border-t border-yakiimo-purple-border">
+                        <form method="post" action="{% url 'munchlogitem_delete' item.id %}" class="inline" onsubmit="return confirm('Are you sure you want to remove this restaurant from your Munch Log?');">
+                            {% csrf_token %}
+                            <button type="submit" class="text-sm text-yakiimo-purple-light hover:text-yakiimo-purple">Remove from Munch Log</button>
+                        </form>
+                    </div>
+                {% endif %}
+            </div>
+        {% endfor %}
+    </div>
+{% else %}
+    <div class="text-center py-12">
+        <p class="text-yakiimo-purple-light text-lg">No restaurants in this munch log yet.</p>
+        {% if user.is_authenticated and user == munch_log.owner %}
+            <p class="text-yakiimo-purple-light text-sm mt-2">
+                <a href="{% url 'restaurantlistitem_create' %}?munchlog=true" class="text-yakiimo-purple-light hover:text-yakiimo-purple font-medium">Add your first restaurant</a> to get started!
+            </p>
+        {% endif %}
+    </div>
+{% endif %}
+
+<div class="mt-8 pt-6 border-t border-yakiimo-purple-border">
+    <a href="{% url 'profile' user_id=munch_log.owner.id %}" class="text-yakiimo-purple-light hover:text-yakiimo-purple font-medium">← Back to {{ munch_log.owner.username }}'s Profile</a>
+</div>
+{% endblock %}

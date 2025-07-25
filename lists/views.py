@@ -11,8 +11,8 @@ from django.core.serializers.json import DjangoJSONEncoder
 from django.db import models, transaction
 from django.http import JsonResponse
 from django.shortcuts import render, redirect, get_object_or_404
-from .models import Restaurant, RestaurantList, RestaurantListItem, RestaurantImage, User, ListComment, ListFollow
-from .forms import RestaurantForm, RestaurantListForm, RestaurantListItemForm, CustomUserCreationForm, RestaurantImageForm, ListCommentForm
+from .models import Restaurant, RestaurantList, RestaurantListItem, RestaurantImage, User, ListComment, ListFollow, MunchLog, MunchLogItem
+from .forms import RestaurantForm, RestaurantListForm, RestaurantListItemForm, CustomUserCreationForm, RestaurantImageForm, ListCommentForm, MunchLogItemForm
 
 
 class OSMType(Enum):
@@ -170,9 +170,7 @@ def restaurant_index(request):
 
 def restaurantlist_index(request):
     query = request.GET.get('q', '')
-    restaurant_lists = RestaurantList.objects.filter(
-        is_munch_log=False
-    ).annotate(
+    restaurant_lists = RestaurantList.objects.annotate(
         follower_count=models.Count('followers')
     )
     
@@ -193,8 +191,7 @@ def user_restaurantlist_index(request, user_id):
     list_user = get_object_or_404(User, id=user_id)
     query = request.GET.get('q', '')
     restaurant_lists = RestaurantList.objects.filter(
-        owner=list_user,
-        is_munch_log=False
+        owner=list_user
     ).annotate(
         follower_count=models.Count('followers')
     )
@@ -288,62 +285,74 @@ def restaurantlistitem_create(request):
     # Ensure user has a munch log
     munch_log = request.user.get_or_create_munch_log()
     
-    # Get all user's lists (including munch log)
-    user_lists = RestaurantList.objects.filter(owner=request.user).order_by(
-        models.Case(
-            models.When(is_munch_log=True, then=0),
-            default=1
-        ),
-        '-inserted_at'
-    )
+    # Get all user's lists (munch log is now a separate model)
+    user_lists = RestaurantList.objects.filter(owner=request.user).order_by('-inserted_at')
     
     # Get URL parameter values
     list_id = request.GET.get('list')
     restaurant_id = request.GET.get('restaurant')
     use_munch_log = request.GET.get('munchlog') == 'true'
     
-    # If munchlog=true, override list_id to use munch log
-    if use_munch_log:
-        list_id = str(munch_log.id)
-    
     if request.method == 'POST':
-        form = RestaurantListItemForm(request.POST)
-        
-        if form.is_valid():
-            # Verify user owns the selected list
-            if form.cleaned_data['restaurant_list'].owner != request.user:
-                messages.error(request, "You don't have permission to add items to this list.")
-                return redirect('restaurantlist_index')
-            
-            list_item = form.save(commit=False)
-            
-            # Auto-generate order to add to end of list
-            max_order = RestaurantListItem.objects.filter(
-                restaurant_list=list_item.restaurant_list
-            ).aggregate(models.Max('order'))['order__max'] or 0
-            list_item.order = max_order + 1
-            
-            list_item.save()
-            messages.success(request, f'"{list_item.restaurant.name}" added to "{list_item.restaurant_list.name}"!')
-            
-            # Redirect based on where user came from
-            if restaurant_id:
-                return redirect('restaurant_detail', restaurant_id=list_item.restaurant.id)
-            elif list_id:
-                return redirect('restaurantlist_detail', list_id=list_item.restaurant_list.id)
-            else:
-                return redirect('restaurantlistitem_create')
+        if use_munch_log or request.POST.get('add_to_munchlog'):
+            # Handle munch log item creation
+            form = MunchLogItemForm(request.POST)
+            if form.is_valid():
+                # Verify user owns the selected munch log
+                if form.cleaned_data['munch_log'].owner != request.user:
+                    messages.error(request, "You don't have permission to add items to this munch log.")
+                    return redirect('restaurantlist_index')
+                
+                munch_log_item = form.save()
+                messages.success(request, f'"{munch_log_item.restaurant.name}" added to your Munch Log!')
+                
+                # Redirect based on where user came from
+                if restaurant_id:
+                    return redirect('restaurant_detail', restaurant_id=munch_log_item.restaurant.id)
+                else:
+                    return redirect('munch_log', user_id=request.user.id)
+        else:
+            # Handle regular list item creation
+            form = RestaurantListItemForm(request.POST)
+            if form.is_valid():
+                # Verify user owns the selected list
+                if form.cleaned_data['restaurant_list'].owner != request.user:
+                    messages.error(request, "You don't have permission to add items to this list.")
+                    return redirect('restaurantlist_index')
+                
+                list_item = form.save(commit=False)
+                
+                # Auto-generate order to add to end of list
+                max_order = RestaurantListItem.objects.filter(
+                    restaurant_list=list_item.restaurant_list
+                ).aggregate(models.Max('order'))['order__max'] or 0
+                list_item.order = max_order + 1
+                
+                list_item.save()
+                messages.success(request, f'"{list_item.restaurant.name}" added to "{list_item.restaurant_list.name}"!')
+                
+                # Redirect based on where user came from
+                if restaurant_id:
+                    return redirect('restaurant_detail', restaurant_id=list_item.restaurant.id)
+                elif list_id:
+                    return redirect('restaurantlist_detail', list_id=list_item.restaurant_list.id)
+                else:
+                    return redirect('restaurantlistitem_create')
     else:
-        # Initialize form with URL parameter values
+        # Initialize forms with URL parameter values
         initial = {}
+        munch_log_initial = {}
+        
         if restaurant_id:
             try:
                 restaurant = Restaurant.objects.get(pk=restaurant_id)
                 initial['restaurant'] = restaurant
+                munch_log_initial['restaurant'] = restaurant
+                munch_log_initial['munch_log'] = munch_log
             except Restaurant.DoesNotExist:
                 pass
         
-        if list_id:
+        if list_id and not use_munch_log:
             try:
                 list_obj = RestaurantList.objects.get(pk=list_id, owner=request.user)
                 initial['restaurant_list'] = list_obj
@@ -351,6 +360,7 @@ def restaurantlistitem_create(request):
                 pass
         
         form = RestaurantListItemForm(initial=initial)
+        munch_log_form = MunchLogItemForm(initial=munch_log_initial)
     
     # Get selected restaurant info for display
     selected_restaurant = None
@@ -362,10 +372,13 @@ def restaurantlistitem_create(request):
     
     return render(request, 'lists/restaurant_list_item_create.html', {
         'form': form,
+        'munch_log_form': munch_log_form,
         'user_lists': user_lists,
+        'munch_log': munch_log,
         'selected_list_id': list_id,
         'selected_restaurant_id': restaurant_id,
-        'selected_restaurant': selected_restaurant
+        'selected_restaurant': selected_restaurant,
+        'use_munch_log': use_munch_log
     })
 
 
@@ -601,17 +614,28 @@ def restaurant_search_api(request):
 def profile(request, user_id):
     profile_user = get_object_or_404(User, id=user_id)
     
-    # Get user's restaurant lists (excluding munch log)
+    # Get user's restaurant lists (munch log is now separate)
     user_lists = RestaurantList.objects.filter(
-        owner=profile_user,
-        is_munch_log=False
+        owner=profile_user
     ).order_by('-inserted_at')
     
-    # Get statistics
+    # Get statistics - count both restaurant lists and munch log entries
     total_lists = user_lists.count()
-    total_restaurants = RestaurantListItem.objects.filter(
+    list_restaurants = RestaurantListItem.objects.filter(
         restaurant_list__owner=profile_user
     ).values('restaurant_id').distinct().count()
+    
+    # Also count munch log restaurants
+    munch_log_restaurants = 0
+    try:
+        munch_log = profile_user.munch_log
+        munch_log_restaurants = MunchLogItem.objects.filter(
+            munch_log=munch_log
+        ).values('restaurant_id').distinct().count()
+    except MunchLog.DoesNotExist:
+        pass
+    
+    total_restaurants = list_restaurants + munch_log_restaurants
     
     return render(request, 'lists/profile.html', {
         'profile_user': profile_user,
@@ -683,42 +707,16 @@ def munch_log(request, user_id):
     munch_log_user = get_object_or_404(User, id=user_id)
     
     # Get or create the user's munch log
-    restaurant_list = munch_log_user.get_or_create_munch_log()
+    munch_log = munch_log_user.get_or_create_munch_log()
     
-    # Get all items in the munch log, ordered by oldest first (chronological)
-    list_items = RestaurantListItem.objects.filter(
-        restaurant_list=restaurant_list
+    # Get all items in the munch log, ordered by newest first
+    munch_log_items = MunchLogItem.objects.filter(
+        munch_log=munch_log
     ).order_by('-inserted_at')
-    
-    # Get comments for the munch log
-    comments = restaurant_list.comments.all()
-    
-    # Check if current user is following this munch log
-    is_following = False
-    if request.user.is_authenticated:
-        is_following = ListFollow.objects.filter(
-            follower=request.user,
-            restaurant_list=restaurant_list
-        ).exists()
-    
-    # Get follower count
-    follower_count = restaurant_list.followers.count()
-    
-    # Handle comment form submission
-    if request.method == 'POST' and request.user.is_authenticated:
-        comment_form = ListCommentForm(request.POST)
-        if comment_form.is_valid():
-            comment = comment_form.save(commit=False)
-            comment.author = request.user
-            comment.save()
-            messages.success(request, 'Your comment has been added!')
-            return redirect('munch_log', user_id=user_id)
-    else:
-        comment_form = ListCommentForm(initial={'restaurant_list': restaurant_list})
     
     # Extract coordinates for the map
     restaurant_coordinates = []
-    for item in list_items:
+    for item in munch_log_items:
         if item.restaurant.location:
             restaurant_coordinates.append({
                 'lat': item.restaurant.location.y,  # latitude
@@ -728,13 +726,27 @@ def munch_log(request, user_id):
                 'notes': item.notes or ''
             })
     
-    return render(request, 'lists/restaurant_list_detail.html', {
-        'restaurant_list': restaurant_list,
-        'list_items': list_items,
-        'comments': comments,
-        'comment_form': comment_form,
+    return render(request, 'lists/munch_log_detail.html', {
+        'munch_log': munch_log,
+        'munch_log_items': munch_log_items,
         'restaurant_coordinates': restaurant_coordinates,
         'restaurant_coordinates_json': json.dumps(restaurant_coordinates, cls=DjangoJSONEncoder),
-        'is_following': is_following,
-        'follower_count': follower_count
     })
+
+
+@login_required
+def munchlogitem_delete(request, item_id):
+    """Delete a munch log item."""
+    item = get_object_or_404(MunchLogItem, id=item_id)
+    
+    # Check if user owns the munch log
+    if item.munch_log.owner != request.user:
+        messages.error(request, "You don't have permission to delete items from this munch log.")
+        return redirect('munch_log', user_id=item.munch_log.owner.id)
+    
+    restaurant_name = item.restaurant.name
+    user_id = item.munch_log.owner.id
+    item.delete()
+    
+    messages.success(request, f'"{restaurant_name}" removed from your Munch Log.')
+    return redirect('munch_log', user_id=user_id)

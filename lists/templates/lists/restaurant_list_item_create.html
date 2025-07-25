@@ -4,9 +4,28 @@
 
 {% block content %}
 <div class="max-w-2xl mx-auto">
-    <h1 class="text-3xl font-bold text-yakiimo-purple mb-6">Add Restaurant to List</h1>
+    <h1 class="text-3xl font-bold text-yakiimo-purple mb-6">
+        {% if use_munch_log %}
+            🍠 Add Restaurant to Munch Log
+        {% else %}
+            Add Restaurant to List
+        {% endif %}
+    </h1>
 
-    <div class="bg-yakiimo-cream-light rounded-lg border border-yakiimo-purple-border p-6">
+    <!-- Option selector tabs -->
+    <div class="mb-6">
+        <div class="flex space-x-1 bg-yakiimo-cream rounded-lg p-1">
+            <button type="button" id="list-tab" class="flex-1 px-4 py-2 rounded-md text-sm font-medium transition-colors {% if not use_munch_log %}bg-yakiimo-yellow text-yakiimo-purple{% else %}text-yakiimo-purple-light hover:text-yakiimo-purple{% endif %}">
+                Add to List
+            </button>
+            <button type="button" id="munchlog-tab" class="flex-1 px-4 py-2 rounded-md text-sm font-medium transition-colors {% if use_munch_log %}bg-yakiimo-yellow text-yakiimo-purple{% else %}text-yakiimo-purple-light hover:text-yakiimo-purple{% endif %}">
+                🍠 Add to Munch Log
+            </button>
+        </div>
+    </div>
+
+    <!-- Regular List Form -->
+    <div id="list-form" class="bg-yakiimo-cream-light rounded-lg border border-yakiimo-purple-border p-6 {% if use_munch_log %}hidden{% endif %}">
         <form method="post" class="space-y-6">
             {% csrf_token %}
             
@@ -98,6 +117,75 @@
             </div>
         </form>
     </div>
+
+    <!-- Munch Log Form -->
+    <div id="munchlog-form" class="bg-yakiimo-cream-light rounded-lg border border-yakiimo-purple-border p-6 {% if not use_munch_log %}hidden{% endif %}">
+        <form method="post" class="space-y-6">
+            {% csrf_token %}
+            <input type="hidden" name="add_to_munchlog" value="1">
+            
+            <!-- Restaurant Selection -->
+            <div>
+                <label class="block text-sm font-medium text-yakiimo-purple mb-2">Restaurant (...or <a href="{% url 'restaurant_nominatim' %}" class="text-yakiimo-purple-light hover:text-yakiimo-purple">import a restaurant</a>)</label>
+                <!-- Autocomplete search input -->
+                <div class="relative">
+                    <input 
+                        type="text" 
+                        id="munchlog-restaurant-search" 
+                        placeholder="Search for a restaurant..." 
+                        value="{% if selected_restaurant %}{{ selected_restaurant.name }} - {{ selected_restaurant.address }}{% endif %}"
+                        class="w-full px-3 py-2 border border-yakiimo-purple-border rounded-md focus:border-yakiimo-yellow"
+                        autocomplete="off">
+                    <div id="munchlog-restaurant-results" class="absolute z-10 w-full bg-yakiimo-cream-light border border-yakiimo-purple-border rounded-md mt-1 hidden"></div>
+                </div>
+                {{ munch_log_form.restaurant }}
+                {% if munch_log_form.restaurant.errors %}
+                    <div class="mt-1 text-sm text-red-600">
+                        {% for error in munch_log_form.restaurant.errors %}
+                            <p>{{ error }}</p>
+                        {% endfor %}
+                    </div>
+                {% endif %}
+            </div>
+            
+            <!-- Munch Log (hidden) -->
+            {{ munch_log_form.munch_log }}
+            
+            <div>
+                <label for="{{ munch_log_form.notes.id_for_label }}" class="block text-sm font-medium text-yakiimo-purple mb-2">
+                    {{ munch_log_form.notes.label }}
+                </label>
+                {{ munch_log_form.notes }}
+                {% if munch_log_form.notes.help_text %}
+                    <p class="mt-1 text-sm text-yakiimo-purple-light">{{ munch_log_form.notes.help_text }}</p>
+                {% endif %}
+                {% if munch_log_form.notes.errors %}
+                    <div class="mt-1 text-sm text-red-600">
+                        {% for error in munch_log_form.notes.errors %}
+                            <p>{{ error }}</p>
+                        {% endfor %}
+                    </div>
+                {% endif %}
+            </div>
+            
+            <div class="flex justify-between items-center">
+                <div>
+                    {% if request.GET.restaurant %}
+                        <a href="{% url 'restaurant_detail' request.GET.restaurant %}" class="text-yakiimo-purple-light hover:text-yakiimo-purple font-medium">
+                            ← Back to restaurant
+                        </a>
+                    {% else %}
+                        <a href="{% url 'munch_log' user_id=munch_log.owner.id %}" class="text-yakiimo-purple-light hover:text-yakiimo-purple font-medium">
+                            ← Back to Munch Log
+                        </a>
+                    {% endif %}
+                </div>
+                <button type="submit" class="bg-yakiimo-yellow text-yakiimo-purple hover:bg-yakiimo-yellow-hover px-4 py-2 rounded-md text-sm font-medium transition-colors">
+                    🍠 Add to Munch Log
+                </button>
+            </div>
+        </form>
+    </div>
     
 </div>
 
@@ -109,11 +197,42 @@
 
 <script>
 document.addEventListener('DOMContentLoaded', function() {
+    // Tab switching functionality
+    const listTab = document.getElementById('list-tab');
+    const munchlogTab = document.getElementById('munchlog-tab');
+    const listForm = document.getElementById('list-form');
+    const munchlogForm = document.getElementById('munchlog-form');
+    
+    listTab.addEventListener('click', function() {
+        listTab.classList.add('bg-yakiimo-yellow', 'text-yakiimo-purple');
+        listTab.classList.remove('text-yakiimo-purple-light');
+        munchlogTab.classList.remove('bg-yakiimo-yellow', 'text-yakiimo-purple');
+        munchlogTab.classList.add('text-yakiimo-purple-light');
+        
+        listForm.classList.remove('hidden');
+        munchlogForm.classList.add('hidden');
+    });
+    
+    munchlogTab.addEventListener('click', function() {
+        munchlogTab.classList.add('bg-yakiimo-yellow', 'text-yakiimo-purple');
+        munchlogTab.classList.remove('text-yakiimo-purple-light');
+        listTab.classList.remove('bg-yakiimo-yellow', 'text-yakiimo-purple');
+        listTab.classList.add('text-yakiimo-purple-light');
+        
+        munchlogForm.classList.remove('hidden');
+        listForm.classList.add('hidden');
+    });
+
+    // Restaurant search functionality for both forms
     const searchInput = document.getElementById('restaurant-search');
     const resultsContainer = document.getElementById('restaurant-results');
     const restaurantHiddenInput = document.getElementById('{{ form.restaurant.id_for_label }}');
     const listSelector = document.getElementById('list-selector');
     const listHiddenInput = document.getElementById('{{ form.restaurant_list.id_for_label }}');
+    
+    const munchlogSearchInput = document.getElementById('munchlog-restaurant-search');
+    const munchlogResultsContainer = document.getElementById('munchlog-restaurant-results');
+    const munchlogRestaurantHiddenInput = document.getElementById('{{ munch_log_form.restaurant.id_for_label }}');
     
     let searchTimeout;
     
@@ -124,82 +243,92 @@ document.addEventListener('DOMContentLoaded', function() {
         });
     }
     
-    if (!searchInput || !resultsContainer || !restaurantHiddenInput) {
-        return;
+    // Setup search for regular list form
+    if (searchInput && resultsContainer && restaurantHiddenInput) {
+        setupRestaurantSearch(searchInput, resultsContainer, restaurantHiddenInput);
     }
     
-    // Search restaurants as user types
-    searchInput.addEventListener('input', function() {
-        clearTimeout(searchTimeout);
-        const query = this.value.trim();
-        
-        if (query.length < 2) {
-            hideResults();
-            return;
-        }
-        
-        searchTimeout = setTimeout(() => {
-            searchRestaurants(query);
-        }, 300);
-    });
+    // Setup search for munch log form
+    if (munchlogSearchInput && munchlogResultsContainer && munchlogRestaurantHiddenInput) {
+        setupRestaurantSearch(munchlogSearchInput, munchlogResultsContainer, munchlogRestaurantHiddenInput);
+    }
     
-    // Hide results when clicking outside
-    document.addEventListener('click', function(e) {
-        if (!searchInput.contains(e.target) && !resultsContainer.contains(e.target)) {
-            hideResults();
-        }
-    });
-    
-    // Handle keyboard navigation
-    searchInput.addEventListener('keydown', function(e) {
-        const items = resultsContainer.querySelectorAll('.result-item');
-        const selected = resultsContainer.querySelector('.result-item.selected');
+    function setupRestaurantSearch(searchInput, resultsContainer, hiddenInput) {
+        // Search restaurants as user types
+        searchInput.addEventListener('input', function() {
+            clearTimeout(searchTimeout);
+            const query = this.value.trim();
+            
+            if (query.length < 2) {
+                hideResults(resultsContainer);
+                return;
+            }
+            
+            searchTimeout = setTimeout(() => {
+                searchRestaurants(query, resultsContainer, hiddenInput, searchInput);
+            }, 300);
+        });
         
-        if (e.key === 'ArrowDown') {
-            e.preventDefault();
-            if (selected && selected.nextElementSibling) {
-                selected.classList.remove('selected');
-                selected.nextElementSibling.classList.add('selected');
-            } else if (items.length > 0) {
-                if (selected) selected.classList.remove('selected');
-                items[0].classList.add('selected');
+        // Hide results when clicking outside
+        document.addEventListener('click', function(e) {
+            if (!searchInput.contains(e.target) && !resultsContainer.contains(e.target)) {
+                hideResults(resultsContainer);
             }
-        } else if (e.key === 'ArrowUp') {
-            e.preventDefault();
-            if (selected && selected.previousElementSibling) {
-                selected.classList.remove('selected');
-                selected.previousElementSibling.classList.add('selected');
-            } else if (items.length > 0) {
-                if (selected) selected.classList.remove('selected');
-                items[items.length - 1].classList.add('selected');
+        });
+        
+        // Handle keyboard navigation
+        searchInput.addEventListener('keydown', function(e) {
+            const items = resultsContainer.querySelectorAll('.result-item');
+            const selected = resultsContainer.querySelector('.result-item.selected');
+            
+            if (e.key === 'ArrowDown') {
+                e.preventDefault();
+                if (selected && selected.nextElementSibling) {
+                    selected.classList.remove('selected');
+                    selected.nextElementSibling.classList.add('selected');
+                } else if (items.length > 0) {
+                    if (selected) selected.classList.remove('selected');
+                    items[0].classList.add('selected');
+                }
+            } else if (e.key === 'ArrowUp') {
+                e.preventDefault();
+                if (selected && selected.previousElementSibling) {
+                    selected.classList.remove('selected');
+                    selected.previousElementSibling.classList.add('selected');
+                } else if (items.length > 0) {
+                    if (selected) selected.classList.remove('selected');
+                    items[items.length - 1].classList.add('selected');
+                }
+            } else if (e.key === 'Enter') {
+                e.preventDefault();
+                if (selected) {
+                    selectRestaurant(
+                        selected.dataset.id,
+                        selected.dataset.name,
+                        selected.dataset.address,
+                        hiddenInput,
+                        searchInput
+                    );
+                }
+            } else if (e.key === 'Escape') {
+                hideResults(resultsContainer);
             }
-        } else if (e.key === 'Enter') {
-            e.preventDefault();
-            if (selected) {
-                selectRestaurant(
-                    selected.dataset.id,
-                    selected.dataset.name,
-                    selected.dataset.address
-                );
-            }
-        } else if (e.key === 'Escape') {
-            hideResults();
-        }
-    });
+        });
+    }
     
-    function searchRestaurants(query) {
+    function searchRestaurants(query, resultsContainer, hiddenInput, searchInput) {
         fetch(`/api/restaurant/search/?q=${encodeURIComponent(query)}`)
             .then(response => response.json())
             .then(data => {
-                displayResults(data.restaurants);
+                displayResults(data.restaurants, resultsContainer, hiddenInput, searchInput);
             })
             .catch(error => {
                 console.error('Search error:', error);
-                showError('Error searching restaurants');
+                showError('Error searching restaurants', resultsContainer);
             });
     }
     
-    function displayResults(restaurants) {
+    function displayResults(restaurants, resultsContainer, hiddenInput, searchInput) {
         if (restaurants.length === 0) {
             resultsContainer.innerHTML = '<div class="p-3 text-yakiimo-purple-light">No restaurants found</div>';
             resultsContainer.classList.remove('hidden');
@@ -222,7 +351,7 @@ document.addEventListener('DOMContentLoaded', function() {
         // Add click handlers
         resultsContainer.querySelectorAll('.result-item').forEach(item => {
             item.addEventListener('click', function() {
-                selectRestaurant(this.dataset.id, this.dataset.name, this.dataset.address);
+                selectRestaurant(this.dataset.id, this.dataset.name, this.dataset.address, hiddenInput, searchInput);
             });
             
             item.addEventListener('mouseenter', function() {
@@ -232,17 +361,19 @@ document.addEventListener('DOMContentLoaded', function() {
         });
     }
     
-    function selectRestaurant(id, name, address) {
-        restaurantHiddenInput.value = id;
+    function selectRestaurant(id, name, address, hiddenInput, searchInput) {
+        hiddenInput.value = id;
         searchInput.value = `${name} - ${address}`;
-        hideResults();
+        // Find the results container for this search input
+        const resultsContainer = searchInput.nextElementSibling;
+        hideResults(resultsContainer);
     }
     
-    function hideResults() {
+    function hideResults(resultsContainer) {
         resultsContainer.classList.add('hidden');
     }
     
-    function showError(message) {
+    function showError(message, resultsContainer) {
         resultsContainer.innerHTML = `<div class="p-3 text-red-600">${escapeHtml(message)}</div>`;
         resultsContainer.classList.remove('hidden');
     }
