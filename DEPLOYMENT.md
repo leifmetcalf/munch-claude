@@ -252,27 +252,7 @@ sudo ufw allow 443/tcp     # HTTPS
 sudo ufw enable
 ```
 
-## 7. Security Hardening
-
-### Restrict database access
-```bash
-# Find PostgreSQL version and edit pg_hba.conf
-PG_VERSION=$(sudo -u postgres psql -t -c "SELECT version()" | grep -oE '[0-9]+\.[0-9]+' | head -1 | cut -d. -f1)
-sudo nano /etc/postgresql/$PG_VERSION/main/pg_hba.conf
-```
-
-Ensure only local connections with peer authentication:
-```
-# Only allow local connections using peer authentication
-local   all             munch                                   peer
-```
-
-Restart PostgreSQL:
-```bash
-sudo systemctl restart postgresql
-```
-
-## 8. Deployment Checklist
+## 7. Deployment Checklist
 
 ### Pre-deployment
 - [ ] Domain DNS points to server IP
@@ -301,7 +281,7 @@ sudo systemctl restart postgresql
 - [ ] Document any custom configurations
 - [ ] Plan regular security updates
 
-## 9. Maintenance
+## 8. Maintenance
 
 ### Regular tasks
 - **Weekly**: Review logs for errors or security issues
