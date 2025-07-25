@@ -47,6 +47,16 @@ uv install
 npm install
 ```
 
+**Run tests:**
+```bash
+uv run manage.py test
+```
+
+**Collect static files (production):**
+```bash
+uv run manage.py collectstatic
+```
+
 ## Architecture
 
 ### Custom User Model
@@ -64,6 +74,10 @@ npm install
 - **RestaurantImage**: Multiple images per restaurant with automatic file cleanup
 - **RestaurantList**: User-owned lists of restaurants
 - **RestaurantListItem**: Junction table linking restaurants to lists (allows duplicates)
+- **MunchLog**: Personal restaurant log for each user (one-to-one with User)
+- **MunchLogItem**: Individual entries in a user's Munch Log
+- **ListComment**: Comments on restaurant lists
+- **ListFollow**: User following relationships for restaurant lists
 
 ### Nominatim API Integration
 - **Search**: Uses Nominatim Search API to find restaurants
@@ -128,3 +142,9 @@ Key function: `create_restaurant_from_osm(osm_type: OSMType, osm_id)` - takes en
 - Fixed design for mobile phone in portrait orientation
 - Templates use Django's template inheritance pattern
 - Accessibility: alt-text for images, screen reader compatibility
+
+## Social Features
+- **List Following**: Users can follow other users' restaurant lists
+- **Comments**: Users can comment on restaurant lists
+- **Activity Feed**: Home page shows recent activity from followed lists
+- **Munch Log**: Each user has a personal restaurant log (auto-created via `get_or_create_munch_log()`)
