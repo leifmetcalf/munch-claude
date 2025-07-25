@@ -11,21 +11,16 @@ This guide covers deploying the Munchzone Django application to production using
 
 ## 1. Server Setup
 
-### Install uv (Python package manager)
-```bash
-curl -LsSf https://astral.sh/uv/install.sh | sh
-source $HOME/.cargo/env
-```
-
 ### Create application user
 ```bash
-sudo useradd -m munch
+sudo useradd -m -s /bin/bash munch
 ```
 
 ## 2. Database Setup
 
 ### Create PostgreSQL user and database
 ```bash
+# Create user without password (will use peer authentication)
 sudo -u postgres createuser --createdb munch
 sudo -u postgres createdb -O munch munch
 ```
@@ -44,10 +39,16 @@ sudo -u postgres psql -d munch -c "CREATE EXTENSION IF NOT EXISTS postgis_topolo
 sudo su - munch
 ```
 
+### Install uv (Python package manager)
+```bash
+curl -LsSf https://astral.sh/uv/install.sh | sh
+source $HOME/.cargo/env
+```
+
 ### Clone repository
 ```bash
 cd /home/munch
-git clone https://github.com/your-username/munch-claude.git munchzone
+git clone https://github.com/leifmetcalf/munch-claude.git munchzone
 cd munchzone
 ```
 
@@ -55,6 +56,8 @@ cd munchzone
 ```bash
 uv install
 ```
+
+**Note**: Node.js/npm is not required for deployment as Tailwind CSS outputs are already compiled and included in the source tree.
 
 ### Create environment file
 ```bash
@@ -71,6 +74,7 @@ DB_NAME=munch
 DB_USER=munch
 DB_HOST=localhost
 DB_PORT=5432
+# DB_PASSWORD is not needed when using peer authentication
 ```
 
 **Important**: Generate a secure SECRET_KEY:
@@ -81,7 +85,6 @@ python3 -c "from django.core.management.utils import get_random_secret_key; prin
 ### Set environment file permissions
 ```bash
 chmod 600 /home/munch/munchzone/.env
-chown munch:munch /home/munch/munchzone/.env
 ```
 
 ### Build static files
@@ -196,11 +199,21 @@ www.munchzone.net {
 }
 
 munchzone.net {
-    root * /home/munch/munchzone
+    # Serve static files
+    handle_path /static/* {
+        file_server {
+            root /home/munch/munchzone/staticfiles
+        }
+    }
     
-    file_server /static/*
-    file_server /media/*
+    # Serve media files
+    handle_path /media/* {
+        file_server {
+            root /home/munch/munchzone/media
+        }
+    }
     
+    # Proxy everything else to Django
     reverse_proxy 127.0.0.1:8000
 }
 ```
