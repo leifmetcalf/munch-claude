@@ -72,8 +72,7 @@ SECRET_KEY=your-very-long-secret-key-here-change-this
 # Database
 DB_NAME=munch
 DB_USER=munch
-DB_HOST=localhost
-DB_PORT=5432
+# DB_HOST and DB_PORT are not needed when using unix socket connection
 # DB_PASSWORD is not needed when using peer authentication
 ```
 
