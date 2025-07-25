@@ -54,7 +54,7 @@ cd munchzone
 
 ### Install Python dependencies
 ```bash
-uv install
+uv sync
 ```
 
 **Note**: Node.js/npm is not required for deployment as Tailwind CSS outputs are already compiled and included in the source tree.
@@ -308,7 +308,7 @@ cd /home/munch/munchzone
 git pull origin master
 
 # Update dependencies
-uv install
+uv sync
 
 # Rebuild static files
 source .env && uv run manage.py collectstatic --noinput
