@@ -137,6 +137,16 @@ def restaurant_nominatim(request):
                 if not osm_type_enum:
                     raise ValueError(f"Invalid OSM type: {osm_type}")
                 
+                # Check if restaurant already exists
+                existing_restaurant = Restaurant.objects.filter(
+                    osm_type=osm_type_enum.value,
+                    osm_id=osm_id
+                ).first()
+                
+                if existing_restaurant:
+                    messages.info(request, f'"{existing_restaurant.name}" already exists in MunchZone. Redirecting to "{existing_restaurant.name}".')
+                    return redirect('restaurant_detail', restaurant_id=existing_restaurant.id)
+                
                 restaurant = create_restaurant_from_osm(osm_type_enum, osm_id)
                 messages.success(request, f'Restaurant "{restaurant.name}" added to database!')
                 return redirect('restaurant_detail', restaurant_id=restaurant.id)
@@ -588,29 +598,20 @@ def profile(request, user_id):
         owner=profile_user
     ).order_by('-inserted_at')
     
-    # Get statistics - count both restaurant lists and munch log entries
-    total_lists = user_lists.count()
-    list_restaurants = RestaurantListItem.objects.filter(
-        restaurant_list__owner=profile_user
-    ).values('restaurant_id').distinct().count()
+    # Get statistics
     
-    # Also count munch log restaurants
-    munch_log_restaurants = 0
+    # Count munch log entries
+    total_munches = 0
     try:
         munch_log = profile_user.munch_log
-        munch_log_restaurants = MunchLogItem.objects.filter(
-            munch_log=munch_log
-        ).values('restaurant_id').distinct().count()
+        total_munches = MunchLogItem.objects.count()
     except MunchLog.DoesNotExist:
         pass
-    
-    total_restaurants = list_restaurants + munch_log_restaurants
     
     return render(request, 'lists/profile.html', {
         'profile_user': profile_user,
         'user_lists': user_lists,
-        'total_lists': total_lists,
-        'total_restaurants': total_restaurants
+        'total_munches': total_munches
     })
 
 

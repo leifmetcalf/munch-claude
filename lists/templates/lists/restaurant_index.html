@@ -45,7 +45,6 @@
                 <h3 class="text-xl font-semibold text-yakiimo-purple mb-2">
                     <a href="{% url 'restaurant_detail' restaurant.id %}" class="hover:text-yakiimo-purple-light">{{ restaurant.name }}</a>
                 </h3>
-                <p class="text-black mb-2">{{ restaurant.address }}</p>
                 <p class="text-black text-sm">{{ restaurant.suburb }}{% if restaurant.region %}, {{ restaurant.region }}{% endif %}{% if restaurant.country %}, {{ restaurant.country }}{% endif %}</p>
             </div>
         {% endfor %}

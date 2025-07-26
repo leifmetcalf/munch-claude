@@ -23,6 +23,10 @@
                     </a>
                 </dd>
             </div>
+            <div class="flex">
+                <dt class="font-medium text-yakiimo-purple-light w-32">Total Munches:</dt>
+                <dd class="text-yakiimo-purple">{{ total_munches }}</dd>
+            </div>
             {% if user.is_authenticated and user.id == profile_user.id %}
                 <div class="mt-4 pt-4 border-t border-yakiimo-purple-border">
                     <form method="post" action="{% url 'logout' %}" class="inline">
@@ -36,7 +40,7 @@
     
     <div class="mb-4 flex gap-4">
         <a href="{% url 'munch_log' user_id=profile_user.id %}" class="inline-block bg-yakiimo-yellow text-yakiimo-purple hover:bg-yakiimo-yellow-hover px-6 py-3 rounded-md font-medium transition-colors">
-            🍠 View {{ profile_user.username }}'s Munch Log
+            View {{ profile_user.username }}'s Munch Log
         </a>
         <a href="{% url 'user_restaurantlist_index' profile_user.id %}" class="inline-block bg-yakiimo-yellow text-yakiimo-purple hover:bg-yakiimo-yellow-hover px-6 py-3 rounded-md font-medium transition-colors">
             All {{ profile_user.username }}'s Lists

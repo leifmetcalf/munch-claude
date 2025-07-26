@@ -4,7 +4,7 @@
 
 {% block content %}
 <div class="max-w-2xl mx-auto">
-    <h1 class="text-3xl font-bold text-yakiimo-purple mb-6">🍠 Add Restaurant to Munch Log</h1>
+    <h1 class="text-3xl font-bold text-yakiimo-purple mb-6">Add Restaurant to Munch Log</h1>
 
     <div class="bg-yakiimo-cream-light rounded-lg border border-yakiimo-purple-border p-6">
         <form method="post" class="space-y-6">
@@ -43,12 +43,12 @@
                         </a>
                     {% else %}
                         <a href="{% url 'munch_log' user_id=munch_log.owner.id %}" class="text-yakiimo-purple-light hover:text-yakiimo-purple font-medium">
-                            ← Back to Munch Log
+                            to Munch Log
                         </a>
                     {% endif %}
                 </div>
                 <button type="submit" class="bg-yakiimo-yellow text-yakiimo-purple hover:bg-yakiimo-yellow-hover px-4 py-2 rounded-md text-sm font-medium transition-colors">
-                    🍠 Add to Munch Log
+                    Munch
                 </button>
             </div>
         </form>

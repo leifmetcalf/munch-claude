@@ -5,13 +5,12 @@
 {% block content %}
 <div class="mb-6">
     <div class="flex items-baseline mb-4 text-yakiimo-purple font-bold">
-        <h1 class="text-3xl">🍠 {{ munch_log.name }}</h1>
+        <h1 class="text-3xl">{{ munch_log.name }}</h1>
         <span class="text-base ml-2">by <a href="{% url 'profile' user_id=munch_log.owner.id %}" class="hover:text-yakiimo-purple-light">{{ munch_log.owner.username }}</a></span>
     </div>
     
     <div class="bg-yakiimo-cream-light rounded-lg border border-yakiimo-purple-border p-4 mb-6">
-        <p class="text-black text-sm mb-2"><strong>Personal restaurant log for {{ munch_log.owner.username }}</strong></p>
-        <p class="text-black text-sm">{{ munch_log_items|length }} entr{{ munch_log_items|length|pluralize:"y,ies" }}</p>
+	    <p class="text-black text-sm"><strong>Munches: </strong>{{ munch_log_items|length }}</p>
     </div>
 
     <div class="flex gap-4 mb-6">
@@ -65,7 +64,7 @@
                         <h3 class="text-xl font-semibold text-yakiimo-purple mb-2">
                             <a href="{% url 'restaurant_detail' item.restaurant.id %}" class="hover:text-yakiimo-purple-light">{{ item.restaurant.name }}</a>
                         </h3>
-                        <p class="text-black text-sm mb-2">{{ item.restaurant.address }}</p>
+                        <p class="text-black text-sm mb-2">{{ item.restaurant.suburb }}{% if item.restaurant.region %}, {{ item.restaurant.region }}{% endif %}{% if item.restaurant.country %}, {{ item.restaurant.country }}{% endif %}</p>
                         <p class="text-black text-sm mb-2"><strong>Visited:</strong> {{ item.inserted_at|date:"F j, Y" }}</p>
                         {% if item.notes %}
                             <p class="text-black mt-3">"{{ item.notes }}"</p>
