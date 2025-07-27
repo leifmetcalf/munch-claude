@@ -61,7 +61,7 @@ uv sync
 
 ### Create environment file
 ```bash
-nano /home/munch/munchzone/.env
+nano /home/munch/munchzone/systemd.env
 ```
 
 Add the following content:
@@ -83,12 +83,12 @@ uv run python -c "from django.core.management.utils import get_random_secret_key
 
 ### Set environment file permissions
 ```bash
-chmod 600 /home/munch/munchzone/.env
+chmod 600 /home/munch/munchzone/systemd.env
 ```
 
 ### Build static files
 ```bash
-set -a; source .env; set +a
+set -a; source systemd.env; set +a
 uv run manage.py collectstatic --noinput
 ```
 
@@ -106,19 +106,19 @@ sudo chmod -R 755 /home/munch/munchzone/media
 
 ### Run database migrations
 ```bash
-set -a; source .env; set +a
+set -a; source systemd.env; set +a
 uv run manage.py migrate
 ```
 
 ### Create Django superuser
 ```bash
-set -a; source .env; set +a
+set -a; source systemd.env; set +a
 uv run manage.py createsuperuser
 ```
 
 ### Test the application
 ```bash
-set -a; source .env; set +a
+set -a; source systemd.env; set +a
 uv run manage.py check --deploy
 ```
 
@@ -152,7 +152,7 @@ Type=exec
 User=munch
 Group=munch
 WorkingDirectory=/home/munch/munchzone
-EnvironmentFile=/home/munch/munchzone/.env
+EnvironmentFile=/home/munch/munchzone/systemd.env
 ExecStart=/home/munch/.local/bin/uv run uvicorn munch.asgi:application --host 127.0.0.1 --port 8000
 Restart=on-failure
 RestartSec=5
@@ -302,10 +302,10 @@ git pull origin master
 uv sync
 
 # Rebuild static files
-set -a; source .env; set +a && uv run manage.py collectstatic --noinput
+set -a; source systemd.env; set +a && uv run manage.py collectstatic --noinput
 
 # Apply database migrations
-set -a; source .env; set +a && uv run manage.py migrate
+set -a; source systemd.env; set +a && uv run manage.py migrate
 
 # Restart services
 sudo systemctl restart munchzone
