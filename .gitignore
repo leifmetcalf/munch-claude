@@ -20,3 +20,7 @@ media/
 
 # Environment variables
 .env
+systemd.env
+
+# Static files (Django collectstatic output)
+staticfiles/
