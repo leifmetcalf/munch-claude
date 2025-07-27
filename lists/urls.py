@@ -21,6 +21,7 @@ urlpatterns = [
     path('restaurant/<int:restaurant_id>/', views.restaurant_detail, name='restaurant_detail'),
     path('restaurant/<int:restaurant_id>/add-image/', views.restaurant_image_add, name='restaurant_image_add'),
     path('profile/<int:user_id>/', views.profile, name='profile'),
+    path('profile/edit/', views.edit_profile, name='edit_profile'),
     path('profile/<int:user_id>/lists/', views.user_restaurantlist_index, name='user_restaurantlist_index'),
     path('profile/<int:user_id>/munchlog/', views.munch_log, name='munch_log'),
     path('profile/<int:user_id>/following/', views.user_following_lists, name='user_following_lists'),

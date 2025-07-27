@@ -21,6 +21,7 @@
     [] "favourite" lists
     [] add followers and following
     [] add "invite friend" functionality.
+    [] email validation email.
 
 [] about page
     [] importing restaurants
@@ -30,10 +31,9 @@
     [x] auto fill in query from search to query to nominatim
 
 [] munch log
-    [] currently decide if i need to second view for munch log or change existing view
-    [] not deleting munch log
+    [x] not deleting munch log
     [] change values fine
-    [] shouldnt come up on restaurants
+    [x] shouldnt come up on restaurants
     [] "recent logs"
     [] back log munch
    

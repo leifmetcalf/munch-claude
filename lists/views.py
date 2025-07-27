@@ -12,7 +12,7 @@ from django.db import models, transaction
 from django.http import JsonResponse
 from django.shortcuts import render, redirect, get_object_or_404
 from .models import Restaurant, RestaurantList, RestaurantListItem, RestaurantImage, User, ListComment, ListFollow, MunchLog, MunchLogItem
-from .forms import RestaurantForm, RestaurantListForm, RestaurantListItemForm, CustomUserCreationForm, RestaurantImageForm, ListCommentForm, MunchLogItemForm
+from .forms import RestaurantForm, RestaurantListForm, RestaurantListItemForm, CustomUserCreationForm, RestaurantImageForm, ListCommentForm, MunchLogItemForm, EditProfileForm
 
 
 class OSMType(Enum):
@@ -778,3 +778,20 @@ def munchlogitem_delete(request, item_id):
     
     messages.success(request, f'"{restaurant_name}" removed from your Munch Log.')
     return redirect('munch_log', user_id=user_id)
+
+
+@login_required
+def edit_profile(request):
+    """Edit user profile."""
+    if request.method == 'POST':
+        form = EditProfileForm(request.POST, instance=request.user)
+        if form.is_valid():
+            form.save()
+            messages.success(request, 'Your profile has been updated.')
+            return redirect('profile', user_id=request.user.id)
+    else:
+        form = EditProfileForm(instance=request.user)
+    
+    return render(request, 'lists/edit_profile.html', {
+        'form': form
+    })

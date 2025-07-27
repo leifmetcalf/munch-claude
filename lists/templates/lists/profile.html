@@ -7,10 +7,12 @@
     <div class="bg-yakiimo-cream-light rounded-lg border border-yakiimo-purple-border p-6 mb-8">
         <h2 class="text-xl font-semibold mb-4">{{ profile_user.username }}</h2>
         <dl class="space-y-2">
+            {% if user.is_authenticated and user.id == profile_user.id %}
             <div class="flex">
                 <dt class="font-medium text-yakiimo-purple-light w-32">Email:</dt>
                 <dd class="text-yakiimo-purple">{{ profile_user.email|default:"Not set" }}</dd>
             </div>
+            {% endif %}
             <div class="flex">
                 <dt class="font-medium text-yakiimo-purple-light w-32">Joined:</dt>
                 <dd class="text-yakiimo-purple">{{ profile_user.date_joined|date:"F d, Y" }}</dd>
@@ -28,7 +30,11 @@
                 <dd class="text-yakiimo-purple">{{ total_munches }}</dd>
             </div>
             {% if user.is_authenticated and user.id == profile_user.id %}
-                <div class="mt-4 pt-4 border-t border-yakiimo-purple-border">
+                <div class="mt-4 pt-4 border-t border-yakiimo-purple-border flex gap-4 items-center">
+                    <a href="{% url 'edit_profile' %}" class="text-yakiimo-purple-light hover:text-yakiimo-purple text-sm font-medium">
+                        Edit Profile
+                    </a>
+                    <span class="text-yakiimo-purple-light">•</span>
                     <form method="post" action="{% url 'logout' %}" class="inline">
                         {% csrf_token %}
                         <button type="submit" class="text-yakiimo-purple-light hover:text-yakiimo-purple text-sm font-medium">Logout</button>

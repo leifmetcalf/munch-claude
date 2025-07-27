@@ -101,3 +101,17 @@ class ListCommentForm(forms.ModelForm):
             }),
             'restaurant_list': forms.HiddenInput(),
         }
+
+
+class EditProfileForm(forms.ModelForm):
+    class Meta:
+        model = User
+        fields = ['username', 'email']
+        widgets = {
+            'username': forms.TextInput(attrs={
+                'class': 'w-full px-3 py-2 border border-yakiimo-purple-border rounded-md focus:border-yakiimo-yellow'
+            }),
+            'email': forms.EmailInput(attrs={
+                'class': 'w-full px-3 py-2 border border-yakiimo-purple-border rounded-md focus:border-yakiimo-yellow'
+            }),
+        }

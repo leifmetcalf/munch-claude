@@ -13,7 +13,6 @@
     --color-red-800: oklch(44.4% 0.177 26.899);
     --color-blue-50: oklch(97% 0.014 254.604);
     --color-gray-50: oklch(98.5% 0.002 247.839);
-    --color-gray-100: oklch(96.7% 0.003 264.542);
     --color-gray-200: oklch(92.8% 0.006 264.531);
     --color-gray-300: oklch(87.2% 0.01 258.338);
     --color-black: #000;
@@ -265,6 +264,9 @@
   .mt-12 {
     margin-top: calc(var(--spacing) * 12);
   }
+  .mb-1 {
+    margin-bottom: calc(var(--spacing) * 1);
+  }
   .mb-2 {
     margin-bottom: calc(var(--spacing) * 2);
   }
@@ -510,6 +512,9 @@
   .bg-yakiimo-cream-light {
     background-color: var(--color-yakiimo-cream-light);
   }
+  .bg-yakiimo-purple-light {
+    background-color: var(--color-yakiimo-purple-light);
+  }
   .bg-yakiimo-purple-vibrant {
     background-color: var(--color-yakiimo-purple-vibrant);
   }
@@ -636,6 +641,9 @@
   }
   .text-red-800 {
     color: var(--color-red-800);
+  }
+  .text-white {
+    color: var(--color-white);
   }
   .text-yakiimo-cream {
     color: var(--color-yakiimo-cream);

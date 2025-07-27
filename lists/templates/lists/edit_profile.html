@@ -1,0 +1,50 @@
+{% extends 'base.html' %}
+
+{% block title %}Munch - Edit Profile{% endblock %}
+
+{% block content %}
+<div class="max-w-2xl mx-auto">
+    <div class="bg-yakiimo-cream-light rounded-lg border border-yakiimo-purple-border p-6">
+        <h2 class="text-xl font-semibold mb-4">Edit Profile</h2>
+        
+        <form method="post">
+            {% csrf_token %}
+            
+            <div class="space-y-4">
+                <div>
+                    <label for="{{ form.username.id_for_label }}" class="block text-sm font-medium text-yakiimo-purple mb-1">
+                        Username
+                    </label>
+                    {{ form.username }}
+                    {% if form.username.errors %}
+                        <div class="mt-1 text-sm text-red-600">
+                            {{ form.username.errors.0 }}
+                        </div>
+                    {% endif %}
+                </div>
+                
+                <div>
+                    <label for="{{ form.email.id_for_label }}" class="block text-sm font-medium text-yakiimo-purple mb-1">
+                        Email
+                    </label>
+                    {{ form.email }}
+                    {% if form.email.errors %}
+                        <div class="mt-1 text-sm text-red-600">
+                            {{ form.email.errors.0 }}
+                        </div>
+                    {% endif %}
+                </div>
+            </div>
+            
+            <div class="mt-6 flex gap-4">
+                <button type="submit" class="bg-yakiimo-yellow hover:bg-yakiimo-yellow-hover text-yakiimo-purple px-6 py-3 rounded-md font-medium transition-colors">
+                    Save Changes
+                </button>
+                <a href="{% url 'profile' user.id %}" class="bg-yakiimo-purple-light hover:bg-yakiimo-purple text-white px-6 py-3 rounded-md font-medium transition-colors">
+                    Cancel
+                </a>
+            </div>
+        </form>
+    </div>
+</div>
+{% endblock %}
