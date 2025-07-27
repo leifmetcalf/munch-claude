@@ -15,7 +15,7 @@
 
     <div class="flex gap-4 mb-6">
         {% if user.is_authenticated and user == munch_log.owner %}
-            <a href="{% url 'munchlogitem_create' %}" class="bg-yakiimo-yellow text-yakiimo-purple hover:bg-yakiimo-yellow-hover px-4 py-2 rounded-md text-sm font-medium transition-colors">Add Restaurant to Munch Log</a>
+            <a href="{% url 'munchlogitem_create' %}" class="bg-yakiimo-yellow text-yakiimo-purple hover:bg-yakiimo-yellow-hover px-4 py-2 rounded-md text-sm font-medium transition-colors">Log a Munch</a>
         {% endif %}
     </div>
 </div>
@@ -65,7 +65,7 @@
                             <a href="{% url 'restaurant_detail' item.restaurant.id %}" class="hover:text-yakiimo-purple-light">{{ item.restaurant.name }}</a>
                         </h3>
                         <p class="text-black text-sm mb-2">{{ item.restaurant.suburb }}{% if item.restaurant.region %}, {{ item.restaurant.region }}{% endif %}{% if item.restaurant.country %}, {{ item.restaurant.country }}{% endif %}</p>
-                        <p class="text-black text-sm mb-2"><strong>Visited:</strong> {{ item.inserted_at|date:"F j, Y" }}</p>
+                        <p class="text-black text-sm mb-2"><strong>Visited:</strong> {{ item.visited_date|date:"F j, Y" }}</p>
                         {% if item.notes %}
                             <p class="text-black mt-3">"{{ item.notes }}"</p>
                         {% endif %}

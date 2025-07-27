@@ -77,10 +77,14 @@ class CustomUserCreationForm(UserCreationForm):
 class MunchLogItemForm(forms.ModelForm):
     class Meta:
         model = MunchLogItem
-        fields = ['restaurant', 'munch_log', 'notes']
+        fields = ['restaurant', 'munch_log', 'visited_date', 'notes']
         widgets = {
             'restaurant': forms.HiddenInput(),
             'munch_log': forms.HiddenInput(),
+            'visited_date': forms.DateInput(attrs={
+                'type': 'date',
+                'class': 'w-full px-3 py-2 border border-yakiimo-purple-border rounded-md focus:border-yakiimo-yellow'
+            }, format='%Y-%m-%d'),
             'notes': forms.Textarea(attrs={
                 'rows': 3, 
                 'placeholder': 'Optional notes about this restaurant...',

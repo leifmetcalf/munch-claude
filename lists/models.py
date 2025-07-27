@@ -4,6 +4,8 @@ from django.contrib.gis.db import models
 from django.contrib.gis.geos import Point
 from django.db.models.signals import post_delete, pre_save
 from django.dispatch import receiver
+from django.utils import timezone
+import datetime
 
 
 class User(AbstractUser):
@@ -88,10 +90,11 @@ class MunchLogItem(models.Model):
     restaurant = models.ForeignKey(Restaurant, on_delete=models.CASCADE)
     munch_log = models.ForeignKey(MunchLog, on_delete=models.CASCADE)
     inserted_at = models.DateTimeField(auto_now_add=True)
+    visited_date = models.DateField(default=datetime.date.today, help_text="Date you visited this restaurant")
     notes = models.TextField(blank=True, help_text="Optional notes about this restaurant")
     
     class Meta:
-        ordering = ['-inserted_at']
+        ordering = ['-visited_date', '-inserted_at']
     
     def __str__(self):
         return f"{self.restaurant.name} in {self.munch_log.name}"

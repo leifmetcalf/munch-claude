@@ -8,27 +8,29 @@ Munch is a Django 5.2.4 restaurant list management application where users can s
 
 ## Development Commands
 
-**Note:** The application uses production-first settings. Development uses `dev_settings.py` which is automatically set in `manage.py`.
+**IMPORTANT:** Always use `DJANGO_SETTINGS_MODULE=munch.dev_settings` when running Django commands in development.
 
 **Start development server:**
 ```bash
-uv run manage.py runserver
+DJANGO_SETTINGS_MODULE=munch.dev_settings uv run manage.py runserver
 ```
 
 **Database migrations:**
 ```bash
-uv run manage.py makemigrations
-uv run manage.py migrate
+DJANGO_SETTINGS_MODULE=munch.dev_settings uv run manage.py makemigrations
+DJANGO_SETTINGS_MODULE=munch.dev_settings uv run manage.py migrate
 ```
+
+**Note:** Apply migrations only when explicitly asked to do so. Running `makemigrations` to create migrations is OK.
 
 **Create superuser:**
 ```bash
-uv run manage.py createsuperuser
+DJANGO_SETTINGS_MODULE=munch.dev_settings uv run manage.py createsuperuser
 ```
 
 **Django shell:**
 ```bash
-uv run manage.py shell
+DJANGO_SETTINGS_MODULE=munch.dev_settings uv run manage.py shell
 ```
 
 **Production deployment check:**
@@ -49,13 +51,17 @@ npm install
 
 **Run tests:**
 ```bash
-uv run manage.py test
+DJANGO_SETTINGS_MODULE=munch.dev_settings uv run manage.py test
 ```
 
 **Collect static files (production):**
 ```bash
 uv run manage.py collectstatic
 ```
+
+## Development Environment Setup
+
+- **Environment Variable:** Always prefix Django commands with `DJANGO_SETTINGS_MODULE=munch.dev_settings` in development
 
 ## Architecture
 

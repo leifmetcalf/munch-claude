@@ -11,6 +11,7 @@ from django.core.serializers.json import DjangoJSONEncoder
 from django.db import models, transaction
 from django.http import JsonResponse
 from django.shortcuts import render, redirect, get_object_or_404
+from django.utils import timezone
 from .models import Restaurant, RestaurantList, RestaurantListItem, RestaurantImage, User, ListComment, ListFollow, MunchLog, MunchLogItem
 from .forms import RestaurantForm, RestaurantListForm, RestaurantListItemForm, CustomUserCreationForm, RestaurantImageForm, ListCommentForm, MunchLogItemForm, EditProfileForm
 
@@ -679,10 +680,10 @@ def munch_log(request, user_id):
     # Get or create the user's munch log
     munch_log = munch_log_user.get_or_create_munch_log()
     
-    # Get all items in the munch log, ordered by newest first
+    # Get all items in the munch log, ordered by newest visited date first
     munch_log_items = MunchLogItem.objects.filter(
         munch_log=munch_log
-    ).order_by('-inserted_at')
+    ).order_by('-visited_date', '-inserted_at')
     
     # Extract coordinates for the map
     restaurant_coordinates = []
@@ -735,7 +736,10 @@ def munchlogitem_create(request):
                 return redirect('munch_log', user_id=request.user.id)
     else:
         # Initialize form with URL parameter values
-        initial = {'munch_log': munch_log}
+        initial = {
+            'munch_log': munch_log,
+            'visited_date': timezone.now().date()
+        }
         
         if restaurant_id:
             try:

@@ -1,10 +1,10 @@
 {% extends 'base.html' %}
 
-{% block title %}Munch - Add Restaurant to Munch Log{% endblock %}
+{% block title %}Munch - Log a Munch{% endblock %}
 
 {% block content %}
 <div class="max-w-2xl mx-auto">
-    <h1 class="text-3xl font-bold text-yakiimo-purple mb-6">Add Restaurant to Munch Log</h1>
+    <h1 class="text-3xl font-bold text-yakiimo-purple mb-6">Log a Munch</h1>
 
     <div class="bg-yakiimo-cream-light rounded-lg border border-yakiimo-purple-border p-6">
         <form method="post" class="space-y-6">
@@ -16,6 +16,20 @@
             <!-- Munch Log (hidden) -->
             <div class="hidden">
                 {{ form.munch_log }}
+            </div>
+            
+            <div>
+                <label for="{{ form.visited_date.id_for_label }}" class="block text-sm font-medium text-yakiimo-purple mb-2">
+                    Date Visited
+                </label>
+                {{ form.visited_date }}
+                {% if form.visited_date.errors %}
+                    <div class="mt-1 text-sm text-red-600">
+                        {% for error in form.visited_date.errors %}
+                            <p>{{ error }}</p>
+                        {% endfor %}
+                    </div>
+                {% endif %}
             </div>
             
             <div>
