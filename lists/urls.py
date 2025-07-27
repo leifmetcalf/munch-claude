@@ -25,8 +25,10 @@ urlpatterns = [
     path('profile/edit/', views.edit_profile, name='edit_profile'),
     path('profile/<int:user_id>/lists/', views.user_restaurantlist_index, name='user_restaurantlist_index'),
     path('profile/<int:user_id>/munchlog/', views.munch_log, name='munch_log'),
+    path('profile/<int:user_id>/munchlog/edit/', views.munch_log_edit, name='munch_log_edit'),
     path('profile/<int:user_id>/following/', views.user_following_lists, name='user_following_lists'),
     path('list/<int:list_id>/followers/', views.list_followers, name='list_followers'),
     path('munchlogitem/<int:item_id>/delete/', views.munchlogitem_delete, name='munchlogitem_delete'),
+    path('munchlogitem/<int:item_id>/update/', views.munchlogitem_update, name='munchlogitem_update'),
     path('api/restaurant/search/', views.restaurant_search_api, name='restaurant_search_api'),
 ]

@@ -10,12 +10,15 @@
     </div>
     
     <div class="bg-yakiimo-cream-light rounded-lg border border-yakiimo-purple-border p-4 mb-6">
-	    <p class="text-black text-sm"><strong>Munches: </strong>{{ munch_log_items|length }}</p>
+	    <p class="text-black text-sm"><strong>Total Munches: </strong>{{ total_munches }}</p>
+	    <p class="text-black text-sm"><strong>Unique Munches: </strong>{{ unique_munches }}</p>
+	    <p class="text-black text-sm"><strong>Countries Munched In: </strong>{{ countries_munched }}</p>
     </div>
 
     <div class="flex gap-4 mb-6">
         {% if user.is_authenticated and user == munch_log.owner %}
             <a href="{% url 'munchlogitem_create' %}" class="bg-yakiimo-yellow text-yakiimo-purple hover:bg-yakiimo-yellow-hover px-4 py-2 rounded-md text-sm font-medium transition-colors">Log a Munch</a>
+            <a href="{% url 'munch_log_edit' munch_log.owner.id %}" class="bg-yakiimo-yellow hover:bg-yakiimo-yellow-hover text-yakiimo-purple px-4 py-2 rounded-md text-sm font-medium transition-colors">Edit Munch Log</a>
         {% endif %}
     </div>
 </div>
@@ -76,14 +79,6 @@
                         </div>
                     {% endif %}
                 </div>
-                {% if user.is_authenticated and user == munch_log.owner %}
-                    <div class="mt-4 pt-4 border-t border-yakiimo-purple-border">
-                        <form method="post" action="{% url 'munchlogitem_delete' item.id %}" class="inline" onsubmit="return confirm('Are you sure you want to remove this restaurant from your Munch Log?');">
-                            {% csrf_token %}
-                            <button type="submit" class="text-sm text-yakiimo-purple-light hover:text-yakiimo-purple">Remove from Munch Log</button>
-                        </form>
-                    </div>
-                {% endif %}
             </div>
         {% endfor %}
     </div>

@@ -685,6 +685,14 @@ def munch_log(request, user_id):
         munch_log=munch_log
     ).order_by('-visited_date', '-inserted_at')
     
+    # Calculate unique munches (unique restaurants)
+    unique_restaurants = munch_log_items.values('restaurant').distinct().count()
+    
+    # Calculate countries munched in
+    countries = munch_log_items.values('restaurant__country').exclude(
+        restaurant__country=''
+    ).distinct().count()
+    
     # Extract coordinates for the map
     restaurant_coordinates = []
     for item in munch_log_items:
@@ -700,6 +708,9 @@ def munch_log(request, user_id):
     return render(request, 'lists/munch_log_detail.html', {
         'munch_log': munch_log,
         'munch_log_items': munch_log_items,
+        'total_munches': munch_log_items.count(),
+        'unique_munches': unique_restaurants,
+        'countries_munched': countries,
         'restaurant_coordinates': restaurant_coordinates,
         'restaurant_coordinates_json': json.dumps(restaurant_coordinates, cls=DjangoJSONEncoder),
     })
@@ -781,7 +792,7 @@ def munchlogitem_delete(request, item_id):
     item.delete()
     
     messages.success(request, f'"{restaurant_name}" removed from your Munch Log.')
-    return redirect('munch_log', user_id=user_id)
+    return redirect('munch_log_edit', user_id=user_id)
 
 
 @login_required
@@ -818,3 +829,57 @@ def restaurantlistitem_update(request, item_id):
         messages.success(request, f'Updated "{item.restaurant.name}" successfully!')
     
     return redirect('restaurantlist_edit', list_id=item.restaurant_list.id)
+
+
+@login_required
+def munch_log_edit(request, user_id):
+    """Edit view for munch log items."""
+    munch_log_user = get_object_or_404(User, id=user_id)
+    
+    # Check if user owns the munch log
+    if munch_log_user != request.user:
+        messages.error(request, "You don't have permission to edit this munch log.")
+        return redirect('munch_log', user_id=user_id)
+    
+    # Get or create the user's munch log
+    munch_log = munch_log_user.get_or_create_munch_log()
+    
+    # Get all items in the munch log, ordered by newest visited date first
+    munch_log_items = MunchLogItem.objects.filter(
+        munch_log=munch_log
+    ).order_by('-visited_date', '-inserted_at')
+    
+    return render(request, 'lists/munch_log_edit.html', {
+        'munch_log': munch_log,
+        'munch_log_items': munch_log_items
+    })
+
+
+@login_required
+def munchlogitem_update(request, item_id):
+    """Update a munch log item's notes and visited date."""
+    item = get_object_or_404(MunchLogItem, id=item_id)
+    
+    # Check if user owns the munch log
+    if item.munch_log.owner != request.user:
+        messages.error(request, "You don't have permission to edit items in this munch log.")
+        return redirect('munch_log', user_id=item.munch_log.owner.id)
+    
+    if request.method == 'POST':
+        # Create a form instance with POST data, bound to the existing item
+        form = MunchLogItemForm(request.POST, instance=item)
+        
+        # We only want to update visited_date and notes, so extract just those fields
+        if 'visited_date' in request.POST:
+            item.visited_date = request.POST.get('visited_date')
+        if 'notes' in request.POST:
+            item.notes = request.POST.get('notes', '')
+            
+        try:
+            item.full_clean()  # This will validate the date format
+            item.save()
+            messages.success(request, f'Updated "{item.restaurant.name}" successfully!')
+        except Exception as e:
+            messages.error(request, f"Error updating item: {str(e)}")
+    
+    return redirect('munch_log_edit', user_id=item.munch_log.owner.id)

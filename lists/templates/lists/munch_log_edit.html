@@ -1,0 +1,61 @@
+{% extends 'base.html' %}
+
+{% block title %}Edit {{ munch_log.name }} - Munch{% endblock %}
+
+{% block content %}
+<div class="mb-6">
+    <h1 class="text-3xl font-bold text-yakiimo-purple mb-4">Edit {{ munch_log.name }}</h1>
+    
+    <div class="mb-6">
+        <a href="{% url 'munch_log' munch_log.owner.id %}" class="bg-yakiimo-yellow hover:bg-yakiimo-yellow-hover text-yakiimo-purple px-4 py-2 rounded-md text-sm font-medium transition-colors">Done editing</a>
+    </div>
+</div>
+
+{% if munch_log_items %}
+    <h2 class="text-2xl font-semibold text-yakiimo-purple mb-4">Restaurant Adventures</h2>
+    <div class="space-y-4">
+        {% for item in munch_log_items %}
+            <div class="bg-yakiimo-cream-light rounded-lg border border-gray-200 p-6">
+                <div class="flex justify-between items-start">
+                    <div class="flex-1">
+                        <h3 class="text-xl font-semibold text-yakiimo-purple mb-2">
+                            <a href="{% url 'restaurant_detail' item.restaurant.id %}" class="hover:text-yakiimo-purple-light">{{ item.restaurant.name }}</a>
+                        </h3>
+                        <p class="text-yakiimo-purple-light mb-2">{{ item.restaurant.address }}</p>
+                        
+                        <form method="post" action="{% url 'munchlogitem_update' item.id %}" class="mt-4">
+                            {% csrf_token %}
+                            <div class="mb-3">
+                                <label for="notes_{{ item.id }}" class="block text-sm font-medium text-yakiimo-purple mb-1">Notes/Blurb</label>
+                                <textarea name="notes" id="notes_{{ item.id }}" rows="3" 
+                                          placeholder="Add notes about this restaurant..."
+                                          class="w-full px-3 py-2 border border-yakiimo-purple-border rounded-md focus:border-yakiimo-yellow text-sm">{{ item.notes }}</textarea>
+                            </div>
+                            <div class="mb-3">
+                                <label for="visited_date_{{ item.id }}" class="block text-sm font-medium text-yakiimo-purple mb-1">Visited Date</label>
+                                <input type="date" name="visited_date" id="visited_date_{{ item.id }}" 
+                                       value="{{ item.visited_date|date:'Y-m-d' }}"
+                                       class="px-3 py-2 border border-yakiimo-purple-border rounded-md focus:border-yakiimo-yellow text-sm">
+                            </div>
+                            <button type="submit" class="bg-yakiimo-yellow text-yakiimo-purple hover:bg-yakiimo-yellow-hover px-4 py-2 rounded-md text-sm font-medium transition-colors">
+                                Update
+                            </button>
+                        </form>
+                    </div>
+                    <div class="flex flex-col gap-2 ml-4">
+                        <a href="{% url 'munchlogitem_delete' item.id %}" class="bg-yakiimo-yellow hover:bg-yakiimo-yellow-hover text-yakiimo-purple px-3 py-2 rounded text-center text-sm font-medium transition-colors">✕</a>
+                    </div>
+                </div>
+            </div>
+        {% endfor %}
+    </div>
+{% else %}
+    <div class="text-center py-12">
+        <p class="text-yakiimo-purple-light text-lg">No restaurants in your munch log yet.</p>
+    </div>
+{% endif %}
+
+<div class="mt-8 pt-6 border-t border-gray-200">
+    <a href="{% url 'munch_log' munch_log.owner.id %}" class="text-yakiimo-purple-light hover:text-yakiimo-purple font-medium">← Back to Munch Log</a>
+</div>
+{% endblock %}
