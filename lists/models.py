@@ -56,6 +56,7 @@ class RestaurantList(models.Model):
     owner = models.ForeignKey(User, on_delete=models.CASCADE)
     blurb = models.TextField(blank=True, help_text="Description or notes about this list")
     inserted_at = models.DateTimeField(auto_now_add=True)
+    updated_at = models.DateTimeField(auto_now=True)
     
     class Meta:
         ordering = ['-inserted_at']

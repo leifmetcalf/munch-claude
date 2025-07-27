@@ -11,6 +11,7 @@
     
     <div class="bg-yakiimo-cream-light rounded-lg border border-yakiimo-purple-border p-4 mb-6">
         <p class="text-black text-sm mb-2"><strong>Created:</strong> {{ restaurant_list.inserted_at|date:"F j, Y" }}</p>
+        <p class="text-black text-sm mb-2"><strong>Last Updated:</strong> {{ restaurant_list.updated_at|date:"F j, Y" }}</p>
         <p class="text-black text-sm mb-2">
             <strong>Followers:</strong> 
             <a href="{% url 'list_followers' restaurant_list.id %}" class="text-black hover:text-yakiimo-purple">{{ follower_count }}</a>

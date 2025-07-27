@@ -799,3 +799,22 @@ def edit_profile(request):
     return render(request, 'lists/edit_profile.html', {
         'form': form
     })
+
+
+@login_required
+def restaurantlistitem_update(request, item_id):
+    """Update a restaurant list item's notes."""
+    item = get_object_or_404(RestaurantListItem, id=item_id)
+    
+    # Check if user owns the list
+    if item.restaurant_list.owner != request.user:
+        messages.error(request, "You don't have permission to edit items in this list.")
+        return redirect('restaurantlist_detail', list_id=item.restaurant_list.id)
+    
+    if request.method == 'POST':
+        # Update notes
+        item.notes = request.POST.get('notes', '')
+        item.save()
+        messages.success(request, f'Updated "{item.restaurant.name}" successfully!')
+    
+    return redirect('restaurantlist_edit', list_id=item.restaurant_list.id)

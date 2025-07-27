@@ -18,6 +18,7 @@ urlpatterns = [
     path('listitem/<int:item_id>/move-up/', views.move_item_up, name='move_item_up'),
     path('listitem/<int:item_id>/move-down/', views.move_item_down, name='move_item_down'),
     path('listitem/<int:item_id>/delete/', views.restaurantlistitem_delete, name='restaurantlistitem_delete'),
+    path('listitem/<int:item_id>/update/', views.restaurantlistitem_update, name='restaurantlistitem_update'),
     path('restaurant/<int:restaurant_id>/', views.restaurant_detail, name='restaurant_detail'),
     path('restaurant/<int:restaurant_id>/add-image/', views.restaurant_image_add, name='restaurant_image_add'),
     path('profile/<int:user_id>/', views.profile, name='profile'),
