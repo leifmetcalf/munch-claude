@@ -10,8 +10,8 @@
     [] upvote a list or comment (?)
     [] special list for "munchie log"
     [x] fix followers and folling list ui
-    [] BUG when someone access munchie log via the list number it is not sorter properly
-    [] you can rearrang your munch log when you edit it.
+    [x] BUG when someone access munchie log via the list number it is not sorter properly
+    [x] you can rearrang your munch log when you edit it.
 
 [] restaurants
     [] comments on restaurants (maybe)
@@ -32,10 +32,10 @@
 
 [] munch log
     [x] not deleting munch log
-    [] change values fine
+    [x] change values fine
     [x] shouldnt come up on restaurants
     [] "recent logs"
-    [] back log munch
+    [x] back log munch
    
 [] other
     [] change map layer
