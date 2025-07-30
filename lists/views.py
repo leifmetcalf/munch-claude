@@ -23,20 +23,61 @@ class OSMType(Enum):
 
 
 def index(request):
-    # Get the 6 most recently added restaurant list items
-    recent_items = RestaurantListItem.objects.select_related(
+    # Get recent activity - both restaurant list items and munch log items
+    # We'll combine them and sort by insertion time
+    from itertools import chain
+    from operator import attrgetter
+    
+    # Get the 12 most recently added restaurant list items
+    recent_list_items = RestaurantListItem.objects.select_related(
         'restaurant', 'restaurant_list', 'restaurant_list__owner'
-    ).order_by('-inserted_at')[:6]
+    ).order_by('-inserted_at')[:12]
+    
+    # Get the 12 most recently added munch log items
+    recent_munch_items = MunchLogItem.objects.select_related(
+        'restaurant', 'munch_log', 'munch_log__owner'
+    ).order_by('-inserted_at')[:12]
+    
+    # Combine and sort by insertion time, then take the top 6
+    all_recent_items = sorted(
+        chain(recent_list_items, recent_munch_items),
+        key=attrgetter('inserted_at'),
+        reverse=True
+    )[:6]
+    
+    # Separate them by type for the template
+    recent_items = []
+    for item in all_recent_items:
+        if isinstance(item, RestaurantListItem):
+            recent_items.append({
+                'type': 'list_item',
+                'item': item,
+                'inserted_at': item.inserted_at
+            })
+        else:  # MunchLogItem
+            recent_items.append({
+                'type': 'munch_item',
+                'item': item,
+                'inserted_at': item.inserted_at
+            })
     
     # If user is authenticated, also get activity from lists they're following
     following_activity = []
     if request.user.is_authenticated:
         followed_lists = ListFollow.objects.filter(follower=request.user).values_list('restaurant_list_id', flat=True)
-        following_activity = RestaurantListItem.objects.filter(
+        following_list_items = RestaurantListItem.objects.filter(
             restaurant_list_id__in=followed_lists
         ).select_related(
             'restaurant', 'restaurant_list', 'restaurant_list__owner'
         ).order_by('-inserted_at')[:6]
+        
+        # For following activity, we only show list items since we don't have user following
+        for item in following_list_items:
+            following_activity.append({
+                'type': 'list_item',
+                'item': item,
+                'inserted_at': item.inserted_at
+            })
     
     return render(request, 'lists/home.html', {
         'recent_items': recent_items,

@@ -152,5 +152,30 @@ Key function: `create_restaurant_from_osm(osm_type: OSMType, osm_id)` - takes en
 ## Social Features
 - **List Following**: Users can follow other users' restaurant lists
 - **Comments**: Users can comment on restaurant lists
-- **Activity Feed**: Home page shows recent activity from followed lists
+- **Activity Feed**: Home page shows recent activity from followed lists and munch log entries
 - **Munch Log**: Each user has a personal restaurant log (auto-created via `get_or_create_munch_log()`)
+
+## API Endpoints
+- **Restaurant Search API**: `/api/restaurant/search/` - AJAX endpoint for restaurant autocomplete
+- **Nominatim Integration**: External API calls to OpenStreetMap Nominatim service
+  - Search API: For finding restaurants by query
+  - Lookup API: For fetching complete restaurant details by OSM ID
+
+## Testing
+- **Test Framework**: Django's built-in TestCase
+- **Current Status**: Minimal test coverage (tests.py contains only boilerplate)
+- **Run Tests**: `DJANGO_SETTINGS_MODULE=munch.dev_settings uv run manage.py test`
+
+## File Structure & Important Patterns
+- **Signal Handlers**: Automatic file cleanup for RestaurantImage deletions (models.py)
+- **Custom Timestamps**: All models use `inserted_at` instead of Django's default `created_at`
+- **Geographic Data**: Restaurant locations stored as PostGIS Point fields
+- **Form Validation**: OSM type/ID validation in RestaurantForm for security
+- **Template Inheritance**: All templates extend `base.html` with consistent navigation
+
+## Development Workflow
+- **Package Management**: `uv` for Python dependencies, `npm` for frontend
+- **CSS Build Process**: Tailwind CSS compilation required for styling changes
+- **Database**: PostgreSQL with PostGIS extension for geographic features
+- **Static Files**: Collected to `staticfiles/` directory for production
+- **Media Files**: User uploads stored in `media/` directory with automatic cleanup

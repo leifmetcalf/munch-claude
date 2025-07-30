@@ -22,14 +22,22 @@
         <h2 class="text-2xl font-bold text-yakiimo-purple mb-4 text-left">Recent Activity</h2>
         <div>
             <ul class="space-y-2">
-                {% for item in recent_items %}
+                {% for activity in recent_items %}
                 <li class="bg-yakiimo-cream-light p-3 rounded-lg border border-yakiimo-purple-border text-left">
                     <span class="text-yakiimo-purple">
-                        <a href="{% url 'profile' user_id=item.restaurant_list.owner.id %}" class="text-yakiimo-purple-light hover:text-yakiimo-purple font-medium">{{ item.restaurant_list.owner.username }}</a>
-                        added
-                        <a href="{% url 'restaurant_detail' restaurant_id=item.restaurant.id %}" class="text-yakiimo-purple-light hover:text-yakiimo-purple font-medium">{{ item.restaurant.name }}</a>
-                        to their list
-                        <a href="{% url 'restaurantlist_detail' list_id=item.restaurant_list.id %}" class="text-yakiimo-purple-light hover:text-yakiimo-purple font-medium">{{ item.restaurant_list.name }}</a>
+                        {% if activity.type == 'list_item' %}
+                            <a href="{% url 'profile' user_id=activity.item.restaurant_list.owner.id %}" class="text-yakiimo-purple-light hover:text-yakiimo-purple font-medium">{{ activity.item.restaurant_list.owner.username }}</a>
+                            added
+                            <a href="{% url 'restaurant_detail' restaurant_id=activity.item.restaurant.id %}" class="text-yakiimo-purple-light hover:text-yakiimo-purple font-medium">{{ activity.item.restaurant.name }}</a>
+                            to their list
+                            <a href="{% url 'restaurantlist_detail' list_id=activity.item.restaurant_list.id %}" class="text-yakiimo-purple-light hover:text-yakiimo-purple font-medium">{{ activity.item.restaurant_list.name }}</a>
+                        {% else %}
+                            <a href="{% url 'profile' user_id=activity.item.munch_log.owner.id %}" class="text-yakiimo-purple-light hover:text-yakiimo-purple font-medium">{{ activity.item.munch_log.owner.username }}</a>
+                            munched at
+                            <a href="{% url 'restaurant_detail' restaurant_id=activity.item.restaurant.id %}" class="text-yakiimo-purple-light hover:text-yakiimo-purple font-medium">{{ activity.item.restaurant.name }}</a>
+                            and added it to their
+                            <a href="{% url 'munch_log' user_id=activity.item.munch_log.owner.id %}" class="text-yakiimo-purple-light hover:text-yakiimo-purple font-medium">Munch Log</a>
+                        {% endif %}
                     </span>
                 </li>
                 {% endfor %}
@@ -49,14 +57,22 @@
                 </div>
             {% elif user.is_authenticated and following_activity %}
                 <ul class="space-y-2">
-                    {% for item in following_activity %}
+                    {% for activity in following_activity %}
                     <li class="bg-yakiimo-cream-light p-3 rounded-lg border border-yakiimo-purple-border text-left">
                         <span class="text-yakiimo-purple">
-                            <a href="{% url 'profile' user_id=item.restaurant_list.owner.id %}" class="text-yakiimo-purple-light hover:text-yakiimo-purple font-medium">{{ item.restaurant_list.owner.username }}</a>
-                            added
-                            <a href="{% url 'restaurant_detail' restaurant_id=item.restaurant.id %}" class="text-yakiimo-purple-light hover:text-yakiimo-purple font-medium">{{ item.restaurant.name }}</a>
-                            to their list
-                            <a href="{% url 'restaurantlist_detail' list_id=item.restaurant_list.id %}" class="text-yakiimo-purple-light hover:text-yakiimo-purple font-medium">{{ item.restaurant_list.name }}</a>
+                            {% if activity.type == 'list_item' %}
+                                <a href="{% url 'profile' user_id=activity.item.restaurant_list.owner.id %}" class="text-yakiimo-purple-light hover:text-yakiimo-purple font-medium">{{ activity.item.restaurant_list.owner.username }}</a>
+                                added
+                                <a href="{% url 'restaurant_detail' restaurant_id=activity.item.restaurant.id %}" class="text-yakiimo-purple-light hover:text-yakiimo-purple font-medium">{{ activity.item.restaurant.name }}</a>
+                                to their list
+                                <a href="{% url 'restaurantlist_detail' list_id=activity.item.restaurant_list.id %}" class="text-yakiimo-purple-light hover:text-yakiimo-purple font-medium">{{ activity.item.restaurant_list.name }}</a>
+                            {% else %}
+                                <a href="{% url 'profile' user_id=activity.item.munch_log.owner.id %}" class="text-yakiimo-purple-light hover:text-yakiimo-purple font-medium">{{ activity.item.munch_log.owner.username }}</a>
+                                munched at
+                                <a href="{% url 'restaurant_detail' restaurant_id=activity.item.restaurant.id %}" class="text-yakiimo-purple-light hover:text-yakiimo-purple font-medium">{{ activity.item.restaurant.name }}</a>
+                                and added it to their
+                                <a href="{% url 'munch_log' user_id=activity.item.munch_log.owner.id %}" class="text-yakiimo-purple-light hover:text-yakiimo-purple font-medium">Munch Log</a>
+                            {% endif %}
                         </span>
                     </li>
                     {% endfor %}
