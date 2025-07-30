@@ -91,11 +91,11 @@ class MunchLogItem(models.Model):
     restaurant = models.ForeignKey(Restaurant, on_delete=models.CASCADE)
     munch_log = models.ForeignKey(MunchLog, on_delete=models.CASCADE)
     inserted_at = models.DateTimeField(auto_now_add=True)
-    visited_date = models.DateField(default=datetime.date.today, help_text="Date you visited this restaurant")
+    visited_date = models.DateField(null=True, blank=True, help_text="Date you visited this restaurant")
     notes = models.TextField(blank=True, help_text="Optional notes about this restaurant")
     
     class Meta:
-        ordering = ['-visited_date', '-inserted_at']
+        ordering = [models.F('visited_date').desc(nulls_last=True), '-inserted_at']
     
     def __str__(self):
         return f"{self.restaurant.name} in {self.munch_log.name}"

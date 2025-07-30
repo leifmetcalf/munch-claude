@@ -23,6 +23,9 @@
                     Date Visited
                 </label>
                 {{ form.visited_date }}
+                <button type="button" id="clear-date-btn" class="mt-2 bg-yakiimo-purple-light text-white hover:bg-yakiimo-purple px-3 py-2 rounded-md text-sm font-medium transition-colors">
+                    Clear date
+                </button>
                 {% if form.visited_date.errors %}
                     <div class="mt-1 text-sm text-red-600">
                         {% for error in form.visited_date.errors %}
@@ -79,6 +82,16 @@ document.addEventListener('DOMContentLoaded', function() {
         'restaurant-results', 
         '{{ form.restaurant.id_for_label }}'
     );
+    
+    // Clear date button functionality
+    const clearDateBtn = document.getElementById('clear-date-btn');
+    const dateInput = document.getElementById('{{ form.visited_date.id_for_label }}');
+    
+    if (clearDateBtn && dateInput) {
+        clearDateBtn.addEventListener('click', function() {
+            dateInput.value = '';
+        });
+    }
 });
 </script>
 {% endblock %}

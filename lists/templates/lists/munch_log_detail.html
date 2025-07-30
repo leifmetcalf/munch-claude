@@ -68,7 +68,7 @@
                             <a href="{% url 'restaurant_detail' item.restaurant.id %}" class="hover:text-yakiimo-purple-light">{{ item.restaurant.name }}</a>
                         </h3>
                         <p class="text-black text-sm mb-2">{{ item.restaurant.suburb }}{% if item.restaurant.region %}, {{ item.restaurant.region }}{% endif %}{% if item.restaurant.country %}, {{ item.restaurant.country }}{% endif %}</p>
-                        <p class="text-black text-sm mb-2"><strong>Visited:</strong> {{ item.visited_date|date:"F j, Y" }}</p>
+                        <p class="text-black text-sm mb-2"><strong>Visited:</strong> {% if item.visited_date %}{{ item.visited_date|date:"F j, Y" }}{% else %}in the past...{% endif %}</p>
                         {% if item.notes %}
                             <p class="text-black mt-3">"{{ item.notes }}"</p>
                         {% endif %}

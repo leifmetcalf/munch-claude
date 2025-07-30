@@ -721,10 +721,10 @@ def munch_log(request, user_id):
     # Get or create the user's munch log
     munch_log = munch_log_user.get_or_create_munch_log()
     
-    # Get all items in the munch log, ordered by newest visited date first
+    # Get all items in the munch log
     munch_log_items = MunchLogItem.objects.filter(
         munch_log=munch_log
-    ).order_by('-visited_date', '-inserted_at')
+    )
     
     # Calculate unique munches (unique restaurants)
     unique_restaurants = munch_log_items.values('restaurant').distinct().count()
@@ -885,10 +885,10 @@ def munch_log_edit(request, user_id):
     # Get or create the user's munch log
     munch_log = munch_log_user.get_or_create_munch_log()
     
-    # Get all items in the munch log, ordered by newest visited date first
+    # Get all items in the munch log
     munch_log_items = MunchLogItem.objects.filter(
         munch_log=munch_log
-    ).order_by('-visited_date', '-inserted_at')
+    )
     
     return render(request, 'lists/munch_log_edit.html', {
         'munch_log': munch_log,
