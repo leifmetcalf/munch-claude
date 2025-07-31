@@ -33,7 +33,7 @@
                             <a href="{% url 'restaurantlist_detail' list_id=activity.item.restaurant_list.id %}" class="text-yakiimo-purple-light hover:text-yakiimo-purple font-medium">{{ activity.item.restaurant_list.name }}</a>
                         {% else %}
                             <a href="{% url 'profile' user_id=activity.item.munch_log.owner.id %}" class="text-yakiimo-purple-light hover:text-yakiimo-purple font-medium">{{ activity.item.munch_log.owner.username }}</a>
-                            munched at
+                            munched
                             <a href="{% url 'restaurant_detail' restaurant_id=activity.item.restaurant.id %}" class="text-yakiimo-purple-light hover:text-yakiimo-purple font-medium">{{ activity.item.restaurant.name }}</a>
                             and added it to their
                             <a href="{% url 'munch_log' user_id=activity.item.munch_log.owner.id %}" class="text-yakiimo-purple-light hover:text-yakiimo-purple font-medium">Munch Log</a>
@@ -68,7 +68,7 @@
                                 <a href="{% url 'restaurantlist_detail' list_id=activity.item.restaurant_list.id %}" class="text-yakiimo-purple-light hover:text-yakiimo-purple font-medium">{{ activity.item.restaurant_list.name }}</a>
                             {% else %}
                                 <a href="{% url 'profile' user_id=activity.item.munch_log.owner.id %}" class="text-yakiimo-purple-light hover:text-yakiimo-purple font-medium">{{ activity.item.munch_log.owner.username }}</a>
-                                munched at
+                                munched
                                 <a href="{% url 'restaurant_detail' restaurant_id=activity.item.restaurant.id %}" class="text-yakiimo-purple-light hover:text-yakiimo-purple font-medium">{{ activity.item.restaurant.name }}</a>
                                 and added it to their
                                 <a href="{% url 'munch_log' user_id=activity.item.munch_log.owner.id %}" class="text-yakiimo-purple-light hover:text-yakiimo-purple font-medium">Munch Log</a>
