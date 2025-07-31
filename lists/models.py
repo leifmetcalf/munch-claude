@@ -38,6 +38,13 @@ class Restaurant(models.Model):
     )
     osm_id = models.CharField(max_length=20)
     location = models.PointField(help_text="Geographic location from Nominatim")
+    added_by = models.ForeignKey(
+        User, 
+        on_delete=models.CASCADE, 
+        related_name='restaurants_added',
+        help_text="User who imported this restaurant"
+    )
+    inserted_at = models.DateTimeField(auto_now_add=True)
     
     class Meta:
         unique_together = ['osm_type', 'osm_id']

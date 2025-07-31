@@ -118,18 +118,26 @@ def fetch_restaurant_data_from_nominatim(osm_type: Restaurant.OSMType, osm_id):
     }
 
 
-def create_restaurant_from_osm(osm_type: Restaurant.OSMType, osm_id):
-    """Create a new restaurant from OSM data."""
+def create_restaurant_from_osm(osm_type: Restaurant.OSMType, osm_id, added_by):
+    """Create a new restaurant from OSM data.
+    
+    Args:
+        osm_type: The OSM type (NODE, WAY, or RELATION)
+        osm_id: The OSM ID
+        added_by: The user who is importing this restaurant (required)
+    """
     data = fetch_restaurant_data_from_nominatim(osm_type, osm_id)
     
     restaurant = Restaurant.objects.create(
         osm_type=osm_type,
         osm_id=osm_id,
+        added_by=added_by,
         **data
     )
     return restaurant
 
 
+@login_required
 def restaurant_nominatim(request):
     """Import restaurants from Nominatim API into the database.
     
@@ -195,7 +203,7 @@ def restaurant_nominatim(request):
                     messages.info(request, f'"{existing_restaurant.name}" already exists in MunchZone. Redirecting to "{existing_restaurant.name}".')
                     return redirect('restaurant_detail', restaurant_id=existing_restaurant.id)
                 
-                restaurant = create_restaurant_from_osm(osm_type_value, osm_id)
+                restaurant = create_restaurant_from_osm(osm_type_value, osm_id, added_by=request.user)
                 messages.success(request, f'Restaurant "{restaurant.name}" added to database!')
                 return redirect('restaurant_detail', restaurant_id=restaurant.id)
             except Exception as e:
