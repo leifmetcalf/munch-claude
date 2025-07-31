@@ -21,6 +21,7 @@ urlpatterns = [
     path('listitem/<int:item_id>/update/', views.restaurantlistitem_update, name='restaurantlistitem_update'),
     path('restaurant/<int:restaurant_id>/', views.restaurant_detail, name='restaurant_detail'),
     path('restaurant/<int:restaurant_id>/add-image/', views.restaurant_image_add, name='restaurant_image_add'),
+    path('restaurant/<int:restaurant_id>/reimport/', views.restaurant_reimport, name='restaurant_reimport'),
     path('profile/<int:user_id>/', views.profile, name='profile'),
     path('profile/edit/', views.edit_profile, name='edit_profile'),
     path('profile/<int:user_id>/lists/', views.user_restaurantlist_index, name='user_restaurantlist_index'),

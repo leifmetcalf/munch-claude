@@ -2,7 +2,6 @@ import json
 import urllib.parse
 import urllib.request
 from collections import defaultdict
-from enum import Enum
 from django.contrib import messages
 from django.contrib.auth import login
 from django.contrib.auth.decorators import login_required
@@ -14,12 +13,6 @@ from django.shortcuts import render, redirect, get_object_or_404
 from django.utils import timezone
 from .models import Restaurant, RestaurantList, RestaurantListItem, RestaurantImage, User, ListComment, ListFollow, MunchLog, MunchLogItem
 from .forms import RestaurantForm, RestaurantListForm, RestaurantListItemForm, CustomUserCreationForm, RestaurantImageForm, ListCommentForm, MunchLogItemForm, EditProfileForm
-
-
-class OSMType(Enum):
-    NODE = 'N'
-    WAY = 'W'
-    RELATION = 'R'
 
 
 def index(request):
@@ -85,16 +78,20 @@ def index(request):
     })
 
 
-def create_restaurant_from_osm(osm_type: OSMType, osm_id):
+def fetch_restaurant_data_from_nominatim(osm_type: Restaurant.OSMType, osm_id):
+    """Fetch restaurant data from Nominatim Lookup API.
+    
+    Returns a dict with restaurant field values.
+    """
     # Lookup restaurant details from Nominatim
-    osm_id_with_type = f"{osm_type.value}{osm_id}"
+    osm_id_with_type = f"{osm_type}{osm_id}"
     lookup_url = f"https://nominatim.openstreetmap.org/lookup?osm_ids={osm_id_with_type}&format=jsonv2"
     
     with urllib.request.urlopen(lookup_url, timeout=10) as response:
         data = json.loads(response.read().decode())
     
     if not data:
-        raise ValueError(f"Restaurant not found. OSM Type: {osm_type.name}, OSM ID: {osm_id}, URL: {lookup_url}")
+        raise ValueError(f"Restaurant not found. OSM Type: {osm_type}, OSM ID: {osm_id}, URL: {lookup_url}")
     
     item = data[0]
     # Parse address components
@@ -102,7 +99,7 @@ def create_restaurant_from_osm(osm_type: OSMType, osm_id):
     
     # Create Point from lat/lon - required field
     if not item.get('lat') or not item.get('lon'):
-        raise ValueError(f"Missing latitude or longitude data from Nominatim for OSM {osm_type.name}:{osm_id}")
+        raise ValueError(f"Missing latitude or longitude data from Nominatim for OSM {osm_type}:{osm_id}")
     
     try:
         lat = float(item['lat'])
@@ -111,15 +108,24 @@ def create_restaurant_from_osm(osm_type: OSMType, osm_id):
     except (ValueError, TypeError) as e:
         raise ValueError(f"Invalid latitude/longitude data from Nominatim: lat={item.get('lat')}, lon={item.get('lon')}") from e
     
+    return {
+        'name': address_parts[0] if address_parts else '',
+        'address': item.get('display_name', ''),
+        'suburb': item.get('address', {}).get('suburb', ''),
+        'region': item.get('address', {}).get('state', ''),
+        'country': item.get('address', {}).get('country', ''),
+        'location': location
+    }
+
+
+def create_restaurant_from_osm(osm_type: Restaurant.OSMType, osm_id):
+    """Create a new restaurant from OSM data."""
+    data = fetch_restaurant_data_from_nominatim(osm_type, osm_id)
+    
     restaurant = Restaurant.objects.create(
-        name=address_parts[0] if address_parts else '',
-        address=item.get('display_name', ''),
-        suburb=item.get('address', {}).get('suburb', ''),
-        region=item.get('address', {}).get('state', ''),
-        country=item.get('address', {}).get('country', ''),
-        osm_type=osm_type.value,
+        osm_type=osm_type,
         osm_id=osm_id,
-        location=location
+        **data
     )
     return restaurant
 
@@ -173,15 +179,15 @@ def restaurant_nominatim(request):
             osm_id = form.cleaned_data['osm_id']
             
             try:
-                # Convert string to OSMType enum
-                type_mapping = {'node': OSMType.NODE, 'way': OSMType.WAY, 'relation': OSMType.RELATION}
-                osm_type_enum = type_mapping.get(osm_type)
-                if not osm_type_enum:
+                # Convert string to OSMType value
+                type_mapping = {'node': Restaurant.OSMType.NODE, 'way': Restaurant.OSMType.WAY, 'relation': Restaurant.OSMType.RELATION}
+                osm_type_value = type_mapping.get(osm_type)
+                if not osm_type_value:
                     raise ValueError(f"Invalid OSM type: {osm_type}")
                 
                 # Check if restaurant already exists
                 existing_restaurant = Restaurant.objects.filter(
-                    osm_type=osm_type_enum.value,
+                    osm_type=osm_type_value,
                     osm_id=osm_id
                 ).first()
                 
@@ -189,7 +195,7 @@ def restaurant_nominatim(request):
                     messages.info(request, f'"{existing_restaurant.name}" already exists in MunchZone. Redirecting to "{existing_restaurant.name}".')
                     return redirect('restaurant_detail', restaurant_id=existing_restaurant.id)
                 
-                restaurant = create_restaurant_from_osm(osm_type_enum, osm_id)
+                restaurant = create_restaurant_from_osm(osm_type_value, osm_id)
                 messages.success(request, f'Restaurant "{restaurant.name}" added to database!')
                 return redirect('restaurant_detail', restaurant_id=restaurant.id)
             except Exception as e:
@@ -924,3 +930,32 @@ def munchlogitem_update(request, item_id):
             messages.error(request, f"Error updating item: {str(e)}")
     
     return redirect('munch_log_edit', user_id=item.munch_log.owner.id)
+
+
+@login_required
+def restaurant_reimport(request, restaurant_id):
+    """Reimport restaurant data from Nominatim Lookup API."""
+    restaurant = get_object_or_404(Restaurant, id=restaurant_id)
+    
+    if request.method == 'POST':
+        try:
+            # Validate OSM type
+            if restaurant.osm_type not in [choice[0] for choice in Restaurant.OSMType.choices]:
+                raise ValueError(f"Invalid OSM type in database: {restaurant.osm_type}")
+            
+            # Fetch updated data from Nominatim
+            data = fetch_restaurant_data_from_nominatim(restaurant.osm_type, restaurant.osm_id)
+            
+            # Update restaurant fields
+            for field, value in data.items():
+                setattr(restaurant, field, value)
+            restaurant.save()
+            
+            messages.success(request, f'Restaurant "{restaurant.name}" data has been refreshed from OpenStreetMap!')
+        except Exception as e:
+            messages.error(request, f'Error reimporting restaurant data: {str(e)}')
+        
+        return redirect('restaurant_detail', restaurant_id=restaurant.id)
+    
+    # For GET requests, redirect back to detail page
+    return redirect('restaurant_detail', restaurant_id=restaurant.id)

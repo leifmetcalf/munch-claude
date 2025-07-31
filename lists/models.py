@@ -21,12 +21,21 @@ class User(AbstractUser):
 
 
 class Restaurant(models.Model):
+    class OSMType(models.TextChoices):
+        NODE = 'N', 'Node'
+        WAY = 'W', 'Way'
+        RELATION = 'R', 'Relation'
+    
     name = models.CharField(max_length=200)
     address = models.CharField(max_length=300)
     suburb = models.CharField(max_length=100)
     region = models.CharField(max_length=100)
     country = models.CharField(max_length=100)
-    osm_type = models.CharField(max_length=20)
+    osm_type = models.CharField(
+        max_length=1,
+        choices=OSMType.choices,
+        help_text="OpenStreetMap element type"
+    )
     osm_id = models.CharField(max_length=20)
     location = models.PointField(help_text="Geographic location from Nominatim")
     

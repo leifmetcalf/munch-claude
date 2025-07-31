@@ -14,6 +14,10 @@
                     <a href="{% url 'restaurantlistitem_create' %}?restaurant={{ restaurant.id }}" class="bg-yakiimo-yellow hover:bg-yakiimo-yellow-hover text-yakiimo-purple px-3 py-1 rounded text-sm font-medium transition-colors">Add to List</a>
                     <a href="{% url 'munchlogitem_create' %}?restaurant={{ restaurant.id }}" class="bg-yakiimo-yellow hover:bg-yakiimo-yellow-hover text-yakiimo-purple px-3 py-1 rounded text-sm font-medium transition-colors">Munch</a>
                     <a href="{% url 'restaurant_image_add' restaurant.id %}" class="bg-yakiimo-yellow text-yakiimo-purple hover:bg-yakiimo-yellow-hover px-3 py-1 rounded text-sm font-medium transition-colors">Add Image</a>
+                    <form action="{% url 'restaurant_reimport' restaurant.id %}" method="post" style="display: inline;">
+                        {% csrf_token %}
+                        <button type="submit" class="bg-yakiimo-yellow text-yakiimo-purple hover:bg-yakiimo-yellow-hover px-3 py-1 rounded text-sm font-medium transition-colors">Refresh Data</button>
+                    </form>
                 </div>
             {% endif %}
         </div>
