@@ -70,7 +70,7 @@
                                 </a>
                             </h3>
                             <p class="text-sm text-yakiimo-purple-light mb-2">
-                                by <a href="{% url 'profile' item.restaurant_list.owner.id %}" class="text-yakiimo-purple-light hover:text-yakiimo-purple">{{ item.restaurant_list.owner.username }}</a> • added {{ item.inserted_at|date:"M d, Y" }}
+                                by <a href="{% url 'profile' item.restaurant_list.owner.id %}" class="text-yakiimo-purple-light hover:text-yakiimo-purple">{{ item.restaurant_list.owner.username }}</a> • added {{ item.created_at|date:"M d, Y" }}
                             </p>
                             {% if item.notes %}
                                 <div class="bg-gray-50 border border-gray-200 rounded p-3">

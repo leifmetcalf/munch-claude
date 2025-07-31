@@ -10,7 +10,7 @@
     </div>
     
     <div class="bg-yakiimo-cream-light rounded-lg border border-yakiimo-purple-border p-4 mb-6">
-        <p class="text-black text-sm mb-2"><strong>Created:</strong> {{ restaurant_list.inserted_at|date:"F j, Y" }}</p>
+        <p class="text-black text-sm mb-2"><strong>Created:</strong> {{ restaurant_list.created_at|date:"F j, Y" }}</p>
         <p class="text-black text-sm mb-2"><strong>Last Updated:</strong> {{ restaurant_list.updated_at|date:"F j, Y" }}</p>
         <p class="text-black text-sm mb-2">
             <strong>Followers:</strong> 
@@ -83,7 +83,7 @@
                             <a href="{% url 'restaurant_detail' item.restaurant.id %}" class="hover:text-yakiimo-purple-light">{{ item.restaurant.name }}</a>
                         </h3>
                         <p class="text-black text-sm mb-2">{{ item.restaurant.suburb }}{% if item.restaurant.region %}, {{ item.restaurant.region }}{% endif %}{% if item.restaurant.country %}, {{ item.restaurant.country }}{% endif %}</p>
-                        <p class="text-black text-sm mb-2"><strong>Added:</strong> {{ item.inserted_at|date:"F j, Y" }}</p>
+                        <p class="text-black text-sm mb-2"><strong>Added:</strong> {{ item.created_at|date:"F j, Y" }}</p>
                         {% if item.notes %}
                             <p class="text-black mt-3">"{{ item.notes }}"</p>
                         {% endif %}
@@ -148,7 +148,7 @@
                     <div class="flex justify-between items-start mb-3">
                         <div class="flex items-center">
                             <a href="{% url 'profile' user_id=comment.author.id %}" class="font-medium text-yakiimo-purple hover:text-yakiimo-purple-light">{{ comment.author.username }}</a>
-                            <span class="text-yakiimo-purple text-sm ml-2">{{ comment.inserted_at|date:"M j, Y g:i A" }}</span>
+                            <span class="text-yakiimo-purple text-sm ml-2">{{ comment.created_at|date:"M j, Y g:i A" }}</span>
                         </div>
                     </div>
                     <div class="text-black">

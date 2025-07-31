@@ -24,17 +24,17 @@ def index(request):
     # Get the 12 most recently added restaurant list items
     recent_list_items = RestaurantListItem.objects.select_related(
         'restaurant', 'restaurant_list', 'restaurant_list__owner'
-    ).order_by('-inserted_at')[:12]
+    ).order_by('-created_at')[:12]
     
     # Get the 12 most recently added munch log items
     recent_munch_items = MunchLogItem.objects.select_related(
         'restaurant', 'munch_log', 'munch_log__owner'
-    ).order_by('-inserted_at')[:12]
+    ).order_by('-created_at')[:12]
     
     # Combine and sort by insertion time, then take the top 6
     all_recent_items = sorted(
         chain(recent_list_items, recent_munch_items),
-        key=attrgetter('inserted_at'),
+        key=attrgetter('created_at'),
         reverse=True
     )[:6]
     
@@ -45,13 +45,13 @@ def index(request):
             recent_items.append({
                 'type': 'list_item',
                 'item': item,
-                'inserted_at': item.inserted_at
+                'created_at': item.created_at
             })
         else:  # MunchLogItem
             recent_items.append({
                 'type': 'munch_item',
                 'item': item,
-                'inserted_at': item.inserted_at
+                'created_at': item.created_at
             })
     
     # If user is authenticated, also get activity from lists they're following
@@ -62,14 +62,14 @@ def index(request):
             restaurant_list_id__in=followed_lists
         ).select_related(
             'restaurant', 'restaurant_list', 'restaurant_list__owner'
-        ).order_by('-inserted_at')[:6]
+        ).order_by('-created_at')[:6]
         
         # For following activity, we only show list items since we don't have user following
         for item in following_list_items:
             following_activity.append({
                 'type': 'list_item',
                 'item': item,
-                'inserted_at': item.inserted_at
+                'created_at': item.created_at
             })
     
     return render(request, 'lists/home.html', {
@@ -348,7 +348,7 @@ def restaurantlistitem_create(request):
     - ?restaurant=<id>: Pre-select a restaurant
     """
     # Get all user's lists
-    user_lists = RestaurantList.objects.filter(owner=request.user).order_by('-inserted_at')
+    user_lists = RestaurantList.objects.filter(owner=request.user).order_by('-created_at')
     
     # Get URL parameter values
     list_id = request.GET.get('list')
@@ -444,7 +444,7 @@ def restaurant_detail(request, restaurant_id):
     # Get all list items for this restaurant with deduplication logic
     all_list_items = RestaurantListItem.objects.filter(
         restaurant=restaurant
-    ).select_related('restaurant_list__owner').order_by('-inserted_at')
+    ).select_related('restaurant_list__owner').order_by('-created_at')
     
     # Group items by list, separating those with and without comments
     items_by_list = defaultdict(lambda: {'with_comments': [], 'without_comments': []})
@@ -465,7 +465,7 @@ def restaurant_detail(request, restaurant_id):
     ]
     
     # Sort by insertion time (newest first)
-    list_items.sort(key=lambda item: item.inserted_at, reverse=True)
+    list_items.sort(key=lambda item: item.created_at, reverse=True)
     
     return render(request, 'lists/restaurant_detail.html', {
         'restaurant': restaurant,
@@ -652,7 +652,7 @@ def profile(request, user_id):
     # Get user's restaurant lists (munch log is now separate)
     user_lists = RestaurantList.objects.filter(
         owner=profile_user
-    ).order_by('-inserted_at')
+    ).order_by('-created_at')
     
     # Get statistics
     

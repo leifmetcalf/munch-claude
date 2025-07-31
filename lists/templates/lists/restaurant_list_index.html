@@ -53,7 +53,7 @@
                 {% if restaurant_list.blurb %}
                     <p class="text-black mb-2">{{ restaurant_list.blurb|truncatewords:20 }}</p>
                 {% endif %}
-                <p class="text-black text-sm"><strong>Created:</strong> {{ restaurant_list.inserted_at|date:"F j, Y" }}</p>
+                <p class="text-black text-sm"><strong>Created:</strong> {{ restaurant_list.created_at|date:"F j, Y" }}</p>
             </div>
         {% endfor %}
     </div>

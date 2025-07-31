@@ -44,7 +44,7 @@ class Restaurant(models.Model):
         related_name='restaurants_added',
         help_text="User who imported this restaurant"
     )
-    inserted_at = models.DateTimeField(auto_now_add=True)
+    created_at = models.DateTimeField(auto_now_add=True)
     
     class Meta:
         unique_together = ['osm_type', 'osm_id']
@@ -71,11 +71,11 @@ class RestaurantList(models.Model):
     name = models.CharField(max_length=200)
     owner = models.ForeignKey(User, on_delete=models.CASCADE)
     blurb = models.TextField(blank=True, help_text="Description or notes about this list")
-    inserted_at = models.DateTimeField(auto_now_add=True)
+    created_at = models.DateTimeField(auto_now_add=True)
     updated_at = models.DateTimeField(auto_now=True)
     
     class Meta:
-        ordering = ['-inserted_at']
+        ordering = ['-created_at']
     
     def __str__(self):
         return self.name
@@ -92,7 +92,7 @@ class MunchLog(models.Model):
 class RestaurantListItem(models.Model):
     restaurant = models.ForeignKey(Restaurant, on_delete=models.CASCADE)
     restaurant_list = models.ForeignKey(RestaurantList, on_delete=models.CASCADE)
-    inserted_at = models.DateTimeField(auto_now_add=True)
+    created_at = models.DateTimeField(auto_now_add=True)
     order = models.PositiveIntegerField(default=0)
     notes = models.TextField(blank=True, help_text="Optional notes about this restaurant")
     
@@ -106,12 +106,12 @@ class RestaurantListItem(models.Model):
 class MunchLogItem(models.Model):
     restaurant = models.ForeignKey(Restaurant, on_delete=models.CASCADE)
     munch_log = models.ForeignKey(MunchLog, on_delete=models.CASCADE)
-    inserted_at = models.DateTimeField(auto_now_add=True)
+    created_at = models.DateTimeField(auto_now_add=True)
     visited_date = models.DateField(null=True, blank=True, help_text="Date you visited this restaurant")
     notes = models.TextField(blank=True, help_text="Optional notes about this restaurant")
     
     class Meta:
-        ordering = [models.F('visited_date').desc(nulls_last=True), '-inserted_at']
+        ordering = [models.F('visited_date').desc(nulls_last=True), '-created_at']
     
     def __str__(self):
         return f"{self.restaurant.name} in {self.munch_log.name}"
@@ -145,13 +145,13 @@ class ListComment(models.Model):
     restaurant_list = models.ForeignKey(RestaurantList, on_delete=models.CASCADE, related_name='comments')
     author = models.ForeignKey(User, on_delete=models.CASCADE)
     content = models.TextField(max_length=1000, help_text="Comment about this restaurant list")
-    inserted_at = models.DateTimeField(auto_now_add=True)
+    created_at = models.DateTimeField(auto_now_add=True)
     updated_at = models.DateTimeField(auto_now=True)
     
     class Meta:
-        ordering = ['-inserted_at']  # Most recent first
+        ordering = ['-created_at']  # Most recent first
         indexes = [
-            models.Index(fields=['restaurant_list', '-inserted_at']),
+            models.Index(fields=['restaurant_list', '-created_at']),
         ]
     
     def __str__(self):
