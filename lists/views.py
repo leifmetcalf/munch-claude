@@ -967,3 +967,43 @@ def restaurant_reimport(request, restaurant_id):
     
     # For GET requests, redirect back to detail page
     return redirect('restaurant_detail', restaurant_id=restaurant.id)
+
+
+@login_required
+def add_by_node_id(request):
+    """Add restaurant by OSM node ID directly."""
+    if request.method == 'POST':
+        osm_id = request.POST.get('osm_id', '').strip()
+        
+        if not osm_id:
+            messages.error(request, 'Please enter an OSM node ID.')
+            return render(request, 'lists/add_by_node_id.html')
+        
+        # Validate that it's a number
+        try:
+            int(osm_id)
+        except ValueError:
+            messages.error(request, 'OSM node ID must be a number.')
+            return render(request, 'lists/add_by_node_id.html', {'osm_id': osm_id})
+        
+        try:
+            # Check if restaurant already exists
+            existing_restaurant = Restaurant.objects.filter(
+                osm_type=Restaurant.OSMType.NODE,
+                osm_id=osm_id
+            ).first()
+            
+            if existing_restaurant:
+                messages.info(request, f'"{existing_restaurant.name}" already exists in MunchZone. Redirecting to "{existing_restaurant.name}".')
+                return redirect('restaurant_detail', restaurant_id=existing_restaurant.id)
+            
+            # Create restaurant from OSM node
+            restaurant = create_restaurant_from_osm(Restaurant.OSMType.NODE, osm_id, added_by=request.user)
+            messages.success(request, f'Restaurant "{restaurant.name}" added to database!')
+            return redirect('restaurant_detail', restaurant_id=restaurant.id)
+            
+        except Exception as e:
+            messages.error(request, f'Error adding restaurant: {str(e)}')
+            return render(request, 'lists/add_by_node_id.html', {'osm_id': osm_id})
+    
+    return render(request, 'lists/add_by_node_id.html')

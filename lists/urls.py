@@ -5,6 +5,7 @@ from . import views
 urlpatterns = [
     path('', views.index, name='index'),
     path('import/', views.restaurant_nominatim, name='restaurant_nominatim'),
+    path('import/node-id/', views.add_by_node_id, name='add_by_node_id'),
     path('restaurants/', views.restaurant_index, name='restaurant_index'),
     path('list/', views.restaurantlist_index, name='restaurantlist_index'),
     path('list/create/', views.restaurantlist_create, name='restaurantlist_create'),

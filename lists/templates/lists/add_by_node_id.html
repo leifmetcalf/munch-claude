@@ -1,0 +1,68 @@
+{% extends 'base.html' %}
+
+{% block title %}Add Restaurant by Node ID - Munch{% endblock %}
+
+{% block content %}
+<div class="max-w-2xl mx-auto">
+    <h1 class="text-3xl font-bold text-yakiimo-purple mb-6">Add Restaurant by Node ID</h1>
+    
+    <div class="bg-yakiimo-cream-light rounded-lg border border-gray-200 p-6 mb-6">
+        <p class="text-yakiimo-purple mb-4">
+            If you know the OpenStreetMap node ID of a restaurant, you can add it directly here. 
+            Node IDs are numbers like <code class="bg-gray-200 px-1 rounded">13039183343</code>.
+        </p>
+        
+        <p class="text-yakiimo-purple mb-4">
+            You can find node IDs by:
+        </p>
+        <ul class="list-disc list-inside text-yakiimo-purple mb-4 space-y-1">
+            <li>Visiting <a href="https://www.openstreetmap.org" target="_blank" class="text-yakiimo-purple-light hover:text-yakiimo-purple underline">OpenStreetMap.org</a></li>
+            <li>Searching for and clicking on a restaurant</li>
+            <li>Looking at the URL or info panel for the node ID</li>
+        </ul>
+    </div>
+
+    <div class="bg-yakiimo-cream-light rounded-lg border border-gray-200 p-6">
+        <form method="post">
+            {% csrf_token %}
+            <div class="mb-4">
+                <label for="osm_id" class="block text-yakiimo-purple font-medium mb-2">
+                    OSM Node ID
+                </label>
+                <input 
+                    type="text" 
+                    id="osm_id" 
+                    name="osm_id" 
+                    value="{{ osm_id|default:'' }}"
+                    placeholder="e.g. 13039183343"
+                    class="w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-yakiimo-yellow focus:border-transparent"
+                    required
+                >
+                <p class="text-sm text-gray-600 mt-1">Enter the numeric node ID from OpenStreetMap</p>
+            </div>
+            
+            <div class="flex gap-4">
+                <button 
+                    type="submit" 
+                    class="bg-yakiimo-yellow hover:bg-yakiimo-yellow-hover text-yakiimo-purple px-6 py-2 rounded font-medium transition-colors"
+                >
+                    Add Restaurant
+                </button>
+                <a 
+                    href="{% url 'restaurant_nominatim' %}" 
+                    class="bg-gray-300 hover:bg-gray-400 text-gray-700 px-6 py-2 rounded font-medium transition-colors"
+                >
+                    Back to Search
+                </a>
+            </div>
+        </form>
+    </div>
+    
+    <div class="mt-6">
+        <p class="text-sm text-gray-600">
+            <strong>Note:</strong> This will only work for restaurants that are tagged as nodes in OpenStreetMap. 
+            If you're not sure, try the <a href="{% url 'restaurant_nominatim' %}" class="text-yakiimo-purple-light hover:text-yakiimo-purple underline">regular search</a> instead.
+        </p>
+    </div>
+</div>
+{% endblock %}

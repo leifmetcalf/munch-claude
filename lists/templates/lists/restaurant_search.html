@@ -7,10 +7,17 @@
     <h1 class="text-3xl font-bold text-yakiimo-purple mb-6">Import Restaurants</h1>
 
     <div class="bg-yakiimo-cream-light rounded-lg border border-gray-200 p-6 mb-6">
-        <form method="get" class="flex gap-4">
+        <form method="get" class="flex gap-4 mb-4">
             <input type="text" name="q" value="{{ query|default:'' }}" placeholder="Enter location or restaurant name" class="flex-1 px-3 py-2 border border-yakiimo-purple-border rounded-md focus:border-yakiimo-yellow">
             <button type="submit" class="bg-yakiimo-yellow text-yakiimo-purple hover:bg-yakiimo-yellow-hover px-6 py-2 rounded-md text-sm font-medium transition-colors">Search</button>
         </form>
+        
+        <div class="border-t border-gray-200 pt-4">
+            <p class="text-yakiimo-purple text-sm mb-2">Or if you know the OpenStreetMap node ID:</p>
+            <a href="{% url 'add_by_node_id' %}" class="bg-gray-300 hover:bg-gray-400 text-gray-700 px-4 py-2 rounded-md text-sm font-medium transition-colors inline-block">
+                Add by Node ID
+            </a>
+        </div>
     </div>
 
     {% if error %}
