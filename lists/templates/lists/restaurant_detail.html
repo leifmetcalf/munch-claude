@@ -46,6 +46,10 @@
         
         <div class="space-y-2">
             <p class="text-black"><strong>Address:</strong> {{ restaurant.address }}</p>
+            <p class="text-black"><strong>Added by:</strong> 
+                <a href="{% url 'profile' restaurant.added_by.id %}" class="text-yakiimo-purple-light hover:text-yakiimo-purple">{{ restaurant.added_by.username }}</a>
+                on {{ restaurant.created_at|date:"M d, Y" }}
+            </p>
         </div>
     </div>
 
