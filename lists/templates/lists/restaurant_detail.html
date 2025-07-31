@@ -85,6 +85,24 @@
     </div>
     {% endif %}
 
+    {% if munchers %}
+    <div class="bg-yakiimo-cream-light rounded-lg border border-gray-200 p-6 mb-6">
+        <h2 class="text-xl font-semibold text-yakiimo-purple mb-4">Who's Munched Here</h2>
+        <div class="flex flex-wrap gap-2">
+            {% for muncher in munchers %}
+                <a href="{% url 'profile' muncher.munch_log__owner__id %}" class="bg-yakiimo-yellow hover:bg-yakiimo-yellow-hover text-yakiimo-purple px-3 py-1 rounded-full text-sm font-medium transition-colors">
+                    {{ muncher.munch_log__owner__username }}
+                </a>
+            {% endfor %}
+        </div>
+        {% if munchers|length == 1 %}
+            <p class="text-sm text-yakiimo-purple-light mt-2">1 person has munched here</p>
+        {% else %}
+            <p class="text-sm text-yakiimo-purple-light mt-2">{{ munchers|length }} people have munched here</p>
+        {% endif %}
+    </div>
+    {% endif %}
+
     <div class="flex gap-4">
         <a href="{% url 'restaurant_index' %}" class="text-yakiimo-purple-light hover:text-yakiimo-purple font-medium">← All Restaurants</a>
         <span class="text-yakiimo-purple-light">|</span>

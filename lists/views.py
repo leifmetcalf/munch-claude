@@ -467,10 +467,19 @@ def restaurant_detail(request, restaurant_id):
     # Sort by insertion time (newest first)
     list_items.sort(key=lambda item: item.created_at, reverse=True)
     
+    # Get users who have munched at this restaurant (from munch logs only)
+    munchers = MunchLogItem.objects.filter(
+        restaurant=restaurant
+    ).select_related('munch_log__owner').values(
+        'munch_log__owner__id',
+        'munch_log__owner__username'
+    ).distinct().order_by('munch_log__owner__username')
+    
     return render(request, 'lists/restaurant_detail.html', {
         'restaurant': restaurant,
         'coordinates': coordinates,
-        'list_items': list_items
+        'list_items': list_items,
+        'munchers': munchers
     })
 
 
