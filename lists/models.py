@@ -40,7 +40,7 @@ class Restaurant(models.Model):
     location = models.PointField(help_text="Geographic location from Nominatim")
     added_by = models.ForeignKey(
         User, 
-        on_delete=models.CASCADE, 
+        on_delete=models.RESTRICT, 
         related_name='restaurants_added',
         help_text="User who imported this restaurant"
     )
@@ -57,7 +57,7 @@ class RestaurantImage(models.Model):
     restaurant = models.ForeignKey(Restaurant, on_delete=models.CASCADE, related_name='images')
     image = models.ImageField(upload_to='restaurants/', help_text="Restaurant photo")
     alt_text = models.CharField(max_length=200, blank=True, help_text="Alt text for accessibility")
-    added_by = models.ForeignKey(User, on_delete=models.CASCADE, help_text="User who added this image")
+    added_by = models.ForeignKey(User, on_delete=models.RESTRICT, help_text="User who added this image")
     uploaded_at = models.DateTimeField(auto_now_add=True)
     
     class Meta:
@@ -69,7 +69,7 @@ class RestaurantImage(models.Model):
 
 class RestaurantList(models.Model):
     name = models.CharField(max_length=200)
-    owner = models.ForeignKey(User, on_delete=models.CASCADE)
+    owner = models.ForeignKey(User, on_delete=models.RESTRICT)
     blurb = models.TextField(blank=True, help_text="Description or notes about this list")
     created_at = models.DateTimeField(auto_now_add=True)
     updated_at = models.DateTimeField(auto_now=True)
@@ -83,14 +83,14 @@ class RestaurantList(models.Model):
 
 class MunchLog(models.Model):
     name = models.CharField(max_length=200)
-    owner = models.OneToOneField(User, on_delete=models.CASCADE, related_name='munch_log')
+    owner = models.OneToOneField(User, on_delete=models.RESTRICT, related_name='munch_log')
     
     def __str__(self):
         return self.name
 
 
 class RestaurantListItem(models.Model):
-    restaurant = models.ForeignKey(Restaurant, on_delete=models.CASCADE)
+    restaurant = models.ForeignKey(Restaurant, on_delete=models.RESTRICT)
     restaurant_list = models.ForeignKey(RestaurantList, on_delete=models.CASCADE)
     created_at = models.DateTimeField(auto_now_add=True)
     order = models.PositiveIntegerField(default=0)
@@ -104,7 +104,7 @@ class RestaurantListItem(models.Model):
 
 
 class MunchLogItem(models.Model):
-    restaurant = models.ForeignKey(Restaurant, on_delete=models.CASCADE)
+    restaurant = models.ForeignKey(Restaurant, on_delete=models.RESTRICT)
     munch_log = models.ForeignKey(MunchLog, on_delete=models.CASCADE)
     created_at = models.DateTimeField(auto_now_add=True)
     visited_date = models.DateField(null=True, blank=True, help_text="Date you visited this restaurant")
@@ -143,7 +143,7 @@ def delete_old_restaurant_image(sender, instance, **kwargs):
 
 class ListComment(models.Model):
     restaurant_list = models.ForeignKey(RestaurantList, on_delete=models.CASCADE, related_name='comments')
-    author = models.ForeignKey(User, on_delete=models.CASCADE)
+    author = models.ForeignKey(User, on_delete=models.RESTRICT)
     content = models.TextField(max_length=1000, help_text="Comment about this restaurant list")
     created_at = models.DateTimeField(auto_now_add=True)
     updated_at = models.DateTimeField(auto_now=True)
