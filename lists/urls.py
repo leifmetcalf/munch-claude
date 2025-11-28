@@ -76,11 +76,6 @@ urlpatterns = [
     ),
     path("profile/<int:user_id>/munchlog/", views.munch_log, name="munch_log"),
     path(
-        "profile/<int:user_id>/munchlog/edit/",
-        views.munch_log_edit,
-        name="munch_log_edit",
-    ),
-    path(
         "profile/<int:user_id>/following/",
         views.user_following_lists,
         name="user_following_lists",

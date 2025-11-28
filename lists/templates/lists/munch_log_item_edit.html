@@ -1,0 +1,80 @@
+{% extends 'base.html' %}
+
+{% block title %}Edit Munch - {{ item.restaurant.name }}{% endblock %}
+
+{% block content %}
+<div class="max-w-2xl mx-auto">
+    <h1 class="text-3xl font-bold text-yakiimo-purple mb-6">Edit Munch</h1>
+
+    <div class="bg-yakiimo-cream-light rounded-lg border border-yakiimo-purple-border p-6">
+        <div class="mb-6">
+            <h2 class="text-xl font-semibold text-yakiimo-purple">
+                <a href="{% url 'restaurant_detail' item.restaurant.id %}" class="hover:text-yakiimo-purple-light">{{ item.restaurant.name }}</a>
+            </h2>
+            <p class="text-black text-sm">{{ item.restaurant.address }}</p>
+        </div>
+
+        <form method="post" class="space-y-6">
+            {% csrf_token %}
+
+            <div>
+                <label for="{{ form.visited_date.id_for_label }}" class="block text-sm font-medium text-yakiimo-purple mb-2">
+                    Date Visited
+                </label>
+                {{ form.visited_date }}
+                <button type="button" id="clear-date-btn" class="mt-2 bg-yakiimo-purple-light text-white hover:bg-yakiimo-purple px-3 py-2 rounded-md text-sm font-medium transition-colors">
+                    Clear date
+                </button>
+                {% if form.visited_date.errors %}
+                    <div class="mt-1 text-sm text-red-600">
+                        {% for error in form.visited_date.errors %}
+                            <p>{{ error }}</p>
+                        {% endfor %}
+                    </div>
+                {% endif %}
+            </div>
+
+            <div>
+                <label for="{{ form.notes.id_for_label }}" class="block text-sm font-medium text-yakiimo-purple mb-2">
+                    Notes
+                </label>
+                {{ form.notes }}
+                {% if form.notes.errors %}
+                    <div class="mt-1 text-sm text-red-600">
+                        {% for error in form.notes.errors %}
+                            <p>{{ error }}</p>
+                        {% endfor %}
+                    </div>
+                {% endif %}
+            </div>
+
+            <div class="flex justify-between items-center pt-4 border-t border-gray-200">
+                <a href="{% url 'munchlogitem_delete' item.id %}" class="text-red-600 hover:text-red-800 font-medium text-sm">
+                    Delete this munch
+                </a>
+                <div class="flex gap-4 items-center">
+                    <a href="{% url 'munch_log' item.munch_log.owner.id %}" class="text-yakiimo-purple-light hover:text-yakiimo-purple font-medium">
+                        Cancel
+                    </a>
+                    <button type="submit" class="bg-yakiimo-yellow text-yakiimo-purple hover:bg-yakiimo-yellow-hover px-4 py-2 rounded-md text-sm font-medium transition-colors">
+                        Save Changes
+                    </button>
+                </div>
+            </div>
+        </form>
+    </div>
+</div>
+
+<script>
+document.addEventListener('DOMContentLoaded', function() {
+    const clearDateBtn = document.getElementById('clear-date-btn');
+    const dateInput = document.getElementById('{{ form.visited_date.id_for_label }}');
+
+    if (clearDateBtn && dateInput) {
+        clearDateBtn.addEventListener('click', function() {
+            dateInput.value = '';
+        });
+    }
+});
+</script>
+{% endblock %}

@@ -1015,29 +1015,6 @@ def restaurantlistitem_update(request, item_id):
 
 
 @login_required
-def munch_log_edit(request, user_id):
-    """Edit view for munch log items."""
-    munch_log_user = get_object_or_404(User, id=user_id)
-
-    # Check if user owns the munch log
-    if munch_log_user != request.user:
-        messages.error(request, "You don't have permission to edit this munch log.")
-        return redirect("munch_log", user_id=user_id)
-
-    # Get or create the user's munch log
-    munch_log = munch_log_user.get_or_create_munch_log()
-
-    # Get all items in the munch log
-    munch_log_items = MunchLogItem.objects.filter(munch_log=munch_log)
-
-    return render(
-        request,
-        "lists/munch_log_edit.html",
-        {"munch_log": munch_log, "munch_log_items": munch_log_items},
-    )
-
-
-@login_required
 def munchlogitem_update(request, item_id):
     """Update a munch log item's notes and visited date."""
     item = get_object_or_404(MunchLogItem, id=item_id)
@@ -1054,10 +1031,17 @@ def munchlogitem_update(request, item_id):
         if form.is_valid():
             form.save()
             messages.success(request, f'Updated "{item.restaurant.name}" successfully!')
+            return redirect("munch_log", user_id=item.munch_log.owner.id)
         else:
             messages.error(request, "Please correct the errors below.")
+    else:
+        form = MunchLogItemUpdateForm(instance=item)
 
-    return redirect("munch_log_edit", user_id=item.munch_log.owner.id)
+    return render(
+        request,
+        "lists/munch_log_item_edit.html",
+        {"item": item, "form": form},
+    )
 
 
 @login_required
