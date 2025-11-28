@@ -1,5 +1,6 @@
 {% load static %}
 {% load i18n %}
+{% load url_extras %}
 {% get_current_language as LANGUAGE_CODE %}
 <!DOCTYPE html>
 <html lang="{{ LANGUAGE_CODE }}">
@@ -25,7 +26,7 @@
                             <a href="{% url 'restaurant_index' %}" class="text-yakiimo-cream hover:text-white px-2 py-2 rounded-md text-sm font-medium">Explore Restaurants</a>
                             <a href="{% url 'user_restaurantlist_index' user.id %}" class="text-yakiimo-cream hover:text-white px-2 py-2 rounded-md text-sm font-medium">My Lists</a>
                             <a href="{% url 'user_following_lists' user.id %}" class="text-yakiimo-cream hover:text-white px-2 py-2 rounded-md text-sm font-medium">Following</a>
-                            <a href="{% url 'munchlogitem_create' %}" class="bg-yakiimo-yellow hover:bg-yakiimo-yellow-hover text-yakiimo-purple px-2 py-2 rounded-md text-sm font-bold transition-colors">Log a Munch</a>
+                            <a href="{% url_with_next 'munchlogitem_create' %}" class="bg-yakiimo-yellow hover:bg-yakiimo-yellow-hover text-yakiimo-purple px-2 py-2 rounded-md text-sm font-bold transition-colors">Log a Munch</a>
                         {% endif %}
                     </div>
                 </div>
@@ -58,7 +59,7 @@
                     <a href="{% url 'restaurant_index' %}" class="block text-yakiimo-cream hover:text-white hover:bg-yakiimo-purple px-3 py-2 rounded-md text-base font-medium">Explore Restaurants</a>
                     <a href="{% url 'user_restaurantlist_index' user.id %}" class="block text-yakiimo-cream hover:text-white hover:bg-yakiimo-purple px-3 py-2 rounded-md text-base font-medium">My Lists</a>
                     <a href="{% url 'user_following_lists' user.id %}" class="block text-yakiimo-cream hover:text-white hover:bg-yakiimo-purple px-3 py-2 rounded-md text-base font-medium">Following</a>
-                    <a href="{% url 'munchlogitem_create' %}" class="block bg-yakiimo-yellow hover:bg-yakiimo-yellow-hover text-yakiimo-purple px-3 py-2 rounded-md text-base font-bold transition-colors">Log a Munch</a>
+                    <a href="{% url_with_next 'munchlogitem_create' %}" class="block bg-yakiimo-yellow hover:bg-yakiimo-yellow-hover text-yakiimo-purple px-3 py-2 rounded-md text-base font-bold transition-colors">Log a Munch</a>
                     <div class="border-t border-yakiimo-purple mt-2 pt-2">
                         <a href="{% url 'profile' user.id %}" class="block text-yakiimo-cream hover:text-white hover:bg-yakiimo-purple px-3 py-2 rounded-md text-base font-medium">Profile</a>
                     </div>

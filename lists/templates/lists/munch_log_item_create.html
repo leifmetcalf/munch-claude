@@ -7,7 +7,7 @@
     <h1 class="text-3xl font-bold text-yakiimo-purple mb-6">Log a Munch</h1>
 
     <div class="bg-yakiimo-cream-light rounded-lg border border-yakiimo-purple-border p-6">
-        <form method="post" class="space-y-6">
+        <form method="post" class="space-y-8">
             {% csrf_token %}
             
             <!-- Restaurant Selection -->
@@ -40,9 +40,6 @@
                     {{ form.notes.label }}
                 </label>
                 {{ form.notes }}
-                {% if form.notes.help_text %}
-                    <p class="mt-1 text-sm text-yakiimo-purple-light">{{ form.notes.help_text }}</p>
-                {% endif %}
                 {% if form.notes.errors %}
                     <div class="mt-1 text-sm text-red-600">
                         {% for error in form.notes.errors %}
@@ -52,20 +49,12 @@
                 {% endif %}
             </div>
             
-            <div class="flex justify-between items-center">
-                <div>
-                    {% if request.GET.restaurant %}
-                        <a href="{% url 'restaurant_detail' request.GET.restaurant %}" class="text-yakiimo-purple-light hover:text-yakiimo-purple font-medium">
-                            ← Back to restaurant
-                        </a>
-                    {% else %}
-                        <a href="{% url 'munch_log' user_id=munch_log.owner.id %}" class="text-yakiimo-purple-light hover:text-yakiimo-purple font-medium">
-                            to Munch Log
-                        </a>
-                    {% endif %}
-                </div>
+            <div class="flex justify-end items-center gap-4">
+                <a href="{{ request.GET.next|default:'/' }}" class="text-yakiimo-purple-light hover:text-yakiimo-purple font-medium">
+                    Cancel
+                </a>
                 <button type="submit" class="bg-yakiimo-yellow text-yakiimo-purple hover:bg-yakiimo-yellow-hover px-4 py-2 rounded-md text-sm font-medium transition-colors">
-                    Munch
+                    Log Munch
                 </button>
             </div>
         </form>
@@ -79,9 +68,15 @@ document.addEventListener('DOMContentLoaded', function() {
     // Setup restaurant search functionality
     setupRestaurantSearch(
         'restaurant-search',
-        'restaurant-results', 
+        'restaurant-results',
         '{{ form.restaurant.id_for_label }}'
     );
+
+    // Auto-focus the restaurant search field
+    const searchInput = document.getElementById('restaurant-search');
+    if (searchInput) {
+        searchInput.focus();
+    }
     
     // Clear date button functionality
     const clearDateBtn = document.getElementById('clear-date-btn');

@@ -803,7 +803,7 @@ def munchlogitem_create(request):
             
             munch_log_item = form.save()
             messages.success(request, f'"{munch_log_item.restaurant.name}" added to your Munch Log!')
-            
+
             # Redirect based on where user came from
             if restaurant_id:
                 return redirect('restaurant_detail', restaurant_id=munch_log_item.restaurant.id)

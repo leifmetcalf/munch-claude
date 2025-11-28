@@ -1,4 +1,5 @@
 {% extends 'base.html' %}
+{% load url_extras %}
 
 {% block title %}{{ munch_log.name }} - Munch{% endblock %}
 
@@ -17,7 +18,7 @@
 
     <div class="flex gap-4 mb-6">
         {% if user.is_authenticated and user == munch_log.owner %}
-            <a href="{% url 'munchlogitem_create' %}" class="bg-yakiimo-yellow text-yakiimo-purple hover:bg-yakiimo-yellow-hover px-4 py-2 rounded-md text-sm font-medium transition-colors">Log a Munch</a>
+            <a href="{% url_with_next 'munchlogitem_create' %}" class="bg-yakiimo-yellow text-yakiimo-purple hover:bg-yakiimo-yellow-hover px-4 py-2 rounded-md text-sm font-medium transition-colors">Log a Munch</a>
             <a href="{% url 'munch_log_edit' munch_log.owner.id %}" class="bg-yakiimo-yellow hover:bg-yakiimo-yellow-hover text-yakiimo-purple px-4 py-2 rounded-md text-sm font-medium transition-colors">Edit Munch Log</a>
         {% endif %}
     </div>
@@ -87,7 +88,7 @@
         <p class="text-yakiimo-purple-light text-lg">No restaurants in this munch log yet.</p>
         {% if user.is_authenticated and user == munch_log.owner %}
             <p class="text-yakiimo-purple-light text-sm mt-2">
-                <a href="{% url 'munchlogitem_create' %}" class="text-yakiimo-purple-light hover:text-yakiimo-purple font-medium">Add your first restaurant</a> to get started!
+                <a href="{% url_with_next 'munchlogitem_create' %}" class="text-yakiimo-purple-light hover:text-yakiimo-purple font-medium">Add your first restaurant</a> to get started!
             </p>
         {% endif %}
     </div>
