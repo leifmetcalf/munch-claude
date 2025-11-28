@@ -985,7 +985,7 @@ def munchlogitem_delete(request, item_id):
     item.delete()
 
     messages.success(request, f'"{restaurant_name}" removed from your Munch Log.')
-    return redirect("munch_log_edit", user_id=user_id)
+    return redirect("munch_log", user_id=user_id)
 
 
 @login_required
