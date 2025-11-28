@@ -10,146 +10,425 @@ from django.db import migrations, models
 
 
 class Migration(migrations.Migration):
-
     initial = True
 
     dependencies = [
-        ('auth', '0012_alter_user_first_name_max_length'),
+        ("auth", "0012_alter_user_first_name_max_length"),
     ]
 
     operations = [
         migrations.CreateModel(
-            name='User',
+            name="User",
             fields=[
-                ('id', models.BigAutoField(auto_created=True, primary_key=True, serialize=False, verbose_name='ID')),
-                ('password', models.CharField(max_length=128, verbose_name='password')),
-                ('last_login', models.DateTimeField(blank=True, null=True, verbose_name='last login')),
-                ('is_superuser', models.BooleanField(default=False, help_text='Designates that this user has all permissions without explicitly assigning them.', verbose_name='superuser status')),
-                ('username', models.CharField(error_messages={'unique': 'A user with that username already exists.'}, help_text='Required. 150 characters or fewer. Letters, digits and @/./+/-/_ only.', max_length=150, unique=True, validators=[django.contrib.auth.validators.UnicodeUsernameValidator()], verbose_name='username')),
-                ('first_name', models.CharField(blank=True, max_length=150, verbose_name='first name')),
-                ('last_name', models.CharField(blank=True, max_length=150, verbose_name='last name')),
-                ('email', models.EmailField(blank=True, max_length=254, verbose_name='email address')),
-                ('is_staff', models.BooleanField(default=False, help_text='Designates whether the user can log into this admin site.', verbose_name='staff status')),
-                ('is_active', models.BooleanField(default=True, help_text='Designates whether this user should be treated as active. Unselect this instead of deleting accounts.', verbose_name='active')),
-                ('date_joined', models.DateTimeField(default=django.utils.timezone.now, verbose_name='date joined')),
-                ('groups', models.ManyToManyField(blank=True, help_text='The groups this user belongs to. A user will get all permissions granted to each of their groups.', related_name='user_set', related_query_name='user', to='auth.group', verbose_name='groups')),
-                ('user_permissions', models.ManyToManyField(blank=True, help_text='Specific permissions for this user.', related_name='user_set', related_query_name='user', to='auth.permission', verbose_name='user permissions')),
+                (
+                    "id",
+                    models.BigAutoField(
+                        auto_created=True,
+                        primary_key=True,
+                        serialize=False,
+                        verbose_name="ID",
+                    ),
+                ),
+                ("password", models.CharField(max_length=128, verbose_name="password")),
+                (
+                    "last_login",
+                    models.DateTimeField(
+                        blank=True, null=True, verbose_name="last login"
+                    ),
+                ),
+                (
+                    "is_superuser",
+                    models.BooleanField(
+                        default=False,
+                        help_text="Designates that this user has all permissions without explicitly assigning them.",
+                        verbose_name="superuser status",
+                    ),
+                ),
+                (
+                    "username",
+                    models.CharField(
+                        error_messages={
+                            "unique": "A user with that username already exists."
+                        },
+                        help_text="Required. 150 characters or fewer. Letters, digits and @/./+/-/_ only.",
+                        max_length=150,
+                        unique=True,
+                        validators=[
+                            django.contrib.auth.validators.UnicodeUsernameValidator()
+                        ],
+                        verbose_name="username",
+                    ),
+                ),
+                (
+                    "first_name",
+                    models.CharField(
+                        blank=True, max_length=150, verbose_name="first name"
+                    ),
+                ),
+                (
+                    "last_name",
+                    models.CharField(
+                        blank=True, max_length=150, verbose_name="last name"
+                    ),
+                ),
+                (
+                    "email",
+                    models.EmailField(
+                        blank=True, max_length=254, verbose_name="email address"
+                    ),
+                ),
+                (
+                    "is_staff",
+                    models.BooleanField(
+                        default=False,
+                        help_text="Designates whether the user can log into this admin site.",
+                        verbose_name="staff status",
+                    ),
+                ),
+                (
+                    "is_active",
+                    models.BooleanField(
+                        default=True,
+                        help_text="Designates whether this user should be treated as active. Unselect this instead of deleting accounts.",
+                        verbose_name="active",
+                    ),
+                ),
+                (
+                    "date_joined",
+                    models.DateTimeField(
+                        default=django.utils.timezone.now, verbose_name="date joined"
+                    ),
+                ),
+                (
+                    "groups",
+                    models.ManyToManyField(
+                        blank=True,
+                        help_text="The groups this user belongs to. A user will get all permissions granted to each of their groups.",
+                        related_name="user_set",
+                        related_query_name="user",
+                        to="auth.group",
+                        verbose_name="groups",
+                    ),
+                ),
+                (
+                    "user_permissions",
+                    models.ManyToManyField(
+                        blank=True,
+                        help_text="Specific permissions for this user.",
+                        related_name="user_set",
+                        related_query_name="user",
+                        to="auth.permission",
+                        verbose_name="user permissions",
+                    ),
+                ),
             ],
             options={
-                'verbose_name': 'user',
-                'verbose_name_plural': 'users',
-                'abstract': False,
+                "verbose_name": "user",
+                "verbose_name_plural": "users",
+                "abstract": False,
             },
             managers=[
-                ('objects', django.contrib.auth.models.UserManager()),
+                ("objects", django.contrib.auth.models.UserManager()),
             ],
         ),
         migrations.CreateModel(
-            name='MunchLog',
+            name="MunchLog",
             fields=[
-                ('id', models.BigAutoField(auto_created=True, primary_key=True, serialize=False, verbose_name='ID')),
-                ('name', models.CharField(max_length=200)),
-                ('owner', models.OneToOneField(on_delete=django.db.models.deletion.CASCADE, related_name='munch_log', to=settings.AUTH_USER_MODEL)),
+                (
+                    "id",
+                    models.BigAutoField(
+                        auto_created=True,
+                        primary_key=True,
+                        serialize=False,
+                        verbose_name="ID",
+                    ),
+                ),
+                ("name", models.CharField(max_length=200)),
+                (
+                    "owner",
+                    models.OneToOneField(
+                        on_delete=django.db.models.deletion.CASCADE,
+                        related_name="munch_log",
+                        to=settings.AUTH_USER_MODEL,
+                    ),
+                ),
             ],
         ),
         migrations.CreateModel(
-            name='Restaurant',
+            name="Restaurant",
             fields=[
-                ('id', models.BigAutoField(auto_created=True, primary_key=True, serialize=False, verbose_name='ID')),
-                ('name', models.CharField(max_length=200)),
-                ('address', models.CharField(max_length=300)),
-                ('suburb', models.CharField(max_length=100)),
-                ('region', models.CharField(max_length=100)),
-                ('country', models.CharField(max_length=100)),
-                ('osm_type', models.CharField(max_length=20)),
-                ('osm_id', models.CharField(max_length=20)),
-                ('location', django.contrib.gis.db.models.fields.PointField(help_text='Geographic location from Nominatim', srid=4326)),
+                (
+                    "id",
+                    models.BigAutoField(
+                        auto_created=True,
+                        primary_key=True,
+                        serialize=False,
+                        verbose_name="ID",
+                    ),
+                ),
+                ("name", models.CharField(max_length=200)),
+                ("address", models.CharField(max_length=300)),
+                ("suburb", models.CharField(max_length=100)),
+                ("region", models.CharField(max_length=100)),
+                ("country", models.CharField(max_length=100)),
+                ("osm_type", models.CharField(max_length=20)),
+                ("osm_id", models.CharField(max_length=20)),
+                (
+                    "location",
+                    django.contrib.gis.db.models.fields.PointField(
+                        help_text="Geographic location from Nominatim", srid=4326
+                    ),
+                ),
             ],
             options={
-                'unique_together': {('osm_type', 'osm_id')},
+                "unique_together": {("osm_type", "osm_id")},
             },
         ),
         migrations.CreateModel(
-            name='MunchLogItem',
+            name="MunchLogItem",
             fields=[
-                ('id', models.BigAutoField(auto_created=True, primary_key=True, serialize=False, verbose_name='ID')),
-                ('inserted_at', models.DateTimeField(auto_now_add=True)),
-                ('notes', models.TextField(blank=True, help_text='Optional notes about this restaurant')),
-                ('munch_log', models.ForeignKey(on_delete=django.db.models.deletion.CASCADE, to='lists.munchlog')),
-                ('restaurant', models.ForeignKey(on_delete=django.db.models.deletion.CASCADE, to='lists.restaurant')),
+                (
+                    "id",
+                    models.BigAutoField(
+                        auto_created=True,
+                        primary_key=True,
+                        serialize=False,
+                        verbose_name="ID",
+                    ),
+                ),
+                ("inserted_at", models.DateTimeField(auto_now_add=True)),
+                (
+                    "notes",
+                    models.TextField(
+                        blank=True, help_text="Optional notes about this restaurant"
+                    ),
+                ),
+                (
+                    "munch_log",
+                    models.ForeignKey(
+                        on_delete=django.db.models.deletion.CASCADE, to="lists.munchlog"
+                    ),
+                ),
+                (
+                    "restaurant",
+                    models.ForeignKey(
+                        on_delete=django.db.models.deletion.CASCADE,
+                        to="lists.restaurant",
+                    ),
+                ),
             ],
             options={
-                'ordering': ['-inserted_at'],
+                "ordering": ["-inserted_at"],
             },
         ),
         migrations.CreateModel(
-            name='RestaurantImage',
+            name="RestaurantImage",
             fields=[
-                ('id', models.BigAutoField(auto_created=True, primary_key=True, serialize=False, verbose_name='ID')),
-                ('image', models.ImageField(help_text='Restaurant photo', upload_to='restaurants/')),
-                ('alt_text', models.CharField(blank=True, help_text='Alt text for accessibility', max_length=200)),
-                ('uploaded_at', models.DateTimeField(auto_now_add=True)),
-                ('added_by', models.ForeignKey(help_text='User who added this image', on_delete=django.db.models.deletion.CASCADE, to=settings.AUTH_USER_MODEL)),
-                ('restaurant', models.ForeignKey(on_delete=django.db.models.deletion.CASCADE, related_name='images', to='lists.restaurant')),
+                (
+                    "id",
+                    models.BigAutoField(
+                        auto_created=True,
+                        primary_key=True,
+                        serialize=False,
+                        verbose_name="ID",
+                    ),
+                ),
+                (
+                    "image",
+                    models.ImageField(
+                        help_text="Restaurant photo", upload_to="restaurants/"
+                    ),
+                ),
+                (
+                    "alt_text",
+                    models.CharField(
+                        blank=True,
+                        help_text="Alt text for accessibility",
+                        max_length=200,
+                    ),
+                ),
+                ("uploaded_at", models.DateTimeField(auto_now_add=True)),
+                (
+                    "added_by",
+                    models.ForeignKey(
+                        help_text="User who added this image",
+                        on_delete=django.db.models.deletion.CASCADE,
+                        to=settings.AUTH_USER_MODEL,
+                    ),
+                ),
+                (
+                    "restaurant",
+                    models.ForeignKey(
+                        on_delete=django.db.models.deletion.CASCADE,
+                        related_name="images",
+                        to="lists.restaurant",
+                    ),
+                ),
             ],
             options={
-                'ordering': ['uploaded_at'],
+                "ordering": ["uploaded_at"],
             },
         ),
         migrations.CreateModel(
-            name='RestaurantList',
+            name="RestaurantList",
             fields=[
-                ('id', models.BigAutoField(auto_created=True, primary_key=True, serialize=False, verbose_name='ID')),
-                ('name', models.CharField(max_length=200)),
-                ('blurb', models.TextField(blank=True, help_text='Description or notes about this list')),
-                ('inserted_at', models.DateTimeField(auto_now_add=True)),
-                ('owner', models.ForeignKey(on_delete=django.db.models.deletion.CASCADE, to=settings.AUTH_USER_MODEL)),
+                (
+                    "id",
+                    models.BigAutoField(
+                        auto_created=True,
+                        primary_key=True,
+                        serialize=False,
+                        verbose_name="ID",
+                    ),
+                ),
+                ("name", models.CharField(max_length=200)),
+                (
+                    "blurb",
+                    models.TextField(
+                        blank=True, help_text="Description or notes about this list"
+                    ),
+                ),
+                ("inserted_at", models.DateTimeField(auto_now_add=True)),
+                (
+                    "owner",
+                    models.ForeignKey(
+                        on_delete=django.db.models.deletion.CASCADE,
+                        to=settings.AUTH_USER_MODEL,
+                    ),
+                ),
             ],
             options={
-                'ordering': ['-inserted_at'],
+                "ordering": ["-inserted_at"],
             },
         ),
         migrations.CreateModel(
-            name='RestaurantListItem',
+            name="RestaurantListItem",
             fields=[
-                ('id', models.BigAutoField(auto_created=True, primary_key=True, serialize=False, verbose_name='ID')),
-                ('inserted_at', models.DateTimeField(auto_now_add=True)),
-                ('order', models.PositiveIntegerField(default=0)),
-                ('notes', models.TextField(blank=True, help_text='Optional notes about this restaurant')),
-                ('restaurant', models.ForeignKey(on_delete=django.db.models.deletion.CASCADE, to='lists.restaurant')),
-                ('restaurant_list', models.ForeignKey(on_delete=django.db.models.deletion.CASCADE, to='lists.restaurantlist')),
+                (
+                    "id",
+                    models.BigAutoField(
+                        auto_created=True,
+                        primary_key=True,
+                        serialize=False,
+                        verbose_name="ID",
+                    ),
+                ),
+                ("inserted_at", models.DateTimeField(auto_now_add=True)),
+                ("order", models.PositiveIntegerField(default=0)),
+                (
+                    "notes",
+                    models.TextField(
+                        blank=True, help_text="Optional notes about this restaurant"
+                    ),
+                ),
+                (
+                    "restaurant",
+                    models.ForeignKey(
+                        on_delete=django.db.models.deletion.CASCADE,
+                        to="lists.restaurant",
+                    ),
+                ),
+                (
+                    "restaurant_list",
+                    models.ForeignKey(
+                        on_delete=django.db.models.deletion.CASCADE,
+                        to="lists.restaurantlist",
+                    ),
+                ),
             ],
             options={
-                'ordering': ['order'],
+                "ordering": ["order"],
             },
         ),
         migrations.CreateModel(
-            name='ListFollow',
+            name="ListFollow",
             fields=[
-                ('id', models.BigAutoField(auto_created=True, primary_key=True, serialize=False, verbose_name='ID')),
-                ('followed_at', models.DateTimeField(auto_now_add=True)),
-                ('follower', models.ForeignKey(on_delete=django.db.models.deletion.CASCADE, related_name='following_lists', to=settings.AUTH_USER_MODEL)),
-                ('restaurant_list', models.ForeignKey(on_delete=django.db.models.deletion.CASCADE, related_name='followers', to='lists.restaurantlist')),
+                (
+                    "id",
+                    models.BigAutoField(
+                        auto_created=True,
+                        primary_key=True,
+                        serialize=False,
+                        verbose_name="ID",
+                    ),
+                ),
+                ("followed_at", models.DateTimeField(auto_now_add=True)),
+                (
+                    "follower",
+                    models.ForeignKey(
+                        on_delete=django.db.models.deletion.CASCADE,
+                        related_name="following_lists",
+                        to=settings.AUTH_USER_MODEL,
+                    ),
+                ),
+                (
+                    "restaurant_list",
+                    models.ForeignKey(
+                        on_delete=django.db.models.deletion.CASCADE,
+                        related_name="followers",
+                        to="lists.restaurantlist",
+                    ),
+                ),
             ],
             options={
-                'ordering': ['-followed_at'],
-                'indexes': [models.Index(fields=['follower', '-followed_at'], name='lists_listf_followe_c8aebe_idx'), models.Index(fields=['restaurant_list', '-followed_at'], name='lists_listf_restaur_d6f745_idx')],
-                'unique_together': {('follower', 'restaurant_list')},
+                "ordering": ["-followed_at"],
+                "indexes": [
+                    models.Index(
+                        fields=["follower", "-followed_at"],
+                        name="lists_listf_followe_c8aebe_idx",
+                    ),
+                    models.Index(
+                        fields=["restaurant_list", "-followed_at"],
+                        name="lists_listf_restaur_d6f745_idx",
+                    ),
+                ],
+                "unique_together": {("follower", "restaurant_list")},
             },
         ),
         migrations.CreateModel(
-            name='ListComment',
+            name="ListComment",
             fields=[
-                ('id', models.BigAutoField(auto_created=True, primary_key=True, serialize=False, verbose_name='ID')),
-                ('content', models.TextField(help_text='Comment about this restaurant list', max_length=1000)),
-                ('inserted_at', models.DateTimeField(auto_now_add=True)),
-                ('updated_at', models.DateTimeField(auto_now=True)),
-                ('author', models.ForeignKey(on_delete=django.db.models.deletion.CASCADE, to=settings.AUTH_USER_MODEL)),
-                ('restaurant_list', models.ForeignKey(on_delete=django.db.models.deletion.CASCADE, related_name='comments', to='lists.restaurantlist')),
+                (
+                    "id",
+                    models.BigAutoField(
+                        auto_created=True,
+                        primary_key=True,
+                        serialize=False,
+                        verbose_name="ID",
+                    ),
+                ),
+                (
+                    "content",
+                    models.TextField(
+                        help_text="Comment about this restaurant list", max_length=1000
+                    ),
+                ),
+                ("inserted_at", models.DateTimeField(auto_now_add=True)),
+                ("updated_at", models.DateTimeField(auto_now=True)),
+                (
+                    "author",
+                    models.ForeignKey(
+                        on_delete=django.db.models.deletion.CASCADE,
+                        to=settings.AUTH_USER_MODEL,
+                    ),
+                ),
+                (
+                    "restaurant_list",
+                    models.ForeignKey(
+                        on_delete=django.db.models.deletion.CASCADE,
+                        related_name="comments",
+                        to="lists.restaurantlist",
+                    ),
+                ),
             ],
             options={
-                'ordering': ['-inserted_at'],
-                'indexes': [models.Index(fields=['restaurant_list', '-inserted_at'], name='lists_listc_restaur_308f10_idx')],
+                "ordering": ["-inserted_at"],
+                "indexes": [
+                    models.Index(
+                        fields=["restaurant_list", "-inserted_at"],
+                        name="lists_listc_restaur_308f10_idx",
+                    )
+                ],
             },
         ),
     ]

@@ -6,7 +6,7 @@ from django.db import migrations, models
 
 def derive_visited_date_from_inserted_at(apps, schema_editor):
     """Derive visited_date from inserted_at for existing MunchLogItem records."""
-    MunchLogItem = apps.get_model('lists', 'MunchLogItem')
+    MunchLogItem = apps.get_model("lists", "MunchLogItem")
     for item in MunchLogItem.objects.all():
         item.visited_date = item.inserted_at.date()
         item.save()
@@ -18,20 +18,24 @@ def reverse_visited_date(apps, schema_editor):
 
 
 class Migration(migrations.Migration):
-
     dependencies = [
-        ('lists', '0001_initial'),
+        ("lists", "0001_initial"),
     ]
 
     operations = [
         migrations.AddField(
-            model_name='munchlogitem',
-            name='visited_date',
-            field=models.DateField(default=datetime.date.today, help_text='Date you visited this restaurant'),
+            model_name="munchlogitem",
+            name="visited_date",
+            field=models.DateField(
+                default=datetime.date.today,
+                help_text="Date you visited this restaurant",
+            ),
         ),
-        migrations.RunPython(derive_visited_date_from_inserted_at, reverse_visited_date),
+        migrations.RunPython(
+            derive_visited_date_from_inserted_at, reverse_visited_date
+        ),
         migrations.AlterModelOptions(
-            name='munchlogitem',
-            options={'ordering': ['-visited_date', '-inserted_at']},
+            name="munchlogitem",
+            options={"ordering": ["-visited_date", "-inserted_at"]},
         ),
     ]

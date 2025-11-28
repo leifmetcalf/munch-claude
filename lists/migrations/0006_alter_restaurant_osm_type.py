@@ -4,15 +4,18 @@ from django.db import migrations, models
 
 
 class Migration(migrations.Migration):
-
     dependencies = [
-        ('lists', '0005_alter_munchlogitem_options'),
+        ("lists", "0005_alter_munchlogitem_options"),
     ]
 
     operations = [
         migrations.AlterField(
-            model_name='restaurant',
-            name='osm_type',
-            field=models.CharField(choices=[('N', 'Node'), ('W', 'Way'), ('R', 'Relation')], help_text='OpenStreetMap element type', max_length=1),
+            model_name="restaurant",
+            name="osm_type",
+            field=models.CharField(
+                choices=[("N", "Node"), ("W", "Way"), ("R", "Relation")],
+                help_text="OpenStreetMap element type",
+                max_length=1,
+            ),
         ),
     ]

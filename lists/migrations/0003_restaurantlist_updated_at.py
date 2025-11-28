@@ -4,15 +4,14 @@ from django.db import migrations, models
 
 
 class Migration(migrations.Migration):
-
     dependencies = [
-        ('lists', '0002_alter_munchlogitem_options_munchlogitem_visited_date'),
+        ("lists", "0002_alter_munchlogitem_options_munchlogitem_visited_date"),
     ]
 
     operations = [
         migrations.AddField(
-            model_name='restaurantlist',
-            name='updated_at',
+            model_name="restaurantlist",
+            name="updated_at",
             field=models.DateTimeField(auto_now=True),
         ),
     ]

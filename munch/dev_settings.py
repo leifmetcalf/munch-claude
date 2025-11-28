@@ -8,7 +8,9 @@ DJANGO_SETTINGS_MODULE=munch.dev_settings python manage.py runserver
 import os
 
 # Set development secret key before importing production settings
-os.environ['SECRET_KEY'] = 'django-insecure-!72+)yngvc_4@u7+yq14zy4)+z#(r44ljvb#-a(ajx*3l_ux_8'
+os.environ["SECRET_KEY"] = (
+    "django-insecure-!72+)yngvc_4@u7+yq14zy4)+z#(r44ljvb#-a(ajx*3l_ux_8"
+)
 
 from .settings import *
 

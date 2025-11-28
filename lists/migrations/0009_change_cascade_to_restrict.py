@@ -6,45 +6,67 @@ from django.db import migrations, models
 
 
 class Migration(migrations.Migration):
-
     dependencies = [
-        ('lists', '0008_rename_inserted_at_to_created_at'),
+        ("lists", "0008_rename_inserted_at_to_created_at"),
     ]
 
     operations = [
         migrations.AlterField(
-            model_name='listcomment',
-            name='author',
-            field=models.ForeignKey(on_delete=django.db.models.deletion.RESTRICT, to=settings.AUTH_USER_MODEL),
+            model_name="listcomment",
+            name="author",
+            field=models.ForeignKey(
+                on_delete=django.db.models.deletion.RESTRICT,
+                to=settings.AUTH_USER_MODEL,
+            ),
         ),
         migrations.AlterField(
-            model_name='munchlog',
-            name='owner',
-            field=models.OneToOneField(on_delete=django.db.models.deletion.RESTRICT, related_name='munch_log', to=settings.AUTH_USER_MODEL),
+            model_name="munchlog",
+            name="owner",
+            field=models.OneToOneField(
+                on_delete=django.db.models.deletion.RESTRICT,
+                related_name="munch_log",
+                to=settings.AUTH_USER_MODEL,
+            ),
         ),
         migrations.AlterField(
-            model_name='munchlogitem',
-            name='restaurant',
-            field=models.ForeignKey(on_delete=django.db.models.deletion.RESTRICT, to='lists.restaurant'),
+            model_name="munchlogitem",
+            name="restaurant",
+            field=models.ForeignKey(
+                on_delete=django.db.models.deletion.RESTRICT, to="lists.restaurant"
+            ),
         ),
         migrations.AlterField(
-            model_name='restaurant',
-            name='added_by',
-            field=models.ForeignKey(help_text='User who imported this restaurant', on_delete=django.db.models.deletion.RESTRICT, related_name='restaurants_added', to=settings.AUTH_USER_MODEL),
+            model_name="restaurant",
+            name="added_by",
+            field=models.ForeignKey(
+                help_text="User who imported this restaurant",
+                on_delete=django.db.models.deletion.RESTRICT,
+                related_name="restaurants_added",
+                to=settings.AUTH_USER_MODEL,
+            ),
         ),
         migrations.AlterField(
-            model_name='restaurantimage',
-            name='added_by',
-            field=models.ForeignKey(help_text='User who added this image', on_delete=django.db.models.deletion.RESTRICT, to=settings.AUTH_USER_MODEL),
+            model_name="restaurantimage",
+            name="added_by",
+            field=models.ForeignKey(
+                help_text="User who added this image",
+                on_delete=django.db.models.deletion.RESTRICT,
+                to=settings.AUTH_USER_MODEL,
+            ),
         ),
         migrations.AlterField(
-            model_name='restaurantlist',
-            name='owner',
-            field=models.ForeignKey(on_delete=django.db.models.deletion.RESTRICT, to=settings.AUTH_USER_MODEL),
+            model_name="restaurantlist",
+            name="owner",
+            field=models.ForeignKey(
+                on_delete=django.db.models.deletion.RESTRICT,
+                to=settings.AUTH_USER_MODEL,
+            ),
         ),
         migrations.AlterField(
-            model_name='restaurantlistitem',
-            name='restaurant',
-            field=models.ForeignKey(on_delete=django.db.models.deletion.RESTRICT, to='lists.restaurant'),
+            model_name="restaurantlistitem",
+            name="restaurant",
+            field=models.ForeignKey(
+                on_delete=django.db.models.deletion.RESTRICT, to="lists.restaurant"
+            ),
         ),
     ]

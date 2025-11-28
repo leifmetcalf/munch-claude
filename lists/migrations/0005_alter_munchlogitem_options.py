@@ -4,14 +4,20 @@ from django.db import migrations, models
 
 
 class Migration(migrations.Migration):
-
     dependencies = [
-        ('lists', '0004_alter_munchlogitem_visited_date'),
+        ("lists", "0004_alter_munchlogitem_visited_date"),
     ]
 
     operations = [
         migrations.AlterModelOptions(
-            name='munchlogitem',
-            options={'ordering': [models.OrderBy(models.F('visited_date'), descending=True, nulls_last=True), '-inserted_at']},
+            name="munchlogitem",
+            options={
+                "ordering": [
+                    models.OrderBy(
+                        models.F("visited_date"), descending=True, nulls_last=True
+                    ),
+                    "-inserted_at",
+                ]
+            },
         ),
     ]

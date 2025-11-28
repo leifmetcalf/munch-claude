@@ -19,6 +19,6 @@ def url_with_next(context, view_name, *args, **kwargs):
         {% url_with_next 'view_name' %}
         {% url_with_next 'view_name' %}&restaurant={{ restaurant.id }}
     """
-    request = context.get('request')
-    next_path = request.path if request else '/'
-    return reverse(view_name, args=args, kwargs=kwargs, query={'next': next_path})
+    request = context.get("request")
+    next_path = request.path if request else "/"
+    return reverse(view_name, args=args, kwargs=kwargs, query={"next": next_path})

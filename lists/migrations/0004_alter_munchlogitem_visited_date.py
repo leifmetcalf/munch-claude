@@ -4,15 +4,16 @@ from django.db import migrations, models
 
 
 class Migration(migrations.Migration):
-
     dependencies = [
-        ('lists', '0003_restaurantlist_updated_at'),
+        ("lists", "0003_restaurantlist_updated_at"),
     ]
 
     operations = [
         migrations.AlterField(
-            model_name='munchlogitem',
-            name='visited_date',
-            field=models.DateField(blank=True, help_text='Date you visited this restaurant', null=True),
+            model_name="munchlogitem",
+            name="visited_date",
+            field=models.DateField(
+                blank=True, help_text="Date you visited this restaurant", null=True
+            ),
         ),
     ]

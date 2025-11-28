@@ -7,22 +7,29 @@ from django.db import migrations, models
 
 
 class Migration(migrations.Migration):
-
     dependencies = [
-        ('lists', '0006_alter_restaurant_osm_type'),
+        ("lists", "0006_alter_restaurant_osm_type"),
     ]
 
     operations = [
         migrations.AddField(
-            model_name='restaurant',
-            name='added_by',
-            field=models.ForeignKey(default=1, help_text='User who imported this restaurant', on_delete=django.db.models.deletion.CASCADE, related_name='restaurants_added', to=settings.AUTH_USER_MODEL),
+            model_name="restaurant",
+            name="added_by",
+            field=models.ForeignKey(
+                default=1,
+                help_text="User who imported this restaurant",
+                on_delete=django.db.models.deletion.CASCADE,
+                related_name="restaurants_added",
+                to=settings.AUTH_USER_MODEL,
+            ),
             preserve_default=False,
         ),
         migrations.AddField(
-            model_name='restaurant',
-            name='inserted_at',
-            field=models.DateTimeField(auto_now_add=True, default=django.utils.timezone.now),
+            model_name="restaurant",
+            name="inserted_at",
+            field=models.DateTimeField(
+                auto_now_add=True, default=django.utils.timezone.now
+            ),
             preserve_default=False,
         ),
     ]
