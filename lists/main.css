@@ -11,3 +11,7 @@
   --color-yakiimo-yellow: oklch(0.9137 0.141 94.67);
   --color-yakiimo-yellow-hover: oklch(0.8921 0.1468 94.67);
 }
+
+.leaflet-popup-content {
+  margin: 4px 6px;
+}
