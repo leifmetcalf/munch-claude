@@ -1,11 +1,8 @@
 import os
 from django.contrib.auth.models import AbstractUser
 from django.contrib.gis.db import models
-from django.contrib.gis.geos import Point
 from django.db.models.signals import post_delete, pre_save
 from django.dispatch import receiver
-from django.utils import timezone
-import datetime
 
 
 class User(AbstractUser):

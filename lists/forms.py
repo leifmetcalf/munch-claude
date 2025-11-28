@@ -1,6 +1,6 @@
 from django import forms
 from django.contrib.auth.forms import UserCreationForm
-from .models import RestaurantList, RestaurantListItem, Restaurant, RestaurantImage, User, ListComment, MunchLog, MunchLogItem
+from .models import RestaurantList, RestaurantListItem, RestaurantImage, User, ListComment, MunchLogItem
 
 
 class RestaurantForm(forms.Form):

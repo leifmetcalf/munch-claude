@@ -11,7 +11,7 @@ from django.db import models, transaction
 from django.http import JsonResponse
 from django.shortcuts import render, redirect, get_object_or_404
 from django.utils import timezone
-from .models import Restaurant, RestaurantList, RestaurantListItem, RestaurantImage, User, ListComment, ListFollow, MunchLog, MunchLogItem
+from .models import Restaurant, RestaurantList, RestaurantListItem, User, ListFollow, MunchLog, MunchLogItem
 from .forms import RestaurantForm, RestaurantListForm, RestaurantListItemForm, CustomUserCreationForm, RestaurantImageForm, ListCommentForm, MunchLogItemForm, EditProfileForm
 
 
@@ -490,7 +490,7 @@ def restaurant_image_add(request, restaurant_id):
     if request.method == 'POST':
         form = RestaurantImageForm(request.POST, request.FILES)
         if form.is_valid():
-            image = form.save()
+            form.save()
             messages.success(request, f'Image added for "{restaurant.name}"!')
             return redirect('restaurant_detail', restaurant_id=restaurant.id)
     else:
@@ -668,7 +668,7 @@ def profile(request, user_id):
     # Count munch log entries
     total_munches = 0
     try:
-        munch_log = profile_user.munch_log
+        profile_user.munch_log  # Check existence
         total_munches = MunchLogItem.objects.count()
     except MunchLog.DoesNotExist:
         pass
@@ -930,9 +930,6 @@ def munchlogitem_update(request, item_id):
         return redirect('munch_log', user_id=item.munch_log.owner.id)
     
     if request.method == 'POST':
-        # Create a form instance with POST data, bound to the existing item
-        form = MunchLogItemForm(request.POST, instance=item)
-        
         # We only want to update visited_date and notes, so extract just those fields
         if 'visited_date' in request.POST:
             item.visited_date = request.POST.get('visited_date')
