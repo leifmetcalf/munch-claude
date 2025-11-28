@@ -1,91 +1,9 @@
 {% extends 'base.html' %}
 
 {% block content %}
-<div class="text-center">
-    <h1 class="text-4xl font-bold text-yakiimo-purple mb-4">Welcome to Munch</h1>
-    <p class="text-xl text-yakiimo-purple-light mb-8">Munch away, then share your munchalishious finds!</p>
-
-    <div class="grid grid-cols-1 md:grid-cols-3 gap-4 max-w-2xl mx-auto">
-        <a href="{% url 'restaurantlist_index' %}" class="bg-yakiimo-yellow hover:bg-yakiimo-yellow-hover p-6 rounded-lg text-center transition-colors">
-            <div class="text-yakiimo-purple font-semibold">View All Lists</div>
-        </a>
-        <a href="{% url 'restaurant_index' %}" class="bg-yakiimo-yellow hover:bg-yakiimo-yellow-hover p-6 rounded-lg text-center transition-colors">
-            <div class="text-yakiimo-purple font-semibold">View All Restaurants</div>
-        </a>
-        <a href="{% url 'restaurant_nominatim' %}" class="bg-yakiimo-yellow hover:bg-yakiimo-yellow-hover p-6 rounded-lg text-center transition-colors">
-            <div class="text-yakiimo-purple font-semibold">Import Restaurants</div>
-        </a>
-    </div>
-
-    {% if recent_items %}
-    <div class="mt-12 max-w-2xl mx-auto">
-        <h2 class="text-2xl font-bold text-yakiimo-purple mb-4 text-left">Recent Activity</h2>
-        <div>
-            <ul class="space-y-2">
-                {% for activity in recent_items %}
-                <li class="bg-yakiimo-cream-light p-3 rounded-lg border border-yakiimo-purple-border text-left">
-                    <span class="text-yakiimo-purple">
-                        {% if activity.type == 'list_item' %}
-                            <a href="{% url 'profile' user_id=activity.item.restaurant_list.owner.id %}" class="text-yakiimo-purple-light hover:text-yakiimo-purple font-medium">{{ activity.item.restaurant_list.owner.username }}</a>
-                            added
-                            <a href="{% url 'restaurant_detail' restaurant_id=activity.item.restaurant.id %}" class="text-yakiimo-purple-light hover:text-yakiimo-purple font-medium">{{ activity.item.restaurant.name }}</a>
-                            to their list
-                            <a href="{% url 'restaurantlist_detail' list_id=activity.item.restaurant_list.id %}" class="text-yakiimo-purple-light hover:text-yakiimo-purple font-medium">{{ activity.item.restaurant_list.name }}</a>
-                        {% else %}
-                            <a href="{% url 'profile' user_id=activity.item.munch_log.owner.id %}" class="text-yakiimo-purple-light hover:text-yakiimo-purple font-medium">{{ activity.item.munch_log.owner.username }}</a>
-                            munched
-                            <a href="{% url 'restaurant_detail' restaurant_id=activity.item.restaurant.id %}" class="text-yakiimo-purple-light hover:text-yakiimo-purple font-medium">{{ activity.item.restaurant.name }}</a>
-                            and added it to their
-                            <a href="{% url 'munch_log' user_id=activity.item.munch_log.owner.id %}" class="text-yakiimo-purple-light hover:text-yakiimo-purple font-medium">Munch Log</a>
-                        {% endif %}
-                    </span>
-                </li>
-                {% endfor %}
-            </ul>
-        </div>
-    </div>
-    {% endif %}
-
-    <div class="mt-12 max-w-2xl mx-auto">
-        <h2 class="text-2xl font-bold text-yakiimo-purple mb-4 text-left">Activity from Lists You Follow</h2>
-        <div>
-            {% if not user.is_authenticated %}
-                <div class="bg-yakiimo-cream-light p-3 rounded-lg border border-yakiimo-purple-border text-left">
-                    <span class="text-yakiimo-purple">
-                        <a href="{% url 'login' %}" class="text-yakiimo-purple-light hover:text-yakiimo-purple font-medium">Log in to follow lists</a>
-                    </span>
-                </div>
-            {% elif user.is_authenticated and following_activity %}
-                <ul class="space-y-2">
-                    {% for activity in following_activity %}
-                    <li class="bg-yakiimo-cream-light p-3 rounded-lg border border-yakiimo-purple-border text-left">
-                        <span class="text-yakiimo-purple">
-                            {% if activity.type == 'list_item' %}
-                                <a href="{% url 'profile' user_id=activity.item.restaurant_list.owner.id %}" class="text-yakiimo-purple-light hover:text-yakiimo-purple font-medium">{{ activity.item.restaurant_list.owner.username }}</a>
-                                added
-                                <a href="{% url 'restaurant_detail' restaurant_id=activity.item.restaurant.id %}" class="text-yakiimo-purple-light hover:text-yakiimo-purple font-medium">{{ activity.item.restaurant.name }}</a>
-                                to their list
-                                <a href="{% url 'restaurantlist_detail' list_id=activity.item.restaurant_list.id %}" class="text-yakiimo-purple-light hover:text-yakiimo-purple font-medium">{{ activity.item.restaurant_list.name }}</a>
-                            {% else %}
-                                <a href="{% url 'profile' user_id=activity.item.munch_log.owner.id %}" class="text-yakiimo-purple-light hover:text-yakiimo-purple font-medium">{{ activity.item.munch_log.owner.username }}</a>
-                                munched
-                                <a href="{% url 'restaurant_detail' restaurant_id=activity.item.restaurant.id %}" class="text-yakiimo-purple-light hover:text-yakiimo-purple font-medium">{{ activity.item.restaurant.name }}</a>
-                                and added it to their
-                                <a href="{% url 'munch_log' user_id=activity.item.munch_log.owner.id %}" class="text-yakiimo-purple-light hover:text-yakiimo-purple font-medium">Munch Log</a>
-                            {% endif %}
-                        </span>
-                    </li>
-                    {% endfor %}
-                </ul>
-            {% else %}
-                <div class="bg-yakiimo-cream-light p-3 rounded-lg border border-yakiimo-purple-border text-left">
-                    <span class="text-yakiimo-purple">
-                        You're not following any lists yet. 
-                        <a href="{% url 'restaurantlist_index' %}" class="text-yakiimo-purple-light hover:text-yakiimo-purple font-medium">Browse lists to follow</a>
-                    </span>
-                </div>
-            {% endif %}
-        </div>
-    </div>
+<div class="flex justify-center pt-8">
+    <a href="{% url 'munchlogitem_create' %}" class="bg-yakiimo-yellow hover:bg-yakiimo-yellow-hover px-12 py-6 rounded-lg text-center transition-colors">
+        <span class="text-yakiimo-purple font-semibold text-2xl">Munch</span>
+    </a>
 </div>
 {% endblock %}
