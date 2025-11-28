@@ -2,15 +2,14 @@
 {% load url_extras %}
 
 {% block content %}
-<div class="flex justify-center pt-8">
-    <a href="{% url_with_next 'munchlogitem_create' %}" class="bg-yakiimo-yellow hover:bg-yakiimo-yellow-hover px-12 py-6 rounded-lg text-center transition-colors">
-        <span class="text-yakiimo-purple font-semibold text-2xl">Munch</span>
+<div class="flex justify-center pt-4">
+    <a href="{% url_with_next 'munchlogitem_create' %}" class="bg-yakiimo-yellow hover:bg-yakiimo-yellow-hover px-8 py-4 rounded-lg text-center transition-colors">
+        <span class="text-yakiimo-purple font-semibold text-xl">Munch</span>
     </a>
 </div>
 
 {% if munched_coordinates %}
-<div class="mt-8">
-    <h2 class="text-xl font-semibold text-yakiimo-purple mb-4 text-center">All Munched Restaurants</h2>
+<div class="mt-6">
     <div id="map" class="h-96 w-full border border-yakiimo-purple-border rounded-lg"></div>
 </div>
 <script>
