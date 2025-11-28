@@ -33,6 +33,11 @@ urlpatterns = [
         name="toggle_list_follow",
     ),
     path(
+        "list/<int:list_id>/comment/",
+        views.list_comment_create,
+        name="list_comment_create",
+    ),
+    path(
         "listitem/create/",
         views.restaurantlistitem_create,
         name="restaurantlistitem_create",

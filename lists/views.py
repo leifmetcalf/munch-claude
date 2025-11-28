@@ -5,6 +5,7 @@ from collections import defaultdict
 from django.contrib import messages
 from django.contrib.auth import login
 from django.contrib.auth.decorators import login_required
+from django.views.decorators.http import require_POST
 from django.contrib.gis.geos import Point
 from django.core.serializers.json import DjangoJSONEncoder
 from django.db import models, transaction
@@ -312,7 +313,7 @@ def user_restaurantlist_index(request, user_id):
     )
 
 
-def restaurantlist_detail(request, list_id):
+def restaurantlist_detail(request, list_id, comment_form=None):
     restaurant_list = get_object_or_404(RestaurantList, id=list_id)
     list_items = RestaurantListItem.objects.filter(
         restaurant_list=restaurant_list
@@ -329,17 +330,10 @@ def restaurantlist_detail(request, list_id):
     # Get follower count
     follower_count = restaurant_list.followers.count()
 
-    # Handle comment form submission
-    if request.method == "POST" and request.user.is_authenticated:
-        comment_form = ListCommentForm(request.POST)
-        if comment_form.is_valid():
-            comment = comment_form.save(commit=False)
-            comment.author = request.user
-            comment.save()
-            messages.success(request, "Your comment has been added!")
-            return redirect("restaurantlist_detail", list_id=list_id)
-    else:
-        comment_form = ListCommentForm(initial={"restaurant_list": restaurant_list})
+    if comment_form is None and request.user.is_authenticated:
+        comment_form = ListCommentForm(
+            initial={"restaurant_list": restaurant_list, "author": request.user}
+        )
 
     # Extract coordinates for the map
     restaurant_coordinates = []
@@ -371,6 +365,20 @@ def restaurantlist_detail(request, list_id):
             "follower_count": follower_count,
         },
     )
+
+
+@login_required
+@require_POST
+def list_comment_create(request, list_id):
+    comment_form = ListCommentForm(request.POST)
+    if comment_form.is_valid():
+        if comment_form.cleaned_data["author"] != request.user:
+            messages.error(request, "You can only post comments as yourself.")
+        else:
+            comment_form.save()
+            messages.success(request, "Your comment has been added!")
+        return redirect("restaurantlist_detail", list_id=list_id)
+    return restaurantlist_detail(request, list_id, comment_form=comment_form)
 
 
 @login_required

@@ -140,7 +140,7 @@ class MunchLogItemUpdateForm(forms.ModelForm):
 class ListCommentForm(forms.ModelForm):
     class Meta:
         model = ListComment
-        fields = ["content", "restaurant_list"]
+        fields = ["content", "restaurant_list", "author"]
         widgets = {
             "content": forms.Textarea(
                 attrs={
@@ -150,6 +150,7 @@ class ListCommentForm(forms.ModelForm):
                 }
             ),
             "restaurant_list": forms.HiddenInput(),
+            "author": forms.HiddenInput(),
         }
 
 

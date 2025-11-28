@@ -109,7 +109,7 @@
     
     {% if user.is_authenticated %}
         <div class="bg-yakiimo-cream-light rounded-lg border border-yakiimo-purple-border p-6 mb-6">
-            <form method="post" class="space-y-4">
+            <form method="post" action="{% url 'list_comment_create' restaurant_list.id %}" class="space-y-4">
                 {% csrf_token %}
                 {% for field in comment_form %}
                     {% if field.field.widget.input_type == 'hidden' %}
