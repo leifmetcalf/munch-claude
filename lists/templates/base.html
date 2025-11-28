@@ -18,31 +18,13 @@
             <div class="flex justify-between items-center h-16">
                 <div class="flex items-center">
                     <a href="{% url 'index' %}" class="text-yakiimo-cream hover:text-white px-2 py-2 rounded-md text-lg font-bold">munch🍠zone</a>
-                    
-                    <!-- Desktop Navigation -->
-                    <div class="hidden md:flex items-center space-x-1 ml-4">
-                        {% if user.is_authenticated %}
-                            <a href="{% url 'restaurantlist_index' %}" class="text-yakiimo-cream hover:text-white px-2 py-2 rounded-md text-sm font-medium">Explore Lists</a>
-                            <a href="{% url 'restaurant_index' %}" class="text-yakiimo-cream hover:text-white px-2 py-2 rounded-md text-sm font-medium">Explore Restaurants</a>
-                            <a href="{% url 'user_restaurantlist_index' user.id %}" class="text-yakiimo-cream hover:text-white px-2 py-2 rounded-md text-sm font-medium">My Lists</a>
-                            <a href="{% url 'user_following_lists' user.id %}" class="text-yakiimo-cream hover:text-white px-2 py-2 rounded-md text-sm font-medium">Following</a>
-                            <a href="{% url_with_next 'munchlogitem_create' %}" class="bg-yakiimo-yellow hover:bg-yakiimo-yellow-hover text-yakiimo-purple px-2 py-2 rounded-md text-sm font-bold transition-colors">Log a Munch</a>
-                        {% endif %}
-                    </div>
-                </div>
-                
-                <!-- Desktop Right Side -->
-                <div class="hidden md:flex items-center space-x-1">
                     {% if user.is_authenticated %}
-                        <a href="{% url 'profile' user.id %}" class="text-yakiimo-cream hover:text-white px-2 py-2 rounded-md text-sm font-medium">Profile</a>
-                    {% else %}
-                        <a href="{% url 'login' %}" class="text-yakiimo-cream hover:text-white px-2 py-2 rounded-md text-sm font-medium">Login</a>
-                        <a href="{% url 'register' %}" class="bg-yakiimo-yellow hover:bg-yakiimo-yellow-hover text-yakiimo-purple px-2 py-2 rounded-md text-sm font-medium transition-colors">Register</a>
+                        <a href="{% url_with_next 'munchlogitem_create' %}" class="bg-yakiimo-yellow hover:bg-yakiimo-yellow-hover text-yakiimo-purple px-3 py-1 rounded-md text-sm font-bold transition-colors ml-2">Munch</a>
                     {% endif %}
                 </div>
-                
-                <!-- Mobile Menu Button -->
-                <button id="mobile-menu-button" class="md:hidden text-yakiimo-cream hover:text-white p-2 rounded-md focus:outline-none focus:ring-2 focus:ring-yakiimo-yellow">
+
+                <!-- Menu Button -->
+                <button id="mobile-menu-button" class="text-yakiimo-cream hover:text-white p-2 rounded-md focus:outline-none focus:ring-2 focus:ring-yakiimo-yellow">
                     <svg class="h-6 w-6" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                         <path class="menu-open" stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 6h16M4 12h16M4 18h16"></path>
                         <path class="menu-close hidden" stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M6 18L18 6M6 6l12 12"></path>
@@ -50,16 +32,15 @@
                 </button>
             </div>
         </div>
-        
-        <!-- Mobile Menu -->
-        <div id="mobile-menu" class="hidden md:hidden">
+
+        <!-- Menu -->
+        <div id="mobile-menu" class="hidden">
             <div class="px-2 pt-2 pb-3 space-y-1 bg-yakiimo-purple-vibrant border-t border-yakiimo-purple">
                 {% if user.is_authenticated %}
                     <a href="{% url 'restaurantlist_index' %}" class="block text-yakiimo-cream hover:text-white hover:bg-yakiimo-purple px-3 py-2 rounded-md text-base font-medium">Explore Lists</a>
                     <a href="{% url 'restaurant_index' %}" class="block text-yakiimo-cream hover:text-white hover:bg-yakiimo-purple px-3 py-2 rounded-md text-base font-medium">Explore Restaurants</a>
                     <a href="{% url 'user_restaurantlist_index' user.id %}" class="block text-yakiimo-cream hover:text-white hover:bg-yakiimo-purple px-3 py-2 rounded-md text-base font-medium">My Lists</a>
                     <a href="{% url 'user_following_lists' user.id %}" class="block text-yakiimo-cream hover:text-white hover:bg-yakiimo-purple px-3 py-2 rounded-md text-base font-medium">Following</a>
-                    <a href="{% url_with_next 'munchlogitem_create' %}" class="block bg-yakiimo-yellow hover:bg-yakiimo-yellow-hover text-yakiimo-purple px-3 py-2 rounded-md text-base font-bold transition-colors">Log a Munch</a>
                     <div class="border-t border-yakiimo-purple mt-2 pt-2">
                         <a href="{% url 'profile' user.id %}" class="block text-yakiimo-cream hover:text-white hover:bg-yakiimo-purple px-3 py-2 rounded-md text-base font-medium">Profile</a>
                     </div>
