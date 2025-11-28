@@ -87,10 +87,33 @@ def index(request):
                 {"type": "list_item", "item": item, "created_at": item.created_at}
             )
 
+    # Get all restaurants that have been munched by anyone
+    munched_restaurant_ids = MunchLogItem.objects.values_list(
+        "restaurant_id", flat=True
+    ).distinct()
+    munched_restaurants = Restaurant.objects.filter(id__in=munched_restaurant_ids)
+
+    # Build coordinates for the map
+    munched_coordinates = [
+        {
+            "lat": restaurant.location.y,
+            "lng": restaurant.location.x,
+            "name": restaurant.name,
+        }
+        for restaurant in munched_restaurants
+    ]
+
     return render(
         request,
         "lists/home.html",
-        {"recent_items": recent_items, "following_activity": following_activity},
+        {
+            "recent_items": recent_items,
+            "following_activity": following_activity,
+            "munched_coordinates": munched_coordinates,
+            "munched_coordinates_json": json.dumps(
+                munched_coordinates, cls=DjangoJSONEncoder
+            ),
+        },
     )
 
 

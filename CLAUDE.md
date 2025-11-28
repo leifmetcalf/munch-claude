@@ -87,5 +87,9 @@ Signal handlers in `models.py` automatically delete image files when `Restaurant
 ### Foreign Key Constraints
 Most FKs use `on_delete=models.RESTRICT` to prevent accidental data loss (User, Restaurant). Only junction tables use `CASCADE`.
 
+## Code Style
+
+Don't add defensive checks for conditions that can't happen (e.g., checking for null on a non-nullable field). They obscure what can actually fail and make the code harder to reason about.
+
 ## API Endpoints
 - `/api/restaurant/search/` - AJAX autocomplete for restaurants (min 2 chars)
