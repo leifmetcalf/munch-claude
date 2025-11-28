@@ -28,6 +28,7 @@ from .forms import (
     RestaurantImageForm,
     ListCommentForm,
     MunchLogItemForm,
+    MunchLogItemUpdateForm,
     EditProfileForm,
 )
 
@@ -1049,18 +1050,12 @@ def munchlogitem_update(request, item_id):
         return redirect("munch_log", user_id=item.munch_log.owner.id)
 
     if request.method == "POST":
-        # We only want to update visited_date and notes, so extract just those fields
-        if "visited_date" in request.POST:
-            item.visited_date = request.POST.get("visited_date")
-        if "notes" in request.POST:
-            item.notes = request.POST.get("notes", "")
-
-        try:
-            item.full_clean()  # This will validate the date format
-            item.save()
+        form = MunchLogItemUpdateForm(request.POST, instance=item)
+        if form.is_valid():
+            form.save()
             messages.success(request, f'Updated "{item.restaurant.name}" successfully!')
-        except Exception as e:
-            messages.error(request, f"Error updating item: {str(e)}")
+        else:
+            messages.error(request, "Please correct the errors below.")
 
     return redirect("munch_log_edit", user_id=item.munch_log.owner.id)
 

@@ -113,6 +113,30 @@ class MunchLogItemForm(forms.ModelForm):
         }
 
 
+class MunchLogItemUpdateForm(forms.ModelForm):
+    """Form for updating only visited_date and notes on a MunchLogItem."""
+
+    class Meta:
+        model = MunchLogItem
+        fields = ["visited_date", "notes"]
+        widgets = {
+            "visited_date": forms.DateInput(
+                attrs={
+                    "type": "date",
+                    "class": "px-3 py-2 border border-yakiimo-purple-border rounded-md focus:border-yakiimo-yellow text-sm",
+                },
+                format="%Y-%m-%d",
+            ),
+            "notes": forms.Textarea(
+                attrs={
+                    "rows": 3,
+                    "placeholder": "Add notes about this restaurant...",
+                    "class": "w-full px-3 py-2 border border-yakiimo-purple-border rounded-md focus:border-yakiimo-yellow text-sm",
+                }
+            ),
+        }
+
+
 class ListCommentForm(forms.ModelForm):
     class Meta:
         model = ListComment
