@@ -1,0 +1,1 @@
+<input type="{{ widget.type }}" name="{{ widget.name }}"{% if widget.value != None %} value="{{ widget.value|stringformat:'s' }}"{% endif %} class="w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-yakiimo-purple focus:border-transparent"{% include "django/forms/widgets/attrs.html" %}>

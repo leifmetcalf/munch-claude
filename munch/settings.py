@@ -40,6 +40,7 @@ INSTALLED_APPS = [
     'django.contrib.staticfiles',
     'django.contrib.gis',
     'lists.apps.ListsConfig',
+    'django.forms',  # For form widget template overrides (must be after lists)
 ]
 
 MIDDLEWARE = [
@@ -70,6 +71,9 @@ TEMPLATES = [
 ]
 
 WSGI_APPLICATION = 'munch.wsgi.application'
+
+# Use project templates for form widget rendering
+FORM_RENDERER = 'django.forms.renderers.TemplatesSetting'
 
 
 # Database

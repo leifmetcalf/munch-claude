@@ -798,6 +798,11 @@
       box-shadow: var(--tw-inset-shadow), var(--tw-inset-ring-shadow), var(--tw-ring-offset-shadow), var(--tw-ring-shadow), var(--tw-shadow);
     }
   }
+  .focus\:ring-yakiimo-purple {
+    &:focus {
+      --tw-ring-color: var(--color-yakiimo-purple);
+    }
+  }
   .focus\:ring-yakiimo-yellow {
     &:focus {
       --tw-ring-color: var(--color-yakiimo-yellow);
