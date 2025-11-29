@@ -9,7 +9,9 @@
     <div class="bg-yakiimo-cream-light rounded-lg border border-yakiimo-purple-border p-6">
         <form method="post" enctype="multipart/form-data" class="space-y-4">
             {% csrf_token %}
-            
+            {{ form.restaurant }}
+            {{ form.added_by }}
+
             <div>
                 <label for="{{ form.image.id_for_label }}" class="block text-sm font-medium text-yakiimo-purple mb-2">
                     {{ form.image.label }}
