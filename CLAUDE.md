@@ -65,6 +65,7 @@ npm install
 - PostgreSQL with PostGIS extension
 - Default: database `munch`, user `munch`, no password, localhost:5432
 - All models use `created_at` timestamps (via `auto_now_add=True`)
+- **Always ask before making database/model changes** (migrations, schema changes, new fields)
 
 ### Frontend
 - Tailwind CSS (v4.x) for styling
