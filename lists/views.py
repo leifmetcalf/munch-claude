@@ -9,11 +9,13 @@ from django.views.decorators.http import require_POST
 from django.contrib.gis.geos import Point
 from django.core.serializers.json import DjangoJSONEncoder
 from django.db import models, transaction
+from django.db.models import Prefetch
 from django.http import JsonResponse
 from django.shortcuts import render, redirect, get_object_or_404
 from django.utils import timezone
 from .models import (
     Restaurant,
+    RestaurantImage,
     RestaurantList,
     RestaurantListItem,
     User,
@@ -341,9 +343,18 @@ def user_restaurantlist_index(request, user_id):
 
 def restaurantlist_detail(request, list_id, comment_form=None):
     restaurant_list = get_object_or_404(RestaurantList, id=list_id)
-    list_items = RestaurantListItem.objects.filter(
-        restaurant_list=restaurant_list
-    ).order_by("order")
+    list_items = (
+        RestaurantListItem.objects.filter(restaurant_list=restaurant_list)
+        .select_related("restaurant")
+        .prefetch_related(
+            Prefetch(
+                "restaurant__images",
+                queryset=RestaurantImage.objects.order_by("id")[:1],
+                to_attr="first_image_list",
+            )
+        )
+        .order_by("order")
+    )
     comments = restaurant_list.comments.all()
 
     # Check if current user is following this list

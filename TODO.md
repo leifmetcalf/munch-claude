@@ -11,12 +11,6 @@ Allow users to attach a photo when logging a munch. This would capture the meal 
 
 ### Medium Priority
 
-#### Template N+1 queries (`restaurant_list_detail.html:91`)
-```html
-{% if item.restaurant.images.first %}
-```
-Calls `.first` twice per item. Should prefetch in view.
-
 #### Missing `select_related('added_by')` in restaurant_index view (`views.py:287`)
 
 #### Manual authorization checks repeated 8 times (`views.py:622, 650, 678, 697, 717, 736, 821, 1035`)
