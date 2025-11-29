@@ -10,6 +10,7 @@ from django.contrib.auth import login
 from django.contrib.auth.decorators import login_required
 from django.views.decorators.http import require_POST
 from django.contrib.gis.geos import Point
+from django.core.exceptions import PermissionDenied
 from django.core.serializers.json import DjangoJSONEncoder
 from django.db import models, transaction
 from django.db.models import Prefetch
@@ -459,10 +460,7 @@ def restaurantlistitem_create(request):
         if form.is_valid():
             # Verify user owns the selected list
             if form.cleaned_data["restaurant_list"].owner != request.user:
-                messages.error(
-                    request, "You don't have permission to add items to this list."
-                )
-                return redirect("restaurantlist_index")
+                raise PermissionDenied
 
             list_item = form.save(commit=False)
 
@@ -636,8 +634,7 @@ def move_item_up(request, item_id):
 
     # Check if user owns the list
     if item.restaurant_list.owner != request.user:
-        messages.error(request, "You don't have permission to modify this list.")
-        return redirect("restaurantlist_detail", list_id=item.restaurant_list.id)
+        raise PermissionDenied
 
     with transaction.atomic():
         # Find the item with the next lower order (the one to swap with)
@@ -664,8 +661,7 @@ def move_item_down(request, item_id):
 
     # Check if user owns the list
     if item.restaurant_list.owner != request.user:
-        messages.error(request, "You don't have permission to modify this list.")
-        return redirect("restaurantlist_detail", list_id=item.restaurant_list.id)
+        raise PermissionDenied
 
     with transaction.atomic():
         # Find the item with the next higher order (the one to swap with)
@@ -692,8 +688,7 @@ def restaurantlist_edit(request, list_id):
 
     # Check if user owns the list
     if restaurant_list.owner != request.user:
-        messages.error(request, "You don't have permission to edit this list.")
-        return redirect("restaurantlist_detail", list_id=list_id)
+        raise PermissionDenied
 
     list_items = RestaurantListItem.objects.filter(
         restaurant_list=restaurant_list
@@ -711,8 +706,7 @@ def restaurantlist_update(request, list_id):
 
     # Check if user owns the list
     if restaurant_list.owner != request.user:
-        messages.error(request, "You don't have permission to edit this list.")
-        return redirect("restaurantlist_detail", list_id=list_id)
+        raise PermissionDenied
 
     if request.method == "POST":
         form = RestaurantListForm(request.POST, instance=restaurant_list)
@@ -731,8 +725,7 @@ def restaurantlist_delete(request, list_id):
 
     # Check if user owns the list
     if restaurant_list.owner != request.user:
-        messages.error(request, "You don't have permission to delete this list.")
-        return redirect("restaurantlist_detail", list_id=list_id)
+        raise PermissionDenied
 
     if request.method == "POST":
         list_name = restaurant_list.name
@@ -750,10 +743,7 @@ def restaurantlistitem_delete(request, item_id):
 
     # Check if user owns the list
     if item.restaurant_list.owner != request.user:
-        messages.error(
-            request, "You don't have permission to delete items from this list."
-        )
-        return redirect("restaurantlist_detail", list_id=item.restaurant_list.id)
+        raise PermissionDenied
 
     restaurant_name = item.restaurant.name
     list_id = item.restaurant_list.id
@@ -956,10 +946,7 @@ def munchlogitem_create(request):
         if form.is_valid():
             # Verify user owns the selected munch log
             if form.cleaned_data["munch_log"].owner != request.user:
-                messages.error(
-                    request, "You don't have permission to add items to this munch log."
-                )
-                return redirect("munch_log", user_id=request.user.id)
+                raise PermissionDenied
 
             munch_log_item = form.save()
             messages.success(
@@ -1013,10 +1000,7 @@ def munchlogitem_delete(request, item_id):
 
     # Check if user owns the munch log
     if item.munch_log.owner != request.user:
-        messages.error(
-            request, "You don't have permission to delete items from this munch log."
-        )
-        return redirect("munch_log", user_id=item.munch_log.owner.id)
+        raise PermissionDenied
 
     restaurant_name = item.restaurant.name
     user_id = item.munch_log.owner.id
@@ -1048,8 +1032,7 @@ def restaurantlistitem_update(request, item_id):
 
     # Check if user owns the list
     if item.restaurant_list.owner != request.user:
-        messages.error(request, "You don't have permission to edit items in this list.")
-        return redirect("restaurantlist_detail", list_id=item.restaurant_list.id)
+        raise PermissionDenied
 
     if request.method == "POST":
         # Update notes
@@ -1067,10 +1050,7 @@ def munchlogitem_update(request, item_id):
 
     # Check if user owns the munch log
     if item.munch_log.owner != request.user:
-        messages.error(
-            request, "You don't have permission to edit items in this munch log."
-        )
-        return redirect("munch_log", user_id=item.munch_log.owner.id)
+        raise PermissionDenied
 
     if request.method == "POST":
         form = MunchLogItemUpdateForm(request.POST, instance=item)
