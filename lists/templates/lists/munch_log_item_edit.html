@@ -14,7 +14,7 @@
             <p class="text-black text-sm">{{ item.restaurant.address }}</p>
         </div>
 
-        <form method="post" class="space-y-6">
+        <form method="post" enctype="multipart/form-data" class="space-y-6">
             {% csrf_token %}
 
             <div>
@@ -46,6 +46,27 @@
                         {% endfor %}
                     </div>
                 {% endif %}
+            </div>
+
+            <div>
+                <label for="{{ form.image.id_for_label }}" class="block text-sm font-medium text-yakiimo-purple mb-2">
+                    Photo
+                </label>
+                {% if item.image %}
+                    <div class="mb-3">
+                        <img src="{{ item.image.image.url }}" alt="{{ item.image.alt_text|default:item.restaurant.name }}" class="w-32 h-32 object-cover rounded-lg">
+                        <p class="text-sm text-gray-500 mt-1">Current photo</p>
+                    </div>
+                {% endif %}
+                {{ form.image }}
+                {% if form.image.errors %}
+                    <div class="mt-1 text-sm text-red-600">
+                        {% for error in form.image.errors %}
+                            <p>{{ error }}</p>
+                        {% endfor %}
+                    </div>
+                {% endif %}
+                <p class="mt-1 text-sm text-gray-500">{% if item.image %}Upload a new photo to replace the current one{% else %}Upload a photo from your visit{% endif %} (max 5MB)</p>
             </div>
 
             <div class="flex justify-between items-center pt-4 border-t border-gray-200">

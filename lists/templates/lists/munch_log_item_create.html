@@ -7,7 +7,7 @@
     <h1 class="text-3xl font-bold text-yakiimo-purple mb-6">Log a Munch</h1>
 
     <div class="bg-yakiimo-cream-light rounded-lg border border-yakiimo-purple-border p-6">
-        <form method="post" class="space-y-8">
+        <form method="post" enctype="multipart/form-data" class="space-y-8">
             {% csrf_token %}
             
             <!-- Restaurant Selection -->
@@ -48,7 +48,22 @@
                     </div>
                 {% endif %}
             </div>
-            
+
+            <div>
+                <label for="{{ form.image.id_for_label }}" class="block text-sm font-medium text-yakiimo-purple mb-2">
+                    Photo (optional)
+                </label>
+                {{ form.image }}
+                {% if form.image.errors %}
+                    <div class="mt-1 text-sm text-red-600">
+                        {% for error in form.image.errors %}
+                            <p>{{ error }}</p>
+                        {% endfor %}
+                    </div>
+                {% endif %}
+                <p class="mt-1 text-sm text-gray-500">Upload a photo from your visit (max 5MB)</p>
+            </div>
+
             <div class="flex justify-end items-center gap-4">
                 <a href="{{ request.GET.next|default:'/' }}" class="text-yakiimo-purple-light hover:text-yakiimo-purple font-medium">
                     Cancel

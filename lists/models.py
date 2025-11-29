@@ -110,6 +110,13 @@ class RestaurantListItem(models.Model):
 class MunchLogItem(models.Model):
     restaurant = models.ForeignKey(Restaurant, on_delete=models.RESTRICT)
     munch_log = models.ForeignKey(MunchLog, on_delete=models.CASCADE)
+    image = models.ForeignKey(
+        RestaurantImage,
+        on_delete=models.SET_NULL,
+        null=True,
+        blank=True,
+        help_text="Photo from this visit",
+    )
     created_at = models.DateTimeField(auto_now_add=True)
     visited_date = models.DateField(
         null=True, blank=True, help_text="Date you visited this restaurant"

@@ -884,7 +884,7 @@ def munch_log(request, user_id):
     munch_log = munch_log_user.get_or_create_munch_log()
 
     # Get all items in the munch log
-    munch_log_items = MunchLogItem.objects.filter(munch_log=munch_log).select_related('restaurant')
+    munch_log_items = MunchLogItem.objects.filter(munch_log=munch_log).select_related('restaurant', 'image')
 
     # Calculate unique munches (unique restaurants)
     unique_restaurants = munch_log_items.values("restaurant").distinct().count()
@@ -942,13 +942,25 @@ def munchlogitem_create(request):
     restaurant_id = request.GET.get("restaurant")
 
     if request.method == "POST":
-        form = MunchLogItemForm(request.POST)
+        form = MunchLogItemForm(request.POST, request.FILES)
         if form.is_valid():
             # Verify user owns the selected munch log
             if form.cleaned_data["munch_log"].owner != request.user:
                 raise PermissionDenied
 
             munch_log_item = form.save()
+
+            # Handle image upload if provided
+            image_file = form.cleaned_data.get("image")
+            if image_file:
+                restaurant_image = RestaurantImage.objects.create(
+                    restaurant=munch_log_item.restaurant,
+                    image=image_file,
+                    added_by=request.user,
+                )
+                munch_log_item.image = restaurant_image
+                munch_log_item.save()
+
             messages.success(
                 request, f'"{munch_log_item.restaurant.name}" added to your Munch Log!'
             )
@@ -1045,7 +1057,7 @@ def restaurantlistitem_update(request, item_id):
 
 @login_required
 def munchlogitem_update(request, item_id):
-    """Update a munch log item's notes and visited date."""
+    """Update a munch log item's notes, visited date, and image."""
     item = get_object_or_404(MunchLogItem, id=item_id)
 
     # Check if user owns the munch log
@@ -1053,9 +1065,21 @@ def munchlogitem_update(request, item_id):
         raise PermissionDenied
 
     if request.method == "POST":
-        form = MunchLogItemUpdateForm(request.POST, instance=item)
+        form = MunchLogItemUpdateForm(request.POST, request.FILES, instance=item)
         if form.is_valid():
             form.save()
+
+            # Handle image upload if provided
+            image_file = form.cleaned_data.get("image")
+            if image_file:
+                restaurant_image = RestaurantImage.objects.create(
+                    restaurant=item.restaurant,
+                    image=image_file,
+                    added_by=request.user,
+                )
+                item.image = restaurant_image
+                item.save()
+
             messages.success(request, f'Updated "{item.restaurant.name}" successfully!')
             return redirect("munch_log", user_id=item.munch_log.owner.id)
         else:

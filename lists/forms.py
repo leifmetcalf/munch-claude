@@ -90,6 +90,12 @@ class CustomUserCreationForm(UserCreationForm):
 
 
 class MunchLogItemForm(forms.ModelForm):
+    image = forms.ImageField(
+        required=False,
+        widget=forms.ClearableFileInput(attrs={"accept": "image/*"}),
+        help_text="Optional photo from your visit",
+    )
+
     class Meta:
         model = MunchLogItem
         fields = ["restaurant", "munch_log", "visited_date", "notes"]
@@ -112,9 +118,24 @@ class MunchLogItemForm(forms.ModelForm):
             ),
         }
 
+    def clean_image(self):
+        image = self.cleaned_data.get("image")
+        if image:
+            if image.size > 5 * 1024 * 1024:
+                raise forms.ValidationError("Image file too large (max 5MB)")
+            if not image.content_type.startswith("image/"):
+                raise forms.ValidationError("Please upload a valid image file")
+        return image
+
 
 class MunchLogItemUpdateForm(forms.ModelForm):
-    """Form for updating only visited_date and notes on a MunchLogItem."""
+    """Form for updating only visited_date, notes, and image on a MunchLogItem."""
+
+    image = forms.ImageField(
+        required=False,
+        widget=forms.ClearableFileInput(attrs={"accept": "image/*"}),
+        help_text="Optional photo from your visit",
+    )
 
     class Meta:
         model = MunchLogItem
@@ -135,6 +156,15 @@ class MunchLogItemUpdateForm(forms.ModelForm):
                 }
             ),
         }
+
+    def clean_image(self):
+        image = self.cleaned_data.get("image")
+        if image:
+            if image.size > 5 * 1024 * 1024:
+                raise forms.ValidationError("Image file too large (max 5MB)")
+            if not image.content_type.startswith("image/"):
+                raise forms.ValidationError("Please upload a valid image file")
+        return image
 
 
 class ListCommentForm(forms.ModelForm):

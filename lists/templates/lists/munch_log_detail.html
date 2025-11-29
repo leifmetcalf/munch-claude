@@ -78,7 +78,11 @@
                             <p class="text-black mt-3">"{{ item.notes }}"</p>
                         {% endif %}
                     </div>
-                    {% if item.restaurant.images.first %}
+                    {% if item.image %}
+                        <div class="w-32 h-32 flex-shrink-0">
+                            <img src="{{ item.image.image.url }}" alt="{{ item.image.alt_text|default:item.restaurant.name }}" class="w-full h-full object-cover rounded-lg">
+                        </div>
+                    {% elif item.restaurant.images.first %}
                         <div class="w-32 h-32 flex-shrink-0">
                             <img src="{{ item.restaurant.images.first.image.url }}" alt="{{ item.restaurant.images.first.alt_text|default:item.restaurant.name }}" class="w-full h-full object-cover rounded-lg">
                         </div>
