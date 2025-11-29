@@ -878,7 +878,7 @@ def munch_log(request, user_id):
     munch_log = munch_log_user.get_or_create_munch_log()
 
     # Get all items in the munch log
-    munch_log_items = MunchLogItem.objects.filter(munch_log=munch_log)
+    munch_log_items = MunchLogItem.objects.filter(munch_log=munch_log).select_related('restaurant')
 
     # Calculate unique munches (unique restaurants)
     unique_restaurants = munch_log_items.values("restaurant").distinct().count()

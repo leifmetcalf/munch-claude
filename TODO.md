@@ -9,14 +9,6 @@ Allow users to attach a photo when logging a munch. This would capture the meal 
 
 ## Technical Debt
 
-### High Priority
-
-#### N+1 query in munch_log view (`views.py:882`)
-```python
-munch_log_items = MunchLogItem.objects.filter(munch_log=munch_log)  # Missing select_related
-```
-Should add `.select_related('restaurant')`.
-
 ### Medium Priority
 
 #### Using `.filter().first()` for unique lookups (`views.py:251, 1133`)
