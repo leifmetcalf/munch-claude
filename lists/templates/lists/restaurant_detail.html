@@ -64,23 +64,19 @@
         <div class="space-y-4">
             {% for item in list_items %}
                 <div class="border border-gray-200 rounded-lg p-4">
-                    <div class="flex justify-between items-start">
-                        <div class="flex-1">
-                            <h3 class="font-medium text-lg">
-                                <a href="{% url 'restaurantlist_detail' item.restaurant_list.id %}" class="text-yakiimo-purple-light hover:text-yakiimo-purple">
-                                    {{ item.restaurant_list.name }}
-                                </a>
-                            </h3>
-                            <p class="text-sm text-yakiimo-purple-light mb-2">
-                                by <a href="{% url 'profile' item.restaurant_list.owner.id %}" class="text-yakiimo-purple-light hover:text-yakiimo-purple">{{ item.restaurant_list.owner.username }}</a> • added {{ item.created_at|date:"M d, Y" }}
-                            </p>
-                            {% if item.notes %}
-                                <div class="bg-gray-50 border border-gray-200 rounded p-3">
-                                    <p class="text-yakiimo-purple"><strong>Notes:</strong> {{ item.notes }}</p>
-                                </div>
-                            {% endif %}
+                    <h3 class="font-medium text-lg">
+                        <a href="{% url 'restaurantlist_detail' item.restaurant_list.id %}" class="text-yakiimo-purple-light hover:text-yakiimo-purple">
+                            {{ item.restaurant_list.name }}
+                        </a>
+                    </h3>
+                    <p class="text-sm text-yakiimo-purple-light mb-2">
+                        by <a href="{% url 'profile' item.restaurant_list.owner.id %}" class="text-yakiimo-purple-light hover:text-yakiimo-purple">{{ item.restaurant_list.owner.username }}</a> • added {{ item.created_at|date:"M d, Y" }}
+                    </p>
+                    {% if item.notes %}
+                        <div class="bg-gray-50 border border-gray-200 rounded p-3">
+                            <p class="text-yakiimo-purple"><strong>Notes:</strong> {{ item.notes }}</p>
                         </div>
-                    </div>
+                    {% endif %}
                 </div>
             {% endfor %}
         </div>
