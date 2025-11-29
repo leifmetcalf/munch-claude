@@ -14,7 +14,7 @@
                 <label for="{{ form.image.id_for_label }}" class="block text-sm font-medium text-yakiimo-purple mb-2">
                     {{ form.image.label }}
                 </label>
-                {{ form.image }}
+                <div class="overflow-hidden">{{ form.image }}</div>
                 {% if form.image.errors %}
                     <div class="text-red-600 text-sm mt-1">
                         {{ form.image.errors }}

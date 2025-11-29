@@ -58,7 +58,7 @@
                         <p class="text-sm text-gray-500 mt-1">Current photo</p>
                     </div>
                 {% endif %}
-                {{ form.image }}
+                <div class="overflow-hidden">{{ form.image }}</div>
                 {% if form.image.errors %}
                     <div class="mt-1 text-sm text-red-600">
                         {% for error in form.image.errors %}
