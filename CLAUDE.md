@@ -18,8 +18,11 @@ DJANGO_SETTINGS_MODULE=munch.dev_settings uv run manage.py runserver
 DJANGO_SETTINGS_MODULE=munch.dev_settings uv run manage.py makemigrations
 DJANGO_SETTINGS_MODULE=munch.dev_settings uv run manage.py migrate
 
-# Django shell
+# Django shell (interactive)
 DJANGO_SETTINGS_MODULE=munch.dev_settings uv run manage.py shell
+
+# Run Python code in Django context (use this instead of `uv run python -c`)
+DJANGO_SETTINGS_MODULE=munch.dev_settings uv run manage.py shell -c "from lists.models import Restaurant; print(Restaurant.objects.count())"
 
 # Run tests
 DJANGO_SETTINGS_MODULE=munch.dev_settings uv run manage.py test

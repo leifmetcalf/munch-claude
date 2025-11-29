@@ -30,11 +30,17 @@
                                 <a href="{{ image.image.url }}" target="_blank" class="block">
                                     <img src="{{ image.image.url }}" alt="{{ image.alt_text|default:restaurant.name }}" class="w-full h-64 object-cover hover:opacity-90 transition-opacity cursor-pointer">
                                 </a>
-                                {% if image.alt_text %}
-                                    <div class="p-3 bg-gray-50">
-                                        <p class="text-sm text-yakiimo-purple">{{ image.alt_text }}</p>
-                                    </div>
-                                {% endif %}
+                                <div class="p-3 bg-gray-50 {% if not image.alt_text and user != image.added_by %}hidden{% endif %}">
+                                    {% if image.alt_text %}
+                                        <p class="text-sm text-yakiimo-purple {% if user == image.added_by %}mb-2{% endif %}">{{ image.alt_text }}</p>
+                                    {% endif %}
+                                    {% if user == image.added_by %}
+                                        <form action="{% url 'restaurant_image_delete' image.id %}" method="post" class="inline">
+                                            {% csrf_token %}
+                                            <button type="submit" class="text-red-600 hover:text-red-800 text-sm" onclick="return confirm('Delete this image?')">Delete</button>
+                                        </form>
+                                    {% endif %}
+                                </div>
                             </div>
                         {% endfor %}
                     </div>

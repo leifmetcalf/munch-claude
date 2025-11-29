@@ -629,6 +629,23 @@ def restaurant_image_add(request, restaurant_id):
 
 
 @login_required
+def restaurant_image_delete(request, image_id):
+    image = get_object_or_404(RestaurantImage, id=image_id)
+
+    if image.added_by != request.user:
+        raise PermissionDenied
+
+    restaurant = image.restaurant
+
+    if request.method == "POST":
+        image.delete()
+        messages.success(request, "Image deleted!")
+        return redirect("restaurant_detail", restaurant_id=restaurant.id)
+
+    return redirect("restaurant_detail", restaurant_id=restaurant.id)
+
+
+@login_required
 def move_item_up(request, item_id):
     item = get_object_or_404(RestaurantListItem, id=item_id)
 

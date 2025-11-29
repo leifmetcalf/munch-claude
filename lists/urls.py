@@ -68,6 +68,11 @@ urlpatterns = [
         name="restaurant_image_add",
     ),
     path(
+        "restaurant/image/<int:image_id>/delete/",
+        views.restaurant_image_delete,
+        name="restaurant_image_delete",
+    ),
+    path(
         "restaurant/<int:restaurant_id>/reimport/",
         views.restaurant_reimport,
         name="restaurant_reimport",
