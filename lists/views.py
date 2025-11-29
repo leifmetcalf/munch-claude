@@ -248,9 +248,12 @@ def restaurant_nominatim(request):
                     raise ValueError(f"Invalid OSM type: {osm_type}")
 
                 # Check if restaurant already exists
-                existing_restaurant = Restaurant.objects.filter(
-                    osm_type=osm_type_value, osm_id=osm_id
-                ).first()
+                try:
+                    existing_restaurant = Restaurant.objects.get(
+                        osm_type=osm_type_value, osm_id=osm_id
+                    )
+                except Restaurant.DoesNotExist:
+                    existing_restaurant = None
 
                 if existing_restaurant:
                     messages.info(
@@ -1129,9 +1132,12 @@ def add_by_node_id(request):
 
         try:
             # Check if restaurant already exists
-            existing_restaurant = Restaurant.objects.filter(
-                osm_type=Restaurant.OSMType.NODE, osm_id=osm_id
-            ).first()
+            try:
+                existing_restaurant = Restaurant.objects.get(
+                    osm_type=Restaurant.OSMType.NODE, osm_id=osm_id
+                )
+            except Restaurant.DoesNotExist:
+                existing_restaurant = None
 
             if existing_restaurant:
                 messages.info(

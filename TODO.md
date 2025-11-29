@@ -11,9 +11,6 @@ Allow users to attach a photo when logging a munch. This would capture the meal 
 
 ### Medium Priority
 
-#### Using `.filter().first()` for unique lookups (`views.py:251, 1133`)
-Since `osm_type + osm_id` is unique, use `.get()` with try/except instead of `.filter().first()`.
-
 #### Template N+1 queries (`restaurant_list_detail.html:91`)
 ```html
 {% if item.restaurant.images.first %}
