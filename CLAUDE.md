@@ -90,6 +90,8 @@ Most FKs use `on_delete=models.RESTRICT` to prevent accidental data loss (User, 
 
 ## Code Style
 
+Prioritize correctness and simplicity over performance. The database is small and will remain so for the foreseeable future—don't add indexes, caching, or other optimizations unless there's a demonstrated need. Simple, readable code that's obviously correct is more valuable than clever code that's theoretically faster.
+
 Don't add defensive checks for conditions that can't happen (e.g., checking for null on a non-nullable field). They obscure what can actually fail and make the code harder to reason about.
 
 ## API Endpoints
