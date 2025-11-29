@@ -8,3 +8,46 @@ Allow users to attach a photo when logging a munch. This would capture the meal 
 ---
 
 ## Technical Debt
+
+### High Priority
+
+#### N+1 query in munch_log view (`views.py:882`)
+```python
+munch_log_items = MunchLogItem.objects.filter(munch_log=munch_log)  # Missing select_related
+```
+Should add `.select_related('restaurant')`.
+
+### Medium Priority
+
+#### Using `.filter().first()` for unique lookups (`views.py:251, 1133`)
+Since `osm_type + osm_id` is unique, use `.get()` with try/except instead of `.filter().first()`.
+
+#### Template N+1 queries (`restaurant_list_detail.html:91`)
+```html
+{% if item.restaurant.images.first %}
+```
+Calls `.first` twice per item. Should prefetch in view.
+
+#### Missing `select_related('added_by')` in restaurant_index view (`views.py:287`)
+
+#### Manual authorization checks repeated 8 times (`views.py:622, 650, 678, 697, 717, 736, 821, 1035`)
+Could use `PermissionDenied` exception or class-based views with `UserPassesTestMixin`.
+
+#### Missing model indexes in `models.py`
+- `Restaurant.added_by`
+- `RestaurantList.owner`
+- `RestaurantListItem` ordering fields
+
+### Low Priority
+
+#### Debug print statement (`views.py:198`)
+```python
+print(f"Nominatim search request: {url}")
+```
+Should use `logging` module.
+
+#### Empty admin.py
+No models registered for admin interface.
+
+#### All function-based views
+The codebase uses FBVs exclusively. Many could benefit from CBVs with mixins for cleaner authorization and CRUD operations.

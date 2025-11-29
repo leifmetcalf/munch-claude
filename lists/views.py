@@ -793,8 +793,7 @@ def profile(request, user_id):
     # Count munch log entries
     total_munches = 0
     try:
-        profile_user.munch_log  # Check existence
-        total_munches = MunchLogItem.objects.count()
+        total_munches = profile_user.munch_log.munchlogitem_set.count()
     except MunchLog.DoesNotExist:
         pass
 
