@@ -1,6 +1,9 @@
 import json
+import logging
 import urllib.parse
 import urllib.request
+
+logger = logging.getLogger(__name__)
 from collections import defaultdict
 from django.contrib import messages
 from django.contrib.auth import login
@@ -196,8 +199,7 @@ def restaurant_nominatim(request):
             encoded_query = urllib.parse.quote(query)
             url = f"https://nominatim.openstreetmap.org/search?q={encoded_query}&format=jsonv2"
 
-            # Print the Nominatim search request
-            print(f"Nominatim search request: {url}")
+            logger.debug("Nominatim search request: %s", url)
 
             try:
                 with urllib.request.urlopen(url, timeout=10) as response:

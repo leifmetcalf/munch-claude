@@ -11,8 +11,6 @@ Allow users to attach a photo when logging a munch. This would capture the meal 
 
 ### Medium Priority
 
-#### Missing `select_related('added_by')` in restaurant_index view (`views.py:287`)
-
 #### Manual authorization checks repeated 8 times (`views.py:622, 650, 678, 697, 717, 736, 821, 1035`)
 Could use `PermissionDenied` exception or class-based views with `UserPassesTestMixin`.
 
@@ -22,12 +20,6 @@ Could use `PermissionDenied` exception or class-based views with `UserPassesTest
 - `RestaurantListItem` ordering fields
 
 ### Low Priority
-
-#### Debug print statement (`views.py:198`)
-```python
-print(f"Nominatim search request: {url}")
-```
-Should use `logging` module.
 
 #### Empty admin.py
 No models registered for admin interface.
