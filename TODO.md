@@ -21,8 +21,5 @@ Could use `PermissionDenied` exception or class-based views with `UserPassesTest
 
 ### Low Priority
 
-#### Empty admin.py
-No models registered for admin interface.
-
 #### All function-based views
 The codebase uses FBVs exclusively. Many could benefit from CBVs with mixins for cleaner authorization and CRUD operations.
