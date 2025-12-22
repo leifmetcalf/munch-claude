@@ -75,6 +75,7 @@ npm install
 - Leaflet.js for interactive maps
 - Mobile-first design (portrait orientation)
 - Templates extend `base.html`
+- **Always commit `lists/static/css/main.css`** after building Tailwind (deployment doesn't regenerate it)
 
 ## Key Patterns
 
