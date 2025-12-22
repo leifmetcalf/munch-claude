@@ -107,3 +107,8 @@ Don't add defensive checks for conditions that can't happen (e.g., checking for 
 
 ## Playwright
 When using Playwright, resize the browser to iPhone 14 resolution (390×844) with `browser_resize`.
+
+## Development Environment Setup
+1. Start Tailwind watcher in background: `npx @tailwindcss/cli -i ./lists/main.css -o ./lists/static/css/main.css --watch`
+2. Start Django dev server in background: `DJANGO_SETTINGS_MODULE=munch.dev_settings uv run manage.py runserver`
+3. Open http://127.0.0.1:8000/ with Playwright, resize to 390×844, and log in as `testuser123`
