@@ -15,7 +15,7 @@
     restaurants.forEach(function(restaurant) {
         var popup = L.popup({closeButton: false, autoClose: false, closeOnClick: false})
             .setLatLng([restaurant.lat, restaurant.lng])
-            .setContent('<strong>' + restaurant.name + '</strong>')
+            .setContent('<a href="/restaurant/' + restaurant.id + '/" style="text-decoration: none; color: black;"><strong>' + restaurant.name + '</strong></a>')
             .openOn(map);
         popups.push(popup);
     });

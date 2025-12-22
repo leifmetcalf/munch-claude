@@ -102,6 +102,7 @@ def index(request):
     # Build coordinates for the map
     munched_coordinates = [
         {
+            "id": restaurant.id,
             "lat": restaurant.location.y,
             "lng": restaurant.location.x,
             "name": restaurant.name,
