@@ -100,3 +100,10 @@ Don't add defensive checks for conditions that can't happen (e.g., checking for 
 
 ## API Endpoints
 - `/api/restaurant/search/` - AJAX autocomplete for restaurants (min 2 chars)
+
+## Test Credentials
+- Username: `testuser123`
+- Password: `SecurePass42!`
+
+## Playwright
+When using Playwright, resize the browser to iPhone 14 resolution (390×844) with `browser_resize`.
