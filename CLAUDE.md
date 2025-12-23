@@ -64,6 +64,11 @@ npm install
 - **Reimport**: `restaurant_reimport()` - refreshes existing restaurant data from OSM
 - **Security**: Client only submits OSM type/ID; server fetches all other data from Nominatim
 
+### OSM API Integration (osm_integration.py)
+- **Node creation**: `POST /nodes` creates a new node (not `PUT /node/create` as older docs suggest)
+- **Changeset workflow**: Create changeset → create node with changeset ID → close changeset
+- **OAuth 2.0**: Tokens stored in `OsmAccount` model, linked one-to-one with User
+
 ### Database
 - PostgreSQL with PostGIS extension
 - Default: database `munch`, user `munch`, no password, localhost:5432
@@ -96,7 +101,11 @@ Most FKs use `on_delete=models.RESTRICT` to prevent accidental data loss (User, 
 
 Prioritize correctness and simplicity over performance. The database is small and will remain so for the foreseeable future—don't add indexes, caching, or other optimizations unless there's a demonstrated need. Simple, readable code that's obviously correct is more valuable than clever code that's theoretically faster.
 
-Don't add defensive checks for conditions that can't happen (e.g., checking for null on a non-nullable field). They obscure what can actually fail and make the code harder to reason about.
+Don't add defensive checks for conditions that can't happen (e.g., checking for null on a non-nullable field, using `getattr(settings, "X", default)` for settings that are always defined). They obscure what can actually fail and make the code harder to reason about.
+
+Error messages can be terse and unfriendly—the only users are the developer and friends. No need for elaborate user-facing error handling or graceful degradation.
+
+Storing user access tokens (e.g., OSM OAuth tokens) as plaintext in the database is fine—encryption at rest adds complexity without meaningful security benefit for this use case. OSM OAuth 2.0 tokens do not expire, so no refresh token handling is needed.
 
 ## API Endpoints
 - `/api/restaurant/search/` - AJAX autocomplete for restaurants (min 2 chars)

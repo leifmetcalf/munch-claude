@@ -1,0 +1,254 @@
+{% extends 'base.html' %}
+
+{% block title %}Munch - Create Restaurant{% endblock %}
+
+{% block content %}
+<div class="max-w-4xl mx-auto">
+    <h1 class="text-3xl font-bold text-yakiimo-purple mb-6">Create New Restaurant</h1>
+
+    <div class="bg-yakiimo-cream-light rounded-lg border border-gray-200 p-6 mb-6">
+        <p class="text-yakiimo-purple mb-4">
+            Can't find a restaurant in OpenStreetMap? Search for it here and add it.
+        </p>
+
+        <div class="bg-yellow-50 border border-yellow-200 text-yellow-800 px-4 py-3 rounded-md">
+            <strong>Important:</strong> You must independently verify all information before submitting.
+            Do not rely solely on search results - check the restaurant's own website or visit in person.
+        </div>
+    </div>
+
+    <!-- Search Section -->
+    <div class="bg-yakiimo-cream-light rounded-lg border border-gray-200 p-6 mb-6">
+        <h2 class="text-xl font-semibold text-yakiimo-purple mb-4">Search for Restaurant</h2>
+
+        <div class="flex gap-4 mb-4">
+            <input type="text" id="search-input" placeholder="Restaurant name and location"
+                   class="flex-1 px-3 py-2 border border-yakiimo-purple-border rounded-md focus:border-yakiimo-yellow">
+            <button type="button" id="search-btn"
+                    class="bg-yakiimo-yellow text-yakiimo-purple hover:bg-yakiimo-yellow-hover px-6 py-2 rounded-md text-sm font-medium transition-colors">
+                Search
+            </button>
+        </div>
+
+        <div id="search-loading" class="hidden text-yakiimo-purple-light">
+            Searching...
+        </div>
+
+        <div id="search-error" class="hidden text-red-600"></div>
+    </div>
+
+    <!-- Result Section -->
+    <div id="result-section" class="hidden bg-yakiimo-cream-light rounded-lg border border-gray-200 p-6 mb-6">
+        <h2 class="text-xl font-semibold text-yakiimo-purple mb-4">Restaurant Details</h2>
+
+        <dl class="space-y-2 mb-4">
+            <div class="flex gap-2">
+                <dt class="text-yakiimo-purple font-medium w-24">Name:</dt>
+                <dd class="text-yakiimo-purple" id="result-name"></dd>
+            </div>
+            <div class="flex gap-2">
+                <dt class="text-yakiimo-purple font-medium w-24">Address:</dt>
+                <dd class="text-yakiimo-purple" id="result-address"></dd>
+            </div>
+            <div class="flex gap-2">
+                <dt class="text-yakiimo-purple font-medium w-24">Location:</dt>
+                <dd class="text-yakiimo-purple" id="result-coords"></dd>
+            </div>
+            <div class="flex gap-2 hidden" id="result-cuisine-row">
+                <dt class="text-yakiimo-purple font-medium w-24">Cuisine:</dt>
+                <dd class="text-yakiimo-purple" id="result-cuisine"></dd>
+            </div>
+            <div class="flex gap-2 hidden" id="result-phone-row">
+                <dt class="text-yakiimo-purple font-medium w-24">Phone:</dt>
+                <dd class="text-yakiimo-purple" id="result-phone"></dd>
+            </div>
+            <div class="flex gap-2 hidden" id="result-website-row">
+                <dt class="text-yakiimo-purple font-medium w-24">Website:</dt>
+                <dd class="text-yakiimo-purple" id="result-website"></dd>
+            </div>
+        </dl>
+
+        <!-- Map -->
+        <div id="map" class="h-48 rounded-md border border-gray-200 mb-4"></div>
+
+        <form method="post" action="{% url 'restaurant_create_verify' %}" id="create-form">
+            {% csrf_token %}
+
+            <!-- Hidden fields for restaurant data -->
+            {{ form.name }}
+            {{ form.latitude }}
+            {{ form.longitude }}
+            {{ form.addr_housenumber }}
+            {{ form.addr_street }}
+            {{ form.addr_unit }}
+            {{ form.addr_suburb }}
+            {{ form.addr_state }}
+            {{ form.addr_postcode }}
+            {{ form.cuisine }}
+            {{ form.phone }}
+            {{ form.website }}
+
+            <div class="border-t border-gray-200 pt-4">
+                <label class="flex items-start gap-3">
+                    <input type="checkbox" name="confirm_accuracy" required
+                           class="mt-1 rounded border-yakiimo-purple-border text-yakiimo-purple focus:ring-yakiimo-yellow">
+                    <span class="text-yakiimo-purple text-sm">
+                        {{ form.confirm_accuracy.label }}
+                    </span>
+                </label>
+            </div>
+
+            <div class="flex gap-4 pt-4">
+                <button type="submit" id="submit-btn" disabled
+                        class="bg-yakiimo-yellow text-yakiimo-purple hover:bg-yakiimo-yellow-hover px-6 py-2 rounded-md text-sm font-medium transition-colors disabled:opacity-50 disabled:cursor-not-allowed">
+                    Review OSM Changeset
+                </button>
+                <a href="{% url 'restaurant_nominatim' %}"
+                   class="bg-gray-200 hover:bg-gray-300 text-gray-700 px-6 py-2 rounded-md text-sm font-medium transition-colors">
+                    Cancel
+                </a>
+            </div>
+        </form>
+    </div>
+</div>
+
+<link rel="stylesheet" href="https://unpkg.com/leaflet@1.9.4/dist/leaflet.css" />
+<script src="https://unpkg.com/leaflet@1.9.4/dist/leaflet.js"></script>
+
+<script>
+document.addEventListener('DOMContentLoaded', function() {
+    const searchInput = document.getElementById('search-input');
+    const searchBtn = document.getElementById('search-btn');
+    const loadingDiv = document.getElementById('search-loading');
+    const errorDiv = document.getElementById('search-error');
+    const resultSection = document.getElementById('result-section');
+
+    let map = null;
+    let marker = null;
+
+    function initMap(lat, lng) {
+        if (!map) {
+            map = L.map('map').setView([lat, lng], 16);
+            L.tileLayer('https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png', {
+                attribution: '&copy; OpenStreetMap contributors'
+            }).addTo(map);
+        } else {
+            map.setView([lat, lng], 16);
+        }
+
+        if (marker) {
+            marker.setLatLng([lat, lng]);
+        } else {
+            marker = L.marker([lat, lng]).addTo(map);
+        }
+    }
+
+    function formatAddress(data) {
+        const parts = [];
+        if (data.addr_unit) parts.push(`Unit ${data.addr_unit}`);
+        if (data.addr_housenumber) parts.push(data.addr_housenumber);
+        if (data.addr_street) parts.push(data.addr_street);
+        if (data.addr_suburb) parts.push(data.addr_suburb);
+        if (data.addr_state) parts.push(data.addr_state);
+        if (data.addr_postcode) parts.push(data.addr_postcode);
+        return parts.join(', ') || 'Not specified';
+    }
+
+    function populateHiddenFields(data) {
+        document.getElementById('id_name').value = data.name || '';
+        document.getElementById('id_latitude').value = data.latitude || '';
+        document.getElementById('id_longitude').value = data.longitude || '';
+        document.getElementById('id_addr_housenumber').value = data.addr_housenumber || '';
+        document.getElementById('id_addr_street').value = data.addr_street || '';
+        document.getElementById('id_addr_unit').value = data.addr_unit || '';
+        document.getElementById('id_addr_suburb').value = data.addr_suburb || '';
+        document.getElementById('id_addr_state').value = data.addr_state || '';
+        document.getElementById('id_addr_postcode').value = data.addr_postcode || '';
+        document.getElementById('id_cuisine').value = data.cuisine || '';
+        document.getElementById('id_phone').value = data.phone || '';
+        document.getElementById('id_website').value = data.website || '';
+
+        // Enable submit button
+        document.getElementById('submit-btn').disabled = false;
+    }
+
+    function showResult(data) {
+        document.getElementById('result-name').textContent = data.name || '';
+        document.getElementById('result-address').textContent = formatAddress(data);
+        document.getElementById('result-coords').textContent = `${data.latitude}, ${data.longitude}`;
+
+        const cuisineRow = document.getElementById('result-cuisine-row');
+        const phoneRow = document.getElementById('result-phone-row');
+        const websiteRow = document.getElementById('result-website-row');
+
+        if (data.cuisine) {
+            document.getElementById('result-cuisine').textContent = data.cuisine;
+            cuisineRow.classList.remove('hidden');
+        } else {
+            cuisineRow.classList.add('hidden');
+        }
+
+        if (data.phone) {
+            document.getElementById('result-phone').textContent = data.phone;
+            phoneRow.classList.remove('hidden');
+        } else {
+            phoneRow.classList.add('hidden');
+        }
+
+        if (data.website) {
+            document.getElementById('result-website').textContent = data.website;
+            websiteRow.classList.remove('hidden');
+        } else {
+            websiteRow.classList.add('hidden');
+        }
+
+        // Populate hidden form fields
+        populateHiddenFields(data);
+
+        resultSection.classList.remove('hidden');
+
+        if (data.latitude && data.longitude) {
+            initMap(data.latitude, data.longitude);
+        }
+    }
+
+    async function search() {
+        const query = searchInput.value.trim();
+        if (!query) return;
+
+        errorDiv.classList.add('hidden');
+        loadingDiv.classList.remove('hidden');
+
+        try {
+            const url = `/api/gemini/search/?q=${encodeURIComponent(query)}`;
+            const response = await fetch(url);
+            const data = await response.json();
+
+            loadingDiv.classList.add('hidden');
+
+            if (data.error) {
+                errorDiv.textContent = data.error;
+                errorDiv.classList.remove('hidden');
+            } else if (data.result) {
+                showResult(data.result);
+            } else {
+                errorDiv.textContent = 'Restaurant not found.';
+                errorDiv.classList.remove('hidden');
+            }
+        } catch (e) {
+            loadingDiv.classList.add('hidden');
+            errorDiv.textContent = 'Search failed. Please try again.';
+            errorDiv.classList.remove('hidden');
+        }
+    }
+
+    searchBtn.addEventListener('click', search);
+    searchInput.addEventListener('keypress', function(e) {
+        if (e.key === 'Enter') {
+            e.preventDefault();
+            search();
+        }
+    });
+});
+</script>
+{% endblock %}

@@ -7,6 +7,9 @@ DJANGO_SETTINGS_MODULE=munch.dev_settings python manage.py runserver
 
 import os
 
+# Allow HTTP for OAuth2 in local development (normally requires HTTPS)
+os.environ["OAUTHLIB_INSECURE_TRANSPORT"] = "1"
+
 # Set development secret key before importing production settings
 os.environ["SECRET_KEY"] = (
     "django-insecure-!72+)yngvc_4@u7+yq14zy4)+z#(r44ljvb#-a(ajx*3l_ux_8"

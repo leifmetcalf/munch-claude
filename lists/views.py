@@ -3,8 +3,11 @@ import logging
 import urllib.parse
 import urllib.request
 
+from requests_oauthlib import OAuth2Session
+
 logger = logging.getLogger(__name__)
 from collections import defaultdict
+from django.conf import settings
 from django.contrib import messages
 from django.contrib.auth import login
 from django.contrib.auth.decorators import login_required
@@ -26,6 +29,7 @@ from .models import (
     ListFollow,
     MunchLog,
     MunchLogItem,
+    OsmAccount,
 )
 from .forms import (
     RestaurantForm,
@@ -37,6 +41,14 @@ from .forms import (
     MunchLogItemForm,
     MunchLogItemUpdateForm,
     EditProfileForm,
+    RestaurantCreateForm,
+)
+from .gemini_integration import get_restaurant_details_from_gemini
+from .osm_integration import (
+    build_restaurant_tags,
+    build_node_xml,
+    create_restaurant_node,
+    OsmAuthError,
 )
 
 
@@ -902,7 +914,9 @@ def munch_log(request, user_id):
     munch_log = munch_log_user.get_or_create_munch_log()
 
     # Get all items in the munch log
-    munch_log_items = MunchLogItem.objects.filter(munch_log=munch_log).select_related('restaurant', 'image')
+    munch_log_items = MunchLogItem.objects.filter(munch_log=munch_log).select_related(
+        "restaurant", "image"
+    )
 
     # Calculate unique munches (unique restaurants)
     unique_restaurants = munch_log_items.values("restaurant").distinct().count()
@@ -1197,3 +1211,200 @@ def add_by_node_id(request):
             return render(request, "lists/add_by_node_id.html", {"osm_id": osm_id})
 
     return render(request, "lists/add_by_node_id.html")
+
+
+# ============================================================================
+# Restaurant Creation (with OSM node creation)
+# ============================================================================
+
+
+@login_required
+def restaurant_create(request):
+    """Search for a restaurant via Gemini and confirm to create."""
+    form = RestaurantCreateForm()
+    return render(request, "lists/restaurant_create.html", {"form": form})
+
+
+@login_required
+def gemini_search_api(request):
+    """AJAX endpoint for searching restaurants via Gemini with Google Maps grounding."""
+    query = request.GET.get("q", "").strip()
+    lat = request.GET.get("lat")
+    lon = request.GET.get("lon")
+
+    if not query:
+        return JsonResponse({"error": "Query required"}, status=400)
+
+    try:
+        latitude = float(lat) if lat else None
+        longitude = float(lon) if lon else None
+    except (TypeError, ValueError):
+        latitude = None
+        longitude = None
+
+    try:
+        details = get_restaurant_details_from_gemini(query, latitude, longitude)
+        if details:
+            return JsonResponse({"result": details.model_dump()})
+        else:
+            return JsonResponse({"result": None, "message": "Restaurant not found"})
+    except Exception:
+        logger.exception("Gemini search error")
+        return JsonResponse({"error": "Search failed"}, status=500)
+
+
+@login_required
+@require_POST
+def restaurant_create_verify(request):
+    """Show verification page with raw XML, or submit if confirmed."""
+    form = RestaurantCreateForm(request.POST)
+    if not form.is_valid():
+        messages.error(request, "Invalid form data.")
+        return redirect("restaurant_create")
+
+    # Check if user has OSM account linked
+    try:
+        osm_account = request.user.osm_account
+    except OsmAccount.DoesNotExist:
+        messages.error(request, "Please connect your OpenStreetMap account first.")
+        request.session["osm_connect_next"] = "restaurant_create"
+        return redirect("osm_connect")
+
+    # Build data dict from form (exclude confirm_accuracy checkbox)
+    data = {k: v for k, v in form.cleaned_data.items() if k != "confirm_accuracy"}
+
+    # If "confirm" is in POST, actually create the node
+    if "confirm" in request.POST:
+        try:
+            node_id = create_restaurant_node(
+                access_token=osm_account.access_token,
+                data=data,
+            )
+        except OsmAuthError:
+            osm_account.delete()
+            messages.warning(
+                request,
+                "Your OpenStreetMap authorization was revoked. Please reconnect your account.",
+            )
+            request.session["osm_connect_next"] = "restaurant_create"
+            return redirect("osm_connect")
+
+        restaurant = create_restaurant_from_osm(
+            Restaurant.OSMType.NODE, str(node_id), added_by=request.user
+        )
+        messages.success(
+            request,
+            f'Restaurant "{restaurant.name}" created in OpenStreetMap and added to Munchzone!',
+        )
+        return redirect("restaurant_detail", restaurant_id=restaurant.id)
+
+    # Otherwise, show the verification page
+    tags = build_restaurant_tags(data)
+    node_xml = build_node_xml(data["latitude"], data["longitude"], tags)
+
+    return render(
+        request,
+        "lists/restaurant_create_verify.html",
+        {
+            "form": form,
+            "node_xml": node_xml,
+            "osm_api_url": settings.OSM_API_URL,
+        },
+    )
+
+
+# ============================================================================
+# OSM OAuth 2.0 Flow
+# ============================================================================
+
+
+@login_required
+def osm_connect(request):
+    """Initiate OAuth 2.0 flow with OpenStreetMap."""
+    client_id = settings.OSM_OAUTH_CLIENT_ID
+    if not client_id:
+        messages.error(
+            request,
+            "OSM OAuth is not configured. Please set OSM_OAUTH_CLIENT_ID in settings.",
+        )
+        return redirect("profile", user_id=request.user.id)
+
+    # Build callback URL
+    callback_url = request.build_absolute_uri("/osm/callback/")
+
+    # Create OAuth session
+    oauth = OAuth2Session(
+        client_id,
+        redirect_uri=callback_url,
+        scope=["write_api"],
+    )
+
+    # Get authorization URL
+    authorization_url, state = oauth.authorization_url(
+        "https://www.openstreetmap.org/oauth2/authorize"
+    )
+
+    # Store state in session for verification
+    request.session["oauth_state"] = state
+
+    return redirect(authorization_url)
+
+
+@login_required
+def osm_callback(request):
+    """Handle OAuth 2.0 callback from OpenStreetMap."""
+    client_id = settings.OSM_OAUTH_CLIENT_ID
+    client_secret = settings.OSM_OAUTH_CLIENT_SECRET
+
+    if not client_id or not client_secret:
+        messages.error(request, "OSM OAuth is not configured.")
+        return redirect("profile", user_id=request.user.id)
+
+    # Verify state
+    state = request.session.get("oauth_state")
+    if not state:
+        messages.error(request, "Invalid OAuth state. Please try again.")
+        return redirect("osm_connect")
+
+    # Build callback URL
+    callback_url = request.build_absolute_uri("/osm/callback/")
+
+    # Create OAuth session and fetch token
+    oauth = OAuth2Session(client_id, redirect_uri=callback_url, state=state)
+    token = oauth.fetch_token(
+        "https://www.openstreetmap.org/oauth2/token",
+        client_secret=client_secret,
+        authorization_response=request.build_absolute_uri(),
+    )
+
+    # Create or update OsmAccount
+    OsmAccount.objects.update_or_create(
+        user=request.user,
+        defaults={"access_token": token["access_token"]},
+    )
+
+    # Clear OAuth state
+    del request.session["oauth_state"]
+
+    messages.success(request, "Connected to OpenStreetMap!")
+
+    # Redirect to next URL if set
+    next_url = request.session.pop("osm_connect_next", None)
+    if next_url:
+        return redirect(next_url)
+
+    return redirect("profile", user_id=request.user.id)
+
+
+@login_required
+@require_POST
+def osm_disconnect(request):
+    """Disconnect OSM account."""
+    try:
+        osm_account = request.user.osm_account
+        osm_account.delete()
+        messages.success(request, "Disconnected from OpenStreetMap.")
+    except OsmAccount.DoesNotExist:
+        pass
+
+    return redirect("profile", user_id=request.user.id)

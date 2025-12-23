@@ -200,3 +200,31 @@ class EditProfileForm(forms.ModelForm):
                 }
             ),
         }
+
+
+class RestaurantCreateForm(forms.Form):
+    """Form for creating a restaurant. Includes hidden fields for restaurant data."""
+
+    # Restaurant data (hidden fields populated by JavaScript)
+    name = forms.CharField(widget=forms.HiddenInput())
+    latitude = forms.DecimalField(
+        widget=forms.HiddenInput(), max_digits=9, decimal_places=6
+    )
+    longitude = forms.DecimalField(
+        widget=forms.HiddenInput(), max_digits=9, decimal_places=6
+    )
+    addr_housenumber = forms.CharField(widget=forms.HiddenInput(), required=False)
+    addr_street = forms.CharField(widget=forms.HiddenInput(), required=False)
+    addr_unit = forms.CharField(widget=forms.HiddenInput(), required=False)
+    addr_suburb = forms.CharField(widget=forms.HiddenInput(), required=False)
+    addr_state = forms.CharField(widget=forms.HiddenInput(), required=False)
+    addr_postcode = forms.CharField(widget=forms.HiddenInput(), required=False)
+    cuisine = forms.CharField(widget=forms.HiddenInput(), required=False)
+    phone = forms.CharField(widget=forms.HiddenInput(), required=False)
+    website = forms.CharField(widget=forms.HiddenInput(), required=False)
+
+    # Confirmation checkbox
+    confirm_accuracy = forms.BooleanField(
+        required=True,
+        label="I confirm I have independently verified this information (e.g., from the restaurant's website or personal visit) and take responsibility for this edit.",
+    )

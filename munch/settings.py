@@ -151,3 +151,9 @@ LOGOUT_REDIRECT_URL = "/"
 SECURE_PROXY_SSL_HEADER = ("HTTP_X_FORWARDED_PROTO", "https")
 SESSION_COOKIE_SECURE = True
 CSRF_COOKIE_SECURE = True
+
+# External APIs
+GEMINI_API_KEY = os.environ.get("GEMINI_API_KEY", "")
+OSM_API_URL = "https://api.openstreetmap.org/api/0.6"
+OSM_OAUTH_CLIENT_ID = os.environ.get("OSM_OAUTH_CLIENT_ID", "")
+OSM_OAUTH_CLIENT_SECRET = os.environ.get("OSM_OAUTH_CLIENT_SECRET", "")

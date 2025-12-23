@@ -5,15 +5,20 @@ from django.db import migrations, models
 
 
 class Migration(migrations.Migration):
-
     dependencies = [
-        ('lists', '0009_change_cascade_to_restrict'),
+        ("lists", "0009_change_cascade_to_restrict"),
     ]
 
     operations = [
         migrations.AddField(
-            model_name='munchlogitem',
-            name='image',
-            field=models.ForeignKey(blank=True, help_text='Photo from this visit', null=True, on_delete=django.db.models.deletion.SET_NULL, to='lists.restaurantimage'),
+            model_name="munchlogitem",
+            name="image",
+            field=models.ForeignKey(
+                blank=True,
+                help_text="Photo from this visit",
+                null=True,
+                on_delete=django.db.models.deletion.SET_NULL,
+                to="lists.restaurantimage",
+            ),
         ),
     ]

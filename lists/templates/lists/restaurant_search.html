@@ -12,11 +12,19 @@
             <button type="submit" class="bg-yakiimo-yellow text-yakiimo-purple hover:bg-yakiimo-yellow-hover px-6 py-2 rounded-md text-sm font-medium transition-colors">Search</button>
         </form>
         
-        <div class="border-t border-gray-200 pt-4">
-            <p class="text-yakiimo-purple text-sm mb-2">Or if you know the OpenStreetMap node ID:</p>
-            <a href="{% url 'add_by_node_id' %}" class="bg-gray-300 hover:bg-gray-400 text-gray-700 px-4 py-2 rounded-md text-sm font-medium transition-colors inline-block">
-                Add by Node ID
-            </a>
+        <div class="border-t border-gray-200 pt-4 space-y-3">
+            <p class="text-yakiimo-purple text-sm">Other options:</p>
+            <div class="flex flex-wrap gap-2">
+                <a href="{% url 'add_by_node_id' %}" class="bg-gray-300 hover:bg-gray-400 text-gray-700 px-4 py-2 rounded-md text-sm font-medium transition-colors inline-block">
+                    Add by Node ID
+                </a>
+                <a href="{% url 'restaurant_create' %}" class="bg-yakiimo-yellow hover:bg-yakiimo-yellow-hover text-yakiimo-purple px-4 py-2 rounded-md text-sm font-medium transition-colors inline-block">
+                    Create New Restaurant
+                </a>
+            </div>
+            <p class="text-yakiimo-purple-light text-xs">
+                Can't find a restaurant? Create it in OpenStreetMap directly from Munchzone.
+            </p>
         </div>
     </div>
 

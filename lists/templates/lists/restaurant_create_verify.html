@@ -1,0 +1,30 @@
+{% extends 'base.html' %}
+
+{% block title %}Munch - Verify Restaurant Creation{% endblock %}
+
+{% block content %}
+<div class="max-w-4xl mx-auto">
+    <h1 class="text-3xl font-bold text-yakiimo-purple mb-6">Verify OSM Changeset</h1>
+
+    <div class="bg-yellow-50 border border-yellow-200 text-yellow-800 px-4 py-3 rounded-md mb-6">
+        <strong>Review before submitting:</strong> The following will be sent to OpenStreetMap.
+        This creates a new node visible to everyone.
+    </div>
+
+    <div class="bg-yakiimo-cream-light rounded-lg border border-gray-200 p-6 mb-6">
+        <p class="text-yakiimo-purple-light text-sm mb-3">POST {{ osm_api_url }}/nodes</p>
+        <pre class="font-mono text-sm text-yakiimo-purple whitespace-pre-wrap break-all">{{ node_xml }}</pre>
+    </div>
+
+    <form method="post" action="{% url 'restaurant_create_verify' %}" class="flex gap-4">
+        {% csrf_token %}
+        {% for field in form %}{{ field }}{% endfor %}
+        <button type="submit" name="confirm" value="1" class="bg-yakiimo-yellow text-yakiimo-purple hover:bg-yakiimo-yellow-hover px-6 py-2 rounded-md text-sm font-medium transition-colors">
+            Confirm and Create
+        </button>
+        <a href="{% url 'restaurant_create' %}" class="bg-gray-200 hover:bg-gray-300 text-gray-700 px-6 py-2 rounded-md text-sm font-medium transition-colors">
+            Go Back
+        </a>
+    </form>
+</div>
+{% endblock %}

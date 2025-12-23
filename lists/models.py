@@ -14,6 +14,15 @@ class User(AbstractUser):
         return munch_log
 
 
+class OsmAccount(models.Model):
+    """Links a Munchzone user to their OpenStreetMap OAuth 2.0 credentials."""
+
+    user = models.OneToOneField(
+        User, on_delete=models.CASCADE, related_name="osm_account"
+    )
+    access_token = models.TextField()
+
+
 class Restaurant(models.Model):
     class OSMType(models.TextChoices):
         NODE = "N", "Node"
