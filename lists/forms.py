@@ -222,9 +222,3 @@ class RestaurantCreateForm(forms.Form):
     cuisine = forms.CharField(widget=forms.HiddenInput(), required=False)
     phone = forms.CharField(widget=forms.HiddenInput(), required=False)
     website = forms.CharField(widget=forms.HiddenInput(), required=False)
-
-    # Confirmation checkbox
-    confirm_accuracy = forms.BooleanField(
-        required=True,
-        label="I confirm I have independently verified this information (e.g., from the restaurant's website or personal visit) and take responsibility for this edit.",
-    )

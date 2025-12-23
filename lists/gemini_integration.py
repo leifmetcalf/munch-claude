@@ -37,35 +37,78 @@ def get_restaurant_details_from_gemini(
     """
     Search for a restaurant using Gemini with Google Maps grounding.
 
+    Uses a two-step approach: first searches with Google Maps grounding,
+    then extracts structured data in a second call.
+
     Returns:
         RestaurantDetails if found, None otherwise
     """
     client = genai.Client(api_key=settings.GEMINI_API_KEY)
 
-    prompt = f"""Find the restaurant: {query}
+    # Step 1: Search with Google Maps grounding (can't use structured output)
+    search_prompt = f"""Find the restaurant: {query}
 
-If found, fill in the details. If not found, return null for name."""
+Provide the full details including:
+- Name
+- Full address (street number, street name, suburb, state, postcode)
+- GPS coordinates (latitude and longitude)
+- Phone number
+- Website
+- Cuisine type"""
 
-    config = types.GenerateContentConfig(
+    search_config = types.GenerateContentConfig(
         tools=[types.Tool(google_maps=types.GoogleMaps())],
-        response_mime_type="application/json",
-        response_schema=RestaurantDetails,
     )
 
     if latitude is not None and longitude is not None:
-        config.tool_config = types.ToolConfig(
+        search_config.tool_config = types.ToolConfig(
             retrieval_config=types.RetrievalConfig(
                 lat_lng=types.LatLng(latitude=latitude, longitude=longitude)
             )
         )
 
-    response = client.models.generate_content(
+    search_response = client.models.generate_content(
         model="gemini-2.5-flash",
-        contents=prompt,
-        config=config,
+        contents=search_prompt,
+        config=search_config,
     )
 
-    details: RestaurantDetails = response.parsed
+    search_result = search_response.text
+    if not search_result:
+        return None
+
+    # Step 2: Extract structured data from the search result
+    extract_prompt = f"""Extract restaurant details from this text. If no restaurant was found, return null for name.
+
+Text:
+{search_result}
+
+Extract these fields:
+- name: restaurant name
+- latitude: GPS latitude as a decimal number (e.g., -33.8915)
+- longitude: GPS longitude as a decimal number (e.g., 151.1903)
+- addr_unit: unit or shop number if any
+- addr_housenumber: street number
+- addr_street: street name only (without number)
+- addr_suburb: suburb or city
+- addr_state: state abbreviation (e.g., NSW, VIC)
+- addr_postcode: postal code
+- cuisine: type of cuisine (e.g., filipino, cafe)
+- phone: phone number
+- website: website URL"""
+
+    extract_config = types.GenerateContentConfig(
+        response_mime_type="application/json",
+        response_schema=RestaurantDetails,
+    )
+
+    extract_response = client.models.generate_content(
+        model="gemini-2.5-flash",
+        contents=extract_prompt,
+        config=extract_config,
+    )
+
+    details: RestaurantDetails = extract_response.parsed
     if not details.name:
         return None
 

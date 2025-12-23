@@ -88,17 +88,7 @@
             {{ form.phone }}
             {{ form.website }}
 
-            <div class="border-t border-gray-200 pt-4">
-                <label class="flex items-start gap-3">
-                    <input type="checkbox" name="confirm_accuracy" required
-                           class="mt-1 rounded border-yakiimo-purple-border text-yakiimo-purple focus:ring-yakiimo-yellow">
-                    <span class="text-yakiimo-purple text-sm">
-                        {{ form.confirm_accuracy.label }}
-                    </span>
-                </label>
-            </div>
-
-            <div class="flex gap-4 pt-4">
+            <div class="flex gap-4 pt-4 border-t border-gray-200">
                 <button type="submit" id="submit-btn" disabled
                         class="bg-yakiimo-yellow text-yakiimo-purple hover:bg-yakiimo-yellow-hover px-6 py-2 rounded-md text-sm font-medium transition-colors disabled:opacity-50 disabled:cursor-not-allowed">
                     Review OSM Changeset

@@ -1270,8 +1270,7 @@ def restaurant_create_verify(request):
         request.session["osm_connect_next"] = "restaurant_create"
         return redirect("osm_connect")
 
-    # Build data dict from form (exclude confirm_accuracy checkbox)
-    data = {k: v for k, v in form.cleaned_data.items() if k != "confirm_accuracy"}
+    data = form.cleaned_data
 
     # If "confirm" is in POST, actually create the node
     if "confirm" in request.POST:
