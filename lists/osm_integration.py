@@ -74,10 +74,9 @@ def create_restaurant_node(
     tags = build_restaurant_tags(data)
 
     # Create changeset
-    comment = f"Added restaurant: {data['name']} via Munchzone (user-verified data)"
     osm = ET.Element("osm")
     changeset = ET.SubElement(osm, "changeset")
-    for k, v in [("created_by", "Munchzone munchzone.net"), ("comment", comment[:255])]:
+    for k, v in [("created_by", "Munch Zone munchzone.net"), ("comment", "Added restaurant with Munch Zone")]:
         tag = ET.SubElement(changeset, "tag")
         tag.set("k", k)
         tag.set("v", v)

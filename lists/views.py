@@ -1293,7 +1293,7 @@ def restaurant_create_verify(request):
         )
         messages.success(
             request,
-            f'Restaurant "{restaurant.name}" created in OpenStreetMap and added to Munchzone!',
+            f'Restaurant "{restaurant.name}" created in OpenStreetMap and added to Munch Zone!',
         )
         return redirect("restaurant_detail", restaurant_id=restaurant.id)
 

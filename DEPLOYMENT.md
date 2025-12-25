@@ -1,6 +1,6 @@
-# Munchzone Production Deployment Guide
+# Munch Zone Production Deployment Guide
 
-This guide covers deploying the Munchzone Django application to production using Caddy as a reverse proxy with automatic HTTPS termination.
+This guide covers deploying the Munch Zone Django application to production using Caddy as a reverse proxy with automatic HTTPS termination.
 
 ## Architecture Overview
 
@@ -143,7 +143,7 @@ sudo nano /etc/systemd/system/munchzone.service
 Add the following content:
 ```ini
 [Unit]
-Description=Munchzone Django Application
+Description=Munch Zone Django Application
 After=network.target postgresql.service
 Requires=postgresql.service
 
@@ -311,4 +311,4 @@ set -a; source systemd.env; set +a && uv run manage.py migrate
 sudo systemctl restart munchzone
 ```
 
-This deployment guide provides a robust, production-ready setup for Munchzone with automatic HTTPS, proper security headers, and efficient static file serving through Caddy.
+This deployment guide provides a robust, production-ready setup for Munch Zone with automatic HTTPS, proper security headers, and efficient static file serving through Caddy.

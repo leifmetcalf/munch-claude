@@ -2,7 +2,7 @@
 
 ## Restaurant Creation Feature
 
-- [ ] Add duplicate checking before creating OSM nodes (check if restaurant at coordinates already exists in Munchzone or nearby in OSM)
+- [ ] Add duplicate checking before creating OSM nodes (check if restaurant at coordinates already exists in Munch Zone or nearby in OSM)
 - [ ] Warn users when tag values are truncated to 255 characters (OSM limit)
 - [ ] Add link on profile page to connect/disconnect OSM account
 - [ ] Add rate limiting on Gemini search API endpoint

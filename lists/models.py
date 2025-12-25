@@ -15,7 +15,7 @@ class User(AbstractUser):
 
 
 class OsmAccount(models.Model):
-    """Links a Munchzone user to their OpenStreetMap OAuth 2.0 credentials."""
+    """Links a Munch Zone user to their OpenStreetMap OAuth 2.0 credentials."""
 
     user = models.OneToOneField(
         User, on_delete=models.CASCADE, related_name="osm_account"
