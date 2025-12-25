@@ -1,5 +1,6 @@
 import json
 import logging
+import time
 import urllib.parse
 import urllib.request
 
@@ -182,15 +183,31 @@ def fetch_restaurant_data_from_nominatim(osm_type: Restaurant.OSMType, osm_id):
     }
 
 
-def create_restaurant_from_osm(osm_type: Restaurant.OSMType, osm_id, added_by):
+def create_restaurant_from_osm(
+    osm_type: Restaurant.OSMType, osm_id, added_by, *, wait_for_nominatim=False
+):
     """Create a new restaurant from OSM data.
 
     Args:
         osm_type: The OSM type (NODE, WAY, or RELATION)
         osm_id: The OSM ID
         added_by: The user who is importing this restaurant (required)
+        wait_for_nominatim: If True, retry fetching from Nominatim for up to 3 minutes
+            (useful after creating a new OSM node, as Nominatim takes time to index)
     """
-    data = fetch_restaurant_data_from_nominatim(osm_type, osm_id)
+    if wait_for_nominatim:
+        # Retry every 30 seconds for up to 3 minutes (6 attempts)
+        max_attempts = 6
+        for attempt in range(max_attempts):
+            try:
+                data = fetch_restaurant_data_from_nominatim(osm_type, osm_id)
+                break
+            except ValueError:
+                if attempt == max_attempts - 1:
+                    raise
+                time.sleep(30)
+    else:
+        data = fetch_restaurant_data_from_nominatim(osm_type, osm_id)
 
     restaurant = Restaurant.objects.create(
         osm_type=osm_type, osm_id=osm_id, added_by=added_by, **data
@@ -1289,7 +1306,10 @@ def restaurant_create_verify(request):
             return redirect("osm_connect")
 
         restaurant = create_restaurant_from_osm(
-            Restaurant.OSMType.NODE, str(node_id), added_by=request.user
+            Restaurant.OSMType.NODE,
+            str(node_id),
+            added_by=request.user,
+            wait_for_nominatim=True,
         )
         messages.success(
             request,
