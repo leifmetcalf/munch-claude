@@ -224,6 +224,14 @@ def restaurant_nominatim(request):
     to the local database. It does NOT add restaurants to user lists - that's
     handled by other views after the restaurant exists in the database.
     """
+    # Require OSM account to create restaurants
+    try:
+        request.user.osm_account
+    except OsmAccount.DoesNotExist:
+        messages.error(request, "Please connect your OpenStreetMap account first.")
+        request.session["osm_connect_next"] = "restaurant_nominatim"
+        return redirect("osm_connect")
+
     if request.method == "GET":
         query = request.GET.get("q", "")
         if query:
