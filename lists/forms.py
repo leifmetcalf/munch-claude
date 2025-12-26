@@ -222,3 +222,80 @@ class RestaurantCreateForm(forms.Form):
     cuisine = forms.CharField(widget=forms.HiddenInput(), required=False)
     phone = forms.CharField(widget=forms.HiddenInput(), required=False)
     website = forms.CharField(widget=forms.HiddenInput(), required=False)
+
+
+TEXT_INPUT_CLASS = "w-full px-3 py-2 border border-yakiimo-purple-border rounded-md focus:border-yakiimo-yellow text-sm"
+READONLY_INPUT_CLASS = "w-full px-3 py-2 border border-gray-200 rounded-md bg-gray-100 text-gray-600 text-sm"
+
+
+class OsmTagsVerifyForm(forms.Form):
+    """Form for viewing/editing OSM tags before creating a node."""
+
+    # Coordinates (readonly)
+    latitude = forms.DecimalField(
+        max_digits=9,
+        decimal_places=6,
+        widget=forms.TextInput(attrs={"class": READONLY_INPUT_CLASS, "readonly": True}),
+    )
+    longitude = forms.DecimalField(
+        max_digits=9,
+        decimal_places=6,
+        widget=forms.TextInput(attrs={"class": READONLY_INPUT_CLASS, "readonly": True}),
+    )
+
+    # OSM tags (editable)
+    amenity = forms.CharField(
+        label="amenity",
+        initial="restaurant",
+        widget=forms.TextInput(attrs={"class": TEXT_INPUT_CLASS}),
+    )
+    name = forms.CharField(
+        label="name",
+        widget=forms.TextInput(attrs={"class": TEXT_INPUT_CLASS}),
+    )
+    addr_housenumber = forms.CharField(
+        label="addr:housenumber",
+        required=False,
+        widget=forms.TextInput(attrs={"class": TEXT_INPUT_CLASS}),
+    )
+    addr_street = forms.CharField(
+        label="addr:street",
+        required=False,
+        widget=forms.TextInput(attrs={"class": TEXT_INPUT_CLASS}),
+    )
+    addr_unit = forms.CharField(
+        label="addr:unit",
+        required=False,
+        widget=forms.TextInput(attrs={"class": TEXT_INPUT_CLASS}),
+    )
+    addr_suburb = forms.CharField(
+        label="addr:suburb",
+        required=False,
+        widget=forms.TextInput(attrs={"class": TEXT_INPUT_CLASS}),
+    )
+    addr_state = forms.CharField(
+        label="addr:state",
+        required=False,
+        widget=forms.TextInput(attrs={"class": TEXT_INPUT_CLASS}),
+    )
+    addr_postcode = forms.CharField(
+        label="addr:postcode",
+        required=False,
+        widget=forms.TextInput(attrs={"class": TEXT_INPUT_CLASS}),
+    )
+    cuisine = forms.CharField(
+        label="cuisine",
+        required=False,
+        widget=forms.TextInput(attrs={"class": TEXT_INPUT_CLASS}),
+        help_text="Comma-separated values (e.g., italian, pizza)",
+    )
+    phone = forms.CharField(
+        label="phone",
+        required=False,
+        widget=forms.TextInput(attrs={"class": TEXT_INPUT_CLASS}),
+    )
+    website = forms.CharField(
+        label="website",
+        required=False,
+        widget=forms.TextInput(attrs={"class": TEXT_INPUT_CLASS}),
+    )

@@ -32,10 +32,10 @@ def _make_request(method: str, url: str, access_token: str, data: bytes = None) 
 
 def build_restaurant_tags(data: dict) -> dict[str, str]:
     """Build OSM tags from restaurant data. Converts addr_* keys to addr:* tags."""
-    tags = {"amenity": "restaurant", "name": data["name"]}
+    tags = {"amenity": data.get("amenity", "restaurant"), "name": data["name"]}
 
     for key, value in data.items():
-        if not value or key in ("name", "latitude", "longitude"):
+        if not value or key in ("amenity", "name", "latitude", "longitude"):
             continue
         if key == "cuisine":
             # Normalize cuisine: lowercase, underscores, semicolon-separated

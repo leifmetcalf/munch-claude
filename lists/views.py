@@ -43,6 +43,7 @@ from .forms import (
     MunchLogItemUpdateForm,
     EditProfileForm,
     RestaurantCreateForm,
+    OsmTagsVerifyForm,
 )
 from .gemini_integration import get_restaurant_details_from_gemini
 from .osm_integration import (
@@ -1273,12 +1274,7 @@ def gemini_search_api(request):
 @login_required
 @require_POST
 def restaurant_create_verify(request):
-    """Show verification page with raw XML, or submit if confirmed."""
-    form = RestaurantCreateForm(request.POST)
-    if not form.is_valid():
-        messages.error(request, "Invalid form data.")
-        return redirect("restaurant_create")
-
+    """Show verification page with editable OSM tags form, or submit if confirmed."""
     # Check if user has OSM account linked
     try:
         osm_account = request.user.osm_account
@@ -1287,10 +1283,17 @@ def restaurant_create_verify(request):
         request.session["osm_connect_next"] = "restaurant_create"
         return redirect("osm_connect")
 
-    data = form.cleaned_data
-
-    # If "confirm" is in POST, actually create the node
+    # If "confirm" is in POST, validate and create the node
     if "confirm" in request.POST:
+        verify_form = OsmTagsVerifyForm(request.POST)
+        if not verify_form.is_valid():
+            return render(
+                request,
+                "lists/restaurant_create_verify.html",
+                {"form": verify_form},
+            )
+
+        data = verify_form.cleaned_data
         try:
             node_id = create_restaurant_node(
                 access_token=osm_account.access_token,
@@ -1317,18 +1320,19 @@ def restaurant_create_verify(request):
         )
         return redirect("restaurant_detail", restaurant_id=restaurant.id)
 
-    # Otherwise, show the verification page
-    tags = build_restaurant_tags(data)
-    node_xml = build_node_xml(data["latitude"], data["longitude"], tags)
+    # Initial POST from search page: validate and show editable form
+    create_form = RestaurantCreateForm(request.POST)
+    if not create_form.is_valid():
+        messages.error(request, "Invalid form data.")
+        return redirect("restaurant_create")
+
+    # Pre-fill the verify form with data from the create form
+    verify_form = OsmTagsVerifyForm(initial=create_form.cleaned_data)
 
     return render(
         request,
         "lists/restaurant_create_verify.html",
-        {
-            "form": form,
-            "node_xml": node_xml,
-            "osm_api_url": settings.OSM_API_URL,
-        },
+        {"form": verify_form},
     )
 
 
