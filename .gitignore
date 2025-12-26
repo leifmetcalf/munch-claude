@@ -24,3 +24,6 @@ systemd.env
 
 # Static files (Django collectstatic output)
 staticfiles/
+
+# Playwright
+.playwright-mcp/
