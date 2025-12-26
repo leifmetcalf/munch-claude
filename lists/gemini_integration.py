@@ -78,24 +78,36 @@ Provide the full details including:
         return None
 
     # Step 2: Extract structured data from the search result
-    extract_prompt = f"""Extract restaurant details from this text. If no restaurant was found, return null for name.
+    extract_prompt = f"""Extract restaurant details from this text for OpenStreetMap. If no restaurant was found, return null for name.
 
 Text:
 {search_result}
 
-Extract these fields:
-- name: restaurant name
-- latitude: GPS latitude as a decimal number (e.g., -33.8915)
-- longitude: GPS longitude as a decimal number (e.g., 151.1903)
-- addr_unit: unit or shop number if any
-- addr_housenumber: street number
-- addr_street: street name only (without number)
-- addr_suburb: suburb or city
-- addr_state: state abbreviation (e.g., NSW, VIC)
-- addr_postcode: postal code
-- cuisine: type of cuisine (e.g., filipino, cafe)
-- phone: phone number
-- website: website URL"""
+Extract these fields following OSM conventions:
+
+- name: Restaurant name exactly as displayed (e.g., "Café Sydney", "McDonald's")
+
+- latitude: GPS latitude as decimal degrees (e.g., -33.8915)
+
+- longitude: GPS longitude as decimal degrees (e.g., 151.1903)
+
+- addr_unit: Unit, suite, or shop number within a larger building. Only if the restaurant is inside a complex. Examples: "Shop 5", "Suite 110A", "Unit 3"
+
+- addr_housenumber: The street number, which may contain letters or ranges. Examples: "42", "42A", "42-44"
+
+- addr_street: Street name only, without the number. Examples: "George Street", "Oxford Road"
+
+- addr_suburb: Suburb name. Examples: "Surry Hills", "Paddington", "Sydney"
+
+- addr_state: State abbreviation in uppercase. Examples: "NSW", "VIC", "QLD"
+
+- addr_postcode: Postal code. Examples: "2000", "3000"
+
+- cuisine: Type of cuisine in lowercase, using singular form. Multiple types separated by semicolons. Use ethnicity (japanese, italian) or food type (ramen, pizza). Examples: "japanese", "pizza;pasta", "vietnamese;noodle"
+
+- phone: Phone number in international ITU-T E.164 format with + prefix. Examples: "+61 2 9234 5678", "+61 412 345 678"
+
+- website: Full URL with https:// prefix. No tracking parameters or URL shorteners. Example: "https://www.example.com.au" """
 
     extract_config = types.GenerateContentConfig(
         response_mime_type="application/json",
